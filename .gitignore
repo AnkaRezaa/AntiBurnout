@@ -11,7 +11,7 @@ ml/.venv/
 #dataset 
 ml/dataset/raw/*.csv
 #model
-ml/models/*.pkl
+ml/models/*.c
 
 
 #environtment
