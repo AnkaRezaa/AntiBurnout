@@ -1,0 +1,18 @@
+
+#mobile
+mobile/flutter_app/dart_tool/
+mobile/flutter_app /build/
+
+#Ml
+ml/_pycache_/
+ml/.venv/
+
+
+#dataset 
+ml/dataset/raw/*.csv
+#model
+ml/models/*.pkl
+
+
+#environtment
+.env
