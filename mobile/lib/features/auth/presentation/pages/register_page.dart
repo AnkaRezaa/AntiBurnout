@@ -99,6 +99,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               Text(
                                 'Buat Akun',
                                 style: AppTextStyles.title.copyWith(
+                                  color: AppColors.primaryDark,
                                   fontSize: context.ui(32),
                                 ),
                               ),

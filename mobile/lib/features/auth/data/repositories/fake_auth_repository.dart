@@ -3,7 +3,17 @@ import '../../domain/repositories/auth_repository.dart';
 
 class FakeAuthRepository implements AuthRepository {
   AuthUser? _currentUser;
-  final Map<String, _StoredAccount> _accounts = {};
+
+  final Map<String, _StoredAccount> _accounts = {
+    'dummy@example.com': const _StoredAccount(
+      user: AuthUser(
+        id: 'dummy-user',
+        email: 'dummy@example.com',
+        name: 'Dummy',
+      ),
+      password: '123456',
+    ),
+  };
 
   @override
   Future<AuthUser?> getCurrentUser() async {
@@ -17,10 +27,13 @@ class FakeAuthRepository implements AuthRepository {
     required String password,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
+
     final account = _accounts[email.trim().toLowerCase()];
+
     if (account == null || account.password != password) {
       throw Exception('Email atau kata sandi tidak sesuai.');
     }
+
     _currentUser = account.user;
     return account.user;
   }
@@ -32,16 +45,24 @@ class FakeAuthRepository implements AuthRepository {
     required String password,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
+
     final key = email.trim().toLowerCase();
+
     if (_accounts.containsKey(key)) {
       throw Exception('Email sudah terdaftar.');
     }
+
     final user = AuthUser(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       email: key,
       name: name.trim(),
     );
-    _accounts[key] = _StoredAccount(user: user, password: password);
+
+    _accounts[key] = _StoredAccount(
+      user: user,
+      password: password,
+    );
+
     _currentUser = user;
     return user;
   }
@@ -53,7 +74,10 @@ class FakeAuthRepository implements AuthRepository {
 }
 
 class _StoredAccount {
-  const _StoredAccount({required this.user, required this.password});
+  const _StoredAccount({
+    required this.user,
+    required this.password,
+  });
 
   final AuthUser user;
   final String password;
