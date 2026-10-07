@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 
@@ -32,21 +33,39 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       obscureText: _obscure,
       validator: widget.validator,
       textInputAction: widget.textInputAction,
-      prefix: const Text(
-        '*',
-        style: TextStyle(
-          color: AppColors.hint,
-          fontSize: 22,
-          fontWeight: FontWeight.w700,
-          height: 1,
-        ),
+
+      // Tetap nonaktif meskipun password sedang ditampilkan.
+      autocorrect: false,
+      enableSuggestions: false,
+
+      // Ukuran ikon mengikuti IconTheme dari AppTextField.
+      prefix: const Icon(
+        Icons.lock_outline_rounded,
+        color: AppColors.hint,
       ),
+
       suffix: IconButton(
-        onPressed: () => setState(() => _obscure = !_obscure),
+        tooltip: _obscure
+            ? 'Tampilkan kata sandi'
+            : 'Sembunyikan kata sandi',
+        padding: EdgeInsets.all(context.ui(12)),
+        constraints: BoxConstraints(
+          minWidth:
+              context.ui(48).clamp(48.0, double.infinity).toDouble(),
+          minHeight:
+              context.ui(48).clamp(48.0, double.infinity).toDouble(),
+        ),
+        onPressed: () {
+          setState(() {
+            _obscure = !_obscure;
+          });
+        },
         icon: Icon(
-          _obscure ? Icons.circle : Icons.circle_outlined,
-          size: 14,
+          _obscure
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
           color: AppColors.primary,
+          size: context.ui(22),
         ),
       ),
     );
