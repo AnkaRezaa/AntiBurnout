@@ -26,10 +26,6 @@ class WelcomePage extends StatelessWidget {
             final screenWidth = constraints.maxWidth;
             final screenHeight = constraints.maxHeight;
 
-            // Skala berdasarkan lebar layar.
-            // Lebar 390 menghasilkan skala 1.
-            // Lebar 768 menghasilkan skala sekitar 1.97.
-            // Sesuaikan ukuran dengan lebar DAN tinggi yang tersedia.
             final scale = math.min(
               screenWidth / 390.0,
               screenHeight / 760.0,
@@ -38,16 +34,15 @@ class WelcomePage extends StatelessWidget {
             final horizontalPadding = 24.0 * scale;
             final verticalPadding = 20.0 * scale;
 
-            // Lebar konten mengikuti layar setelah dikurangi padding.
             final contentWidth = math.max(
               0.0,
               screenWidth - horizontalPadding * 2,
             );
 
-            final logoWidth = 240.0 * scale;
+            final logoWidth = 270.0 * scale;
             final illustrationWidth = math.min(
               contentWidth,
-              340.0 * scale,
+              360.0 * scale,
             );
 
             final minimumContentHeight = math.max(
@@ -75,61 +70,77 @@ class WelcomePage extends StatelessWidget {
                     horizontal: horizontalPadding,
                     vertical: verticalPadding,
                   ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: minimumContentHeight,
-                    ),
-                    child: Center(
-                      // Hanya konten utama yang dibatasi lebarnya.
-                      child: SizedBox(
-                        width: contentWidth,
+                  child: Center(
+                    child: SizedBox(
+                      width: contentWidth,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: minimumContentHeight,
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                           children: [
-                            SizedBox(height: 16 * scale),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(height: 16 * scale),
 
-                            Image.asset(
-                              _logoAsset,
-                              width: logoWidth,
-                              height: 140 * scale,
-                              fit: BoxFit.contain,
-                              semanticLabel: 'Logo AntiBurnout',
+                                Image.asset(
+                                  _logoAsset,
+                                  width: logoWidth,
+                                  height: 160 * scale,
+                                  fit: BoxFit.contain,
+                                  semanticLabel: 'Logo AntiBurnout',
+                                ),
+
+                                SizedBox(height: 24 * scale),
+                              ],
                             ),
 
-                            SizedBox(height: 24 * scale),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: illustrationWidth,
+                                  child: const _WelcomeIllustration(
+                                    girlAsset: _girlAsset,
+                                    leftLeafAsset: _leftLeafAsset,
+                                    rightLeafAsset: _rightLeafAsset,
+                                  ),
+                                ),
 
-                            SizedBox(
-                              width: illustrationWidth,
-                              child: const _WelcomeIllustration(
-                                girlAsset: _girlAsset,
-                                leftLeafAsset: _leftLeafAsset,
-                                rightLeafAsset: _rightLeafAsset,
-                              ),
+                                SizedBox(height: 20 * scale),
+                              ],
                             ),
 
-                            SizedBox(height: 20 * scale),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Langkah kecil untuk\n'
+                                  'kesehatan mental yang lebih baik.',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.subtitle.copyWith(
+                                    color: AppColors.navy,
+                                    fontSize: 16.0 * scale,
+                                  ),
+                                ),
 
-                            Text(
-                              'Langkah kecil untuk\n'
-                              'kesehatan mental yang lebih baik.',
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.subtitle.copyWith(
-                                color: AppColors.navy,
-                                fontSize: 14.0 * scale,
-                              ),
+                                SizedBox(height: 22 * scale),
+
+                                AppButton(
+                                  label: 'Mulai Sekarang',
+                                  scale: scale,
+                                  onPressed: () {
+                                    context.go(RoutePaths.register);
+                                  },
+                                ),
+
+                                SizedBox(height: 24 * scale),
+                              ],
                             ),
-
-                            SizedBox(height: 22 * scale),
-
-                            AppButton(
-                              label: 'Mulai Sekarang',
-                              scale: scale,
-                              onPressed: () {
-                                context.go(RoutePaths.register);
-                              },
-                            ),
-
-                            SizedBox(height: 24 * scale),
                           ],
                         ),
                       ),
