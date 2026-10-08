@@ -29,10 +29,32 @@ class AuthController extends Notifier<AuthState> {
     required String name,
     required String email,
     required String password,
-  }) {
-    return _submit(
-      () => _repository.register(name: name, email: email, password: password),
+  }) async {
+    if (state.isSubmitting) return false;
+
+    state = state.copyWith(
+      isSubmitting: true,
+      clearError: true,
     );
+
+    try {
+      await _repository.register(
+        name: name.trim(),
+        email: email.trim(),
+        password: password,
+      );
+
+      state = const AuthState.unauthenticated();
+      return true;
+    } catch (error) {
+      state = AuthState(
+        status: AuthStatus.unauthenticated,
+        isSubmitting: false,
+        errorMessage: error.toString().replaceFirst('Exception: ', ''),
+      );
+
+      return false;
+    }
   }
 
   Future<bool> login({
