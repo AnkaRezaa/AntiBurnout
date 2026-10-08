@@ -63,7 +63,6 @@ class FakeAuthRepository implements AuthRepository {
       password: password,
     );
 
-    _currentUser = user;
     return user;
   }
 
