@@ -7,7 +7,8 @@ import '../../features/auth/presentation/controllers/auth_state.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/welcome_page.dart';
-import '../../features/dashboard/presentation/pages/dashboard_page.dart';
+import '../../features/recommendations/presentation/pages/recommendation_page.dart';
+import '../../features/results/presentation/pages/result_page.dart';
 import '../navigation/main_shell.dart';
 import 'route_paths.dart';
 
@@ -51,6 +52,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.home,
         builder: (context, state) => const MainShell(),
+      ),
+      GoRoute(
+        path: RoutePaths.result,
+        builder: (context, state) => const ResultPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.recommendation,
+        builder: (context, state) => const RecommendationPage(),
       ),
     ],
   );
