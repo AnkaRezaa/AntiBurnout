@@ -5,6 +5,7 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import 'personalization_page.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -15,6 +16,7 @@ class ProfilePage extends ConsumerStatefulWidget {
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   bool _isLoggingOut = false;
+  bool _showPersonalization = false;
 
   void _showComingSoon(String feature) {
     ScaffoldMessenger.of(context)
@@ -54,6 +56,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_showPersonalization) {
+      return PersonalizationPage(
+        onBack: () {
+          setState(() {
+            _showPersonalization = false;
+          });
+        },
+      );
+    }
+
     final user = ref.watch(authControllerProvider).user;
     final name = user?.name ?? 'Pengguna';
     final email = user?.email ?? '';
@@ -178,7 +190,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       iconColor: Colors.black,
                       label: 'Personalisasi Profil',
                       onTap: () {
-                        _showComingSoon('Personalisasi Profil');
+                        setState(() {
+                          _showPersonalization = true;
+                        });
                       },
                     ),
                     const _ProfileDivider(),
