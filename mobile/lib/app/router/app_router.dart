@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/auth/presentation/controllers/auth_state.dart';
+import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/welcome_page.dart';
@@ -14,7 +15,12 @@ import 'route_paths.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
-  ref.listen(authControllerProvider, (previous, next) => refresh.value++);
+
+  ref.listen(
+    authControllerProvider,
+    (previous, next) => refresh.value++,
+  );
+
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
@@ -23,17 +29,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final location = state.matchedLocation;
+
       final isAuthRoute = location == RoutePaths.welcome ||
           location == RoutePaths.login ||
-          location == RoutePaths.register;
+          location == RoutePaths.register ||
+          location == RoutePaths.forgotPassword;
 
-      if (auth.status == AuthStatus.unknown) return null;
+      if (auth.status == AuthStatus.unknown) {
+        return null;
+      }
+
       if (auth.status == AuthStatus.authenticated && isAuthRoute) {
         return RoutePaths.home;
       }
+
       if (auth.status == AuthStatus.unauthenticated && !isAuthRoute) {
         return RoutePaths.welcome;
       }
+
       return null;
     },
     routes: [
@@ -48,6 +61,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.register,
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.forgotPassword,
+        builder: (context, state) => const ForgotPasswordPage(),
       ),
       GoRoute(
         path: RoutePaths.home,
