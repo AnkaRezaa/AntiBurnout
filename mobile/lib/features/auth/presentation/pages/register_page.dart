@@ -39,7 +39,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   Future<void> _submit() async {
+    if (ref.read(authControllerProvider).isSubmitting) return;
     if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    FocusScope.of(context).unfocus();
 
     final ok = await ref.read(authControllerProvider.notifier).register(
           name: _name.text.trim(),
@@ -50,7 +53,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (!mounted) return;
 
     if (ok) {
-      context.go(RoutePaths.home);
+      context.go(RoutePaths.login);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Registrasi berhasil. Silakan masuk dengan akunmu.'),
+        ),
+      );
     }
   }
 
@@ -99,6 +108,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               Text(
                                 'Buat Akun',
                                 style: AppTextStyles.title.copyWith(
+                                  color: AppColors.primaryDark,
                                   fontSize: context.ui(32),
                                 ),
                               ),

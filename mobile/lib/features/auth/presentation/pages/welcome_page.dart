@@ -9,8 +9,93 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_button.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
+
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  bool _started = false;
+  bool _imagesReady = false;
+  bool _loadFailed = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_started) return;
+
+    _started = true;
+    _prepareImages();
+  }
+
+  Future<void> _prepareImages() async {
+    var failed = false;
+
+    await Future.wait(
+      [
+        _WelcomeContent._logoAsset,
+        _WelcomeContent._girlAsset,
+        _WelcomeContent._leftLeafAsset,
+        _WelcomeContent._rightLeafAsset,
+      ].map(
+        (asset) => precacheImage(
+          AssetImage(asset),
+          context,
+          onError: (error, stackTrace) {
+            failed = true;
+            debugPrint('Gagal memuat aset $asset: $error');
+          },
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _loadFailed = failed;
+      _imagesReady = !failed;
+    });
+  }
+
+  void _retry() {
+    setState(() {
+      _loadFailed = false;
+    });
+
+    _prepareImages();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 250),
+      child: _imagesReady
+          ? const _WelcomeContent(
+              key: ValueKey('welcome-content'),
+            )
+          : Scaffold(
+              key: const ValueKey('welcome-loading'),
+              backgroundColor: AppColors.background,
+              body: Center(
+                child: _loadFailed
+                    ? TextButton(
+                        onPressed: _retry,
+                        child: const Text('Muat ulang gambar'),
+                      )
+                    : const CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
+              ),
+            ),
+    );
+  }
+}
+
+class _WelcomeContent extends StatelessWidget {
+  const _WelcomeContent({super.key});
 
   static const _logoAsset = 'assets/images/LogoAntiBurnout.png';
   static const _girlAsset = 'assets/images/girl.png';
@@ -24,12 +109,9 @@ class WelcomePage extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Ukuran berasal dari aturan pusat di app_scale.dart.
             final horizontalPadding = context.ui(24);
             final verticalPadding = context.ui(20);
 
-            // LayoutBuilder tetap digunakan untuk mengetahui
-            // ruang yang tersedia setelah SafeArea.
             final contentWidth = math.max(
               0.0,
               constraints.maxWidth - horizontalPadding * 2,
@@ -77,8 +159,7 @@ class WelcomePage extends StatelessWidget {
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // Logo.
                             Column(
@@ -117,12 +198,12 @@ class WelcomePage extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Langkah kecil untuk\n'
-                                  'kesehatan mental yang lebih baik.',
+                                  'Langkah kecil untuk kesehatan mental yang lebih baik.',
                                   textAlign: TextAlign.center,
                                   style: AppTextStyles.subtitle.copyWith(
                                     color: AppColors.navy,
                                     fontSize: context.ui(16),
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 SizedBox(height: context.ui(22)),
@@ -183,8 +264,6 @@ class _WelcomeIllustration extends StatelessWidget {
           final width = constraints.maxWidth;
           final height = constraints.maxHeight;
 
-          // Ukuran sudah mengikuti ruang ilustrasi yang diskalakan.
-          // Tidak perlu memakai context.ui() lagi di sini.
           final leafWidth = width * 0.19;
           final leafHeight = height * 0.46;
           final leafBottom = height * 0.04;
