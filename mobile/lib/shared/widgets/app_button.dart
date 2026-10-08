@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/responsive/app_scale.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -10,13 +11,11 @@ class AppButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.isLoading = false,
-    this.scale = 1.0,
-  }) : assert(scale > 0);
+  });
 
   final String label;
   final VoidCallback? onPressed;
   final bool isLoading;
-  final double scale;
 
   @override
   Widget build(BuildContext context) {
@@ -29,30 +28,29 @@ class AppButton extends StatelessWidget {
           disabledBackgroundColor:
               AppColors.primary.withValues(alpha: 0.6),
 
-          // Tinggi minimum agar tombol masih dapat membesar
-          // jika ukuran teks pengguna memerlukan ruang tambahan.
+          // Tinggi minimum 48; dapat bertambah mengikuti ukuran teks.
           minimumSize: Size(
             0,
-            (52.0 * scale).clamp(48.0, double.infinity).toDouble(),
+            context.ui(52).clamp(48.0, double.infinity).toDouble(),
           ),
 
           padding: EdgeInsets.symmetric(
-            horizontal: 20.0 * scale,
-            vertical: 12.0 * scale,
+            horizontal: context.ui(20),
+            vertical: context.ui(12),
           ),
 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
-              AppSpacing.radius * scale,
+              context.ui(AppSpacing.radius),
             ),
           ),
         ),
         child: isLoading
             ? SizedBox(
-                width: 22.0 * scale,
-                height: 22.0 * scale,
+                width: context.ui(22),
+                height: context.ui(22),
                 child: CircularProgressIndicator(
-                  strokeWidth: 2.4 * scale,
+                  strokeWidth: context.ui(2.4),
                   color: Colors.white,
                 ),
               )
@@ -60,7 +58,7 @@ class AppButton extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.button.copyWith(
-                  fontSize: 16.0 * scale,
+                  fontSize: context.ui(16),
                 ),
               ),
       ),
