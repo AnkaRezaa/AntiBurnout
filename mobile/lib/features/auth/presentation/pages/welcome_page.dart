@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/route_paths.dart';
+import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_button.dart';
@@ -23,113 +24,117 @@ class WelcomePage extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final screenWidth = constraints.maxWidth;
-            final screenHeight = constraints.maxHeight;
+            // Ukuran berasal dari aturan pusat di app_scale.dart.
+            final horizontalPadding = context.ui(24);
+            final verticalPadding = context.ui(20);
 
-            // Skala berdasarkan lebar layar.
-            // Lebar 390 menghasilkan skala 1.
-            // Lebar 768 menghasilkan skala sekitar 1.97.
-            // Sesuaikan ukuran dengan lebar DAN tinggi yang tersedia.
-            final scale = math.min(
-              screenWidth / 390.0,
-              screenHeight / 760.0,
-            );
-
-            final horizontalPadding = 24.0 * scale;
-            final verticalPadding = 20.0 * scale;
-
-            // Lebar konten mengikuti layar setelah dikurangi padding.
+            // LayoutBuilder tetap digunakan untuk mengetahui
+            // ruang yang tersedia setelah SafeArea.
             final contentWidth = math.max(
               0.0,
-              screenWidth - horizontalPadding * 2,
+              constraints.maxWidth - horizontalPadding * 2,
             );
 
-            final logoWidth = 240.0 * scale;
+            final logoWidth = math.min(
+              contentWidth,
+              context.ui(270),
+            );
+
             final illustrationWidth = math.min(
               contentWidth,
-              340.0 * scale,
+              context.ui(360),
             );
 
             final minimumContentHeight = math.max(
               0.0,
-              screenHeight - verticalPadding * 2,
+              constraints.maxHeight - verticalPadding * 2,
             );
-            
+
             return Stack(
               fit: StackFit.expand,
               children: [
                 Positioned(
-                  top: 42 * scale,
-                  left: -76 * scale,
-                  child: _blob(150 * scale),
+                  top: context.ui(42),
+                  left: -context.ui(76),
+                  child: _blob(context.ui(150)),
                 ),
-
                 Positioned(
-                  top: 74 * scale,
-                  right: -84 * scale,
-                  child: _blob(160 * scale),
+                  top: context.ui(74),
+                  right: -context.ui(84),
+                  child: _blob(context.ui(160)),
                 ),
-
                 SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
                     horizontal: horizontalPadding,
                     vertical: verticalPadding,
                   ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: minimumContentHeight,
-                    ),
-                    child: Center(
-                      // Hanya konten utama yang dibatasi lebarnya.
-                      child: SizedBox(
-                        width: contentWidth,
+                  child: Center(
+                    child: SizedBox(
+                      width: contentWidth,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: minimumContentHeight,
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(height: 16 * scale),
-
-                            Image.asset(
-                              _logoAsset,
-                              width: logoWidth,
-                              height: 140 * scale,
-                              fit: BoxFit.contain,
-                              semanticLabel: 'Logo AntiBurnout',
+                            // Logo.
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(height: context.ui(16)),
+                                Image.asset(
+                                  _logoAsset,
+                                  width: logoWidth,
+                                  height: context.ui(160),
+                                  fit: BoxFit.contain,
+                                  semanticLabel: 'Logo AntiBurnout',
+                                ),
+                                SizedBox(height: context.ui(24)),
+                              ],
                             ),
 
-                            SizedBox(height: 24 * scale),
-
-                            SizedBox(
-                              width: illustrationWidth,
-                              child: const _WelcomeIllustration(
-                                girlAsset: _girlAsset,
-                                leftLeafAsset: _leftLeafAsset,
-                                rightLeafAsset: _rightLeafAsset,
-                              ),
+                            // Ilustrasi perempuan dan tanaman.
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: illustrationWidth,
+                                  child: const _WelcomeIllustration(
+                                    girlAsset: _girlAsset,
+                                    leftLeafAsset: _leftLeafAsset,
+                                    rightLeafAsset: _rightLeafAsset,
+                                  ),
+                                ),
+                                SizedBox(height: context.ui(20)),
+                              ],
                             ),
 
-                            SizedBox(height: 20 * scale),
-
-                            Text(
-                              'Langkah kecil untuk\n'
-                              'kesehatan mental yang lebih baik.',
-                              textAlign: TextAlign.center,
-                              style: AppTextStyles.subtitle.copyWith(
-                                color: AppColors.navy,
-                                fontSize: 14.0 * scale,
-                              ),
+                            // Deskripsi dan tombol.
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Langkah kecil untuk\n'
+                                  'kesehatan mental yang lebih baik.',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.subtitle.copyWith(
+                                    color: AppColors.navy,
+                                    fontSize: context.ui(16),
+                                  ),
+                                ),
+                                SizedBox(height: context.ui(22)),
+                                AppButton(
+                                  label: 'Mulai Sekarang',
+                                  onPressed: () {
+                                    context.go(RoutePaths.login);
+                                  },
+                                ),
+                                SizedBox(height: context.ui(24)),
+                              ],
                             ),
-
-                            SizedBox(height: 22 * scale),
-
-                            AppButton(
-                              label: 'Mulai Sekarang',
-                              scale: scale,
-                              onPressed: () {
-                                context.go(RoutePaths.register);
-                              },
-                            ),
-
-                            SizedBox(height: 24 * scale),
                           ],
                         ),
                       ),
@@ -178,12 +183,13 @@ class _WelcomeIllustration extends StatelessWidget {
           final width = constraints.maxWidth;
           final height = constraints.maxHeight;
 
+          // Ukuran sudah mengikuti ruang ilustrasi yang diskalakan.
+          // Tidak perlu memakai context.ui() lagi di sini.
           final leafWidth = width * 0.19;
           final leafHeight = height * 0.46;
           final leafBottom = height * 0.04;
           final girlPadding = width * 0.08;
 
-          // Widget ini hanya menampilkan perempuan dan tanaman.
           return Stack(
             alignment: Alignment.bottomCenter,
             children: [
@@ -198,7 +204,6 @@ class _WelcomeIllustration extends StatelessWidget {
                   excludeFromSemantics: true,
                 ),
               ),
-
               Positioned(
                 right: 0,
                 bottom: leafBottom,
@@ -210,7 +215,6 @@ class _WelcomeIllustration extends StatelessWidget {
                   excludeFromSemantics: true,
                 ),
               ),
-
               Positioned.fill(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
