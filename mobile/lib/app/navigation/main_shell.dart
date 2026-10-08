@@ -25,7 +25,9 @@ class _MainShellState extends State<MainShell> {
         onStartSurvey: () => setState(() => _currentIndex = 1),
         onViewHistory: () => setState(() => _currentIndex = 2),
       ),
-      const SurveyIntroPage(), 
+      SurveyIntroPage(
+        onLater: () => setState(() => _currentIndex = 0),
+      ),
       const HistoryPage(),     
       const ProfilePage(),     
     ];
