@@ -6,6 +6,7 @@ import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/survey/presentation/pages/survey_intro_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/results/presentation/pages/result_page.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -24,12 +25,12 @@ class _MainShellState extends State<MainShell> {
       DashboardPage(
         onStartSurvey: () => setState(() => _currentIndex = 1),
         onViewHistory: () => setState(() => _currentIndex = 2),
+        onViewResult: () => setState(() => _currentIndex = 2),
       ),
-      SurveyIntroPage(
-        onLater: () => setState(() => _currentIndex = 0),
-      ),
-      const HistoryPage(),     
-      const ProfilePage(),     
+      const SurveyIntroPage(),
+      const ResultPage(),
+      const HistoryPage(),
+      const ProfilePage(),
     ];
     return Scaffold(
       body: IndexedStack(
@@ -63,6 +64,11 @@ class _MainShellState extends State<MainShell> {
               icon: Icon(Icons.assignment_outlined),
               activeIcon: Icon(Icons.assignment_rounded),
               label: 'Survei',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart_rounded),
+              activeIcon: Icon(Icons.bar_chart_rounded),
+              label: 'Hasil',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.access_time_rounded),
