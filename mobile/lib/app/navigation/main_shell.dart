@@ -24,7 +24,7 @@ class _MainShellState extends State<MainShell> {
     final pages = [
       DashboardPage(
         onStartSurvey: () => setState(() => _currentIndex = 1),
-        onViewHistory: () => setState(() => _currentIndex = 2),
+        onViewHistory: () => setState(() => _currentIndex = 3),
         onViewResult: () => setState(() => _currentIndex = 2),
       ),
       const SurveyIntroPage(),
