@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/router/route_paths.dart';
+
 class RecommendationPage extends StatelessWidget {
   const RecommendationPage({super.key});
 
@@ -11,22 +13,19 @@ class RecommendationPage extends StatelessWidget {
         icon: Icons.bedtime_rounded,
         iconBg: const Color(0xFFE0F2FE),
         title: 'Perbaiki Pola Tidur',
-        body:
-            'Usahakan tidur 7-8 jam per hari dengan jadwal yang konsisten.',
+        body: 'Usahakan tidur 7-8 jam per hari dengan jadwal yang konsisten.',
       ),
       _RecommendationItem(
         icon: Icons.self_improvement_rounded,
         iconBg: const Color(0xFFE0E7FF),
         title: 'Kelola Aktivitas',
-        body:
-            'Coba prioritaskan tugas penting dan sisihkan waktu istirahat secara teratur.',
+        body: 'Coba prioritaskan tugas penting dan sisihkan waktu istirahat secara teratur.',
       ),
       _RecommendationItem(
         icon: Icons.groups_rounded,
         iconBg: const Color(0xFFFCE7F3),
         title: 'Cari Dukungan Sosial',
-        body:
-            'Jangan ragu untuk berdiskusi dengan teman, keluarga, atau profesional jika merasa terbebani.',
+        body: 'Jangan ragu untuk berdiskusi dengan teman, keluarga, atau profesional jika merasa terbebani.',
       ),
     ];
 
@@ -44,7 +43,7 @@ class RecommendationPage extends StatelessWidget {
                   IconButton(
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
-                    onPressed: () => context.pop(),
+                    onPressed: () => context.go(RoutePaths.result),
                     icon: const Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 24,
@@ -140,6 +139,62 @@ class RecommendationPage extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: 2,
+          onTap: (index) {
+            if (index == 2) {
+              context.go(RoutePaths.result);
+            } else {
+              context.go(RoutePaths.home, extra: index);
+            }
+          },
+          backgroundColor: Colors.white,
+          elevation: 0,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF4F46E5),
+          unselectedItemColor: const Color(0xFF94A3B8),
+          selectedLabelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home_outlined),
+              label: 'Beranda',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.assignment_outlined),
+              activeIcon: Icon(Icons.assignment_rounded),
+              label: 'Survei',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.note_alt_outlined),
+              activeIcon: Icon(Icons.note_alt_outlined),
+              label: 'Hasil',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.pending_actions_outlined),
+              activeIcon: Icon(Icons.pending_actions_outlined),
+              label: 'Riwayat',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline_rounded),
+              activeIcon: Icon(Icons.person_rounded),
+              label: 'Profil',
+            ),
+          ],
         ),
       ),
     );

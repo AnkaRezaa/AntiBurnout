@@ -16,10 +16,7 @@ import 'route_paths.dart';
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
 
-  ref.listen(
-    authControllerProvider,
-    (previous, next) => refresh.value++,
-  );
+  ref.listen(authControllerProvider, (previous, next) => refresh.value++);
 
   ref.onDispose(refresh.dispose);
 
@@ -30,7 +27,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final auth = ref.read(authControllerProvider);
       final location = state.matchedLocation;
 
-      final isAuthRoute = location == RoutePaths.welcome ||
+      final isAuthRoute =
+          location == RoutePaths.welcome ||
           location == RoutePaths.login ||
           location == RoutePaths.register ||
           location == RoutePaths.forgotPassword;
@@ -68,11 +66,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: RoutePaths.home,
-        builder: (context, state) => const MainShell(),
+        builder: (context, state) {
+          final index = state.extra as int? ?? 0;
+          return MainShell(initialIndex: index);
+        },
       ),
       GoRoute(
         path: RoutePaths.result,
-        builder: (context, state) => const ResultPage(),
+        builder: (context, state) => const MainShell(initialIndex: 2),
       ),
       GoRoute(
         path: RoutePaths.recommendation,
