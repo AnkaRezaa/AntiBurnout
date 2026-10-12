@@ -58,10 +58,7 @@ class FakeAuthRepository implements AuthRepository {
       name: name.trim(),
     );
 
-    _accounts[key] = _StoredAccount(
-      user: user,
-      password: password,
-    );
+    _accounts[key] = _StoredAccount(user: user, password: password);
 
     return user;
   }
@@ -73,10 +70,7 @@ class FakeAuthRepository implements AuthRepository {
 }
 
 class _StoredAccount {
-  const _StoredAccount({
-    required this.user,
-    required this.password,
-  });
+  const _StoredAccount({required this.user, required this.password});
 
   final AuthUser user;
   final String password;
