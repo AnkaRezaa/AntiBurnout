@@ -10,11 +10,13 @@ import '../widgets/motivation_card.dart';
 class DashboardPage extends ConsumerWidget {
   final VoidCallback? onStartSurvey;
   final VoidCallback? onViewHistory;
+  final VoidCallback? onViewResult;
 
   const DashboardPage({
     super.key,
     this.onStartSurvey,
     this.onViewHistory,
+    this.onViewResult,
   });
 
   @override
@@ -38,9 +40,7 @@ class DashboardPage extends ConsumerWidget {
               LatestAssessmentCard(
                 riskLevel: 'Sedang',
                 date: '18 September 2026',
-                onDetailTap: () {
-                  // Arahkan ke halaman detail hasil asesmen
-                },
+                onDetailTap: onViewResult,
               ),
               const SizedBox(height: 20),
 
