@@ -9,22 +9,40 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/results/presentation/pages/result_page.dart';
 
 class MainShell extends StatefulWidget {
-  const MainShell({super.key});
+  final int initialIndex;
+
+  const MainShell({
+    super.key,
+    this.initialIndex = 0,
+  });
 
   @override
   State<MainShell> createState() => _MainShellState();
 }
 
 class _MainShellState extends State<MainShell> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
-     @override
+  @override
+  void didUpdateWidget(covariant MainShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialIndex != oldWidget.initialIndex) {
+      setState(() => _currentIndex = widget.initialIndex);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final pages = [
       DashboardPage(
         onStartSurvey: () => setState(() => _currentIndex = 1),
-        onViewHistory: () => setState(() => _currentIndex = 2),
+        onViewHistory: () => setState(() => _currentIndex = 3),
         onViewResult: () => setState(() => _currentIndex = 2),
       ),
       const SurveyIntroPage(),
@@ -33,16 +51,11 @@ class _MainShellState extends State<MainShell> {
       const ProfilePage(),
     ];
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: pages),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          border: Border(
-            top: BorderSide(color: Color(0xFFF1F5F9), width: 1),
-          ),
+          border: Border(top: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
@@ -50,14 +63,20 @@ class _MainShellState extends State<MainShell> {
           backgroundColor: Colors.white,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF2563EB),
+          selectedItemColor: const Color(0xFF4F46E5),
           unselectedItemColor: const Color(0xFF94A3B8),
-          selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-          unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          selectedLabelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home_rounded),
+              activeIcon: Icon(Icons.home_outlined),
               label: 'Beranda',
             ),
             BottomNavigationBarItem(
@@ -66,13 +85,13 @@ class _MainShellState extends State<MainShell> {
               label: 'Survei',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_rounded),
-              activeIcon: Icon(Icons.bar_chart_rounded),
+              icon: Icon(Icons.note_alt_outlined),
+              activeIcon: Icon(Icons.note_alt_outlined),
               label: 'Hasil',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.access_time_rounded),
-              activeIcon: Icon(Icons.schedule_rounded),
+              icon: Icon(Icons.pending_actions_outlined),
+              activeIcon: Icon(Icons.pending_actions_outlined),
               label: 'Riwayat',
             ),
             BottomNavigationBarItem(

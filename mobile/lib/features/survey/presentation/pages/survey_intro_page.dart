@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/app_button.dart';
 
 class SurveyIntroPage extends StatelessWidget {
   const SurveyIntroPage({super.key, this.onStartSurvey, this.onLater});
@@ -8,203 +12,221 @@ class SurveyIntroPage extends StatelessWidget {
   final VoidCallback? onStartSurvey;
   final VoidCallback? onLater;
 
-  static const _navy = Color(0xFF101D75);
-  static const _muted = Color(0xFF7988B7);
-  static const _purple = Color(0xFF5557FF);
-
   @override
   Widget build(BuildContext context) {
-    final scale = AppScale.factor(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Positioned(
-              top: -72 * scale,
-              left: -64 * scale,
-              child: Container(
-                width: 152 * scale,
-                height: 152 * scale,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE8F1FF),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            SingleChildScrollView(
-              padding: EdgeInsets.all(context.ui(20)),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 520 * scale),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(context.ui(24)),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
                     children: [
                       IconButton(
-                        tooltip: 'Kembali',
+                        tooltip: 'Kembali ke beranda',
                         onPressed: onLater,
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppColors.blob.withValues(
+                            alpha: 0.5,
+                          ),
+                          minimumSize: const Size(48, 48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(context.ui(14)),
+                          ),
+                        ),
                         icon: Icon(
-                          Icons.arrow_back_ios_rounded,
-                          color: _navy,
-                          size: context.ui(20),
+                          Icons.chevron_left_rounded,
+                          color: AppColors.navy,
+                          size: context.ui(26),
                         ),
                       ),
-                      SizedBox(height: context.ui(28)),
-                      Text(
-                        'Siap mengisi survei harian?',
-                        style: TextStyle(
-                          fontSize: context.ui(25),
-                          height: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: _navy,
+                      SizedBox(width: context.ui(12)),
+                      Expanded(
+                        child: Text(
+                          'Survei Harian',
+                          style: AppTextStyles.title.copyWith(
+                            fontSize: context.ui(24),
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
-                      SizedBox(height: context.ui(12)),
-                      Text(
-                        'Jawab beberapa pertanyaan singkat untuk membantu kami memahami aktivitas, kebiasaan, dan kondisi harianmu.',
-                        style: TextStyle(
-                          fontSize: context.ui(14),
-                          height: 1.45,
-                          color: _muted,
-                        ),
+                    ],
+                  ),
+                  SizedBox(height: context.ui(24)),
+                  Container(
+                    padding: EdgeInsets.all(context.ui(24)),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.blob,
+                          AppColors.primary.withValues(alpha: 0.04),
+                        ],
                       ),
-                      Center(
-                        child: SizedBox(
+                      borderRadius: BorderRadius.circular(context.ui(24)),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.ui(12),
+                            vertical: context.ui(8),
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.background,
+                            borderRadius: BorderRadius.circular(context.ui(24)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.schedule_rounded,
+                                size: context.ui(16),
+                                color: AppColors.primary,
+                              ),
+                              SizedBox(width: context.ui(6)),
+                              Flexible(
+                                child: Text(
+                                  'Waktu untuk dirimu · 3–5 menit',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyles.link.copyWith(
+                                    fontSize: context.ui(12),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: context.ui(16)),
+                        SizedBox(
                           width: context.ui(220),
                           height: context.ui(154),
                           child: const CustomPaint(
                             painter: _SurveyIllustration(),
                           ),
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(context.ui(15)),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFDFE5FF)),
-                          borderRadius: BorderRadius.circular(context.ui(14)),
-                        ),
-                        child: Column(
-                          children: [
-                            _feature(
-                              context,
-                              Icons.description_outlined,
-                              'Pertanyaan singkat',
-                              'Mudah diisi dan tidak memakan banyak waktu.',
-                            ),
-                            SizedBox(height: context.ui(16)),
-                            _feature(
-                              context,
-                              Icons.access_time_rounded,
-                              'Hanya 3–5 menit',
-                              'Survei singkat yang bisa kamu selesaikan dengan cepat.',
-                            ),
-                            SizedBox(height: context.ui(16)),
-                            _feature(
-                              context,
-                              Icons.favorite_border_rounded,
-                              'Bantu refleksi harian',
-                              'Hasilnya membantu memantau pola aktivitas dan kesejahteraanmu.',
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: context.ui(14)),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: onLater,
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: _muted,
-                                disabledForegroundColor: _muted,
-                                side: const BorderSide(
-                                  color: Color(0xFFC6D0FA),
-                                ),
-                                minimumSize: Size(0, context.ui(48)),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    context.ui(12),
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                'Nanti saja',
-                                style: TextStyle(
-                                  fontSize: context.ui(14),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
+                        SizedBox(height: context.ui(16)),
+                        Text(
+                          'Bagaimana harimu?',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.title.copyWith(
+                            fontSize: context.ui(26),
                           ),
-                          SizedBox(width: context.ui(10)),
-                          Expanded(
-                            child: FilledButton(
-                              onPressed: onStartSurvey,
-                              style: FilledButton.styleFrom(
-                                backgroundColor: _purple,
-                                disabledBackgroundColor: _purple,
-                                foregroundColor: Colors.white,
-                                disabledForegroundColor: Colors.white,
-                                minimumSize: Size(0, context.ui(48)),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    context.ui(12),
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                'Mulai Survey',
-                                style: TextStyle(
-                                  fontSize: context.ui(14),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
+                        ),
+                        SizedBox(height: context.ui(10)),
+                        Text(
+                          'Luangkan waktu sejenak untuk mengenali aktivitas, '
+                          'kebiasaan, dan perasaanmu hari ini.',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.subtitle.copyWith(
+                            fontSize: context.ui(14),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: context.ui(14)),
-                      Container(
-                        padding: EdgeInsets.all(context.ui(16)),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE8F1FF),
-                          borderRadius: BorderRadius.circular(context.ui(14)),
                         ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: context.ui(48),
-                              height: context.ui(48),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF5B8FFF),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.lightbulb_outline_rounded,
-                                color: Colors.white,
-                                size: context.ui(26),
-                              ),
-                            ),
-                            SizedBox(width: context.ui(18)),
-                            Expanded(
-                              child: Text(
-                                'Jawab dengan jujur agar hasil refleksi harian lebih akurat dan bermanfaat.',
-                                style: TextStyle(
-                                  fontSize: context.ui(12),
-                                  height: 1.5,
-                                  color: _muted,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                  SizedBox(height: context.ui(24)),
+                  Text(
+                    'Langkah kecil, manfaat berarti',
+                    style: AppTextStyles.title.copyWith(
+                      fontSize: context.ui(17),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: context.ui(12)),
+                  Container(
+                    padding: EdgeInsets.all(context.ui(16)),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      border: Border.all(color: AppColors.border),
+                      borderRadius: BorderRadius.circular(
+                        context.ui(AppSpacing.radius),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        _feature(
+                          context,
+                          Icons.assignment_outlined,
+                          'Pertanyaan sederhana',
+                          'Ceritakan aktivitas dan kebiasaan harianmu.',
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.ui(14),
+                          ),
+                          child: const Divider(
+                            height: 1,
+                            color: AppColors.border,
+                          ),
+                        ),
+                        _feature(
+                          context,
+                          Icons.favorite_border_rounded,
+                          'Kenali pola keseharianmu',
+                          'Bantu refleksi dan pantau kesejahteraanmu.',
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: context.ui(16)),
+                  Container(
+                    padding: EdgeInsets.all(context.ui(14)),
+                    decoration: BoxDecoration(
+                      color: AppColors.leaf.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(
+                        context.ui(AppSpacing.fieldRadius),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline_rounded,
+                          color: AppColors.navy,
+                          size: context.ui(22),
+                        ),
+                        SizedBox(width: context.ui(10)),
+                        Expanded(
+                          child: Text(
+                            'Tidak ada jawaban benar atau salah. '
+                            'Jawab sesuai kondisi yang kamu rasakan.',
+                            style: AppTextStyles.subtitle.copyWith(
+                              fontSize: context.ui(12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: context.ui(24)),
+                  AppButton(label: 'Mulai Survei', onPressed: onStartSurvey),
+                  SizedBox(height: context.ui(8)),
+                  TextButton(
+                    onPressed: onLater,
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.body,
+                      minimumSize: const Size(48, 48),
+                      padding: EdgeInsets.symmetric(vertical: context.ui(12)),
+                    ),
+                    child: Text(
+                      'Nanti saja',
+                      style: AppTextStyles.subtitle.copyWith(
+                        fontSize: context.ui(14),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -220,34 +242,32 @@ class SurveyIntroPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: context.ui(48),
-          height: context.ui(48),
-          decoration: const BoxDecoration(
-            color: Color(0xFFE8F1FF),
-            shape: BoxShape.circle,
+          width: context.ui(44),
+          height: context.ui(44),
+          decoration: BoxDecoration(
+            color: AppColors.blob.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(context.ui(12)),
           ),
-          child: Icon(icon, color: _purple, size: context.ui(24)),
+          child: Icon(icon, color: AppColors.primary, size: context.ui(22)),
         ),
-        SizedBox(width: context.ui(14)),
+        SizedBox(width: context.ui(12)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: AppTextStyles.subtitle.copyWith(
                   fontSize: context.ui(14),
                   fontWeight: FontWeight.w700,
-                  color: _navy,
+                  color: AppColors.navy,
                 ),
               ),
-              SizedBox(height: context.ui(3)),
+              SizedBox(height: context.ui(4)),
               Text(
                 body,
-                style: TextStyle(
+                style: AppTextStyles.subtitle.copyWith(
                   fontSize: context.ui(12),
-                  height: 1.4,
-                  color: _muted,
                 ),
               ),
             ],
@@ -266,19 +286,19 @@ class _SurveyIllustration extends CustomPainter {
     canvas.save();
     canvas.scale(size.width / 220, size.height / 154);
     final paint = Paint();
-    paint.color = const Color(0xFFC5D0FF);
+    paint.color = AppColors.blob;
     canvas.save();
     canvas.translate(48, 106);
     canvas.rotate(-0.6);
     canvas.drawOval(const Rect.fromLTWH(-17, -54, 34, 78), paint);
     canvas.restore();
-    paint.color = const Color(0xFFAEC3FF);
+    paint.color = AppColors.leaf.withValues(alpha: 0.5);
     canvas.save();
     canvas.translate(40, 124);
     canvas.rotate(-0.8);
     canvas.drawOval(const Rect.fromLTWH(-19, -37, 38, 62), paint);
     canvas.restore();
-    paint.color = const Color(0xFFC5D0FF);
+    paint.color = AppColors.blob;
     canvas.save();
     canvas.translate(181, 124);
     canvas.rotate(0.7);
@@ -287,7 +307,7 @@ class _SurveyIllustration extends CustomPainter {
     canvas.save();
     canvas.translate(66, 22);
     canvas.rotate(0.06);
-    paint.color = const Color(0xFF8999FF);
+    paint.color = AppColors.primary.withValues(alpha: 0.5);
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         const Rect.fromLTWH(0, 0, 105, 128),
@@ -303,7 +323,7 @@ class _SurveyIllustration extends CustomPainter {
       ),
       paint,
     );
-    paint.color = const Color(0xFF5557FF);
+    paint.color = AppColors.primary;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         const Rect.fromLTWH(28, -6, 48, 20),
@@ -316,7 +336,7 @@ class _SurveyIllustration extends CustomPainter {
     canvas.drawCircle(const Offset(52, -8), 4, paint);
     for (var i = 0; i < 3; i++) {
       final y = 36.0 + i * 30;
-      paint.color = const Color(0xFF5557FF);
+      paint.color = AppColors.primary;
       canvas.drawCircle(Offset(25, y), 10, paint);
       paint
         ..color = Colors.white
@@ -332,7 +352,7 @@ class _SurveyIllustration extends CustomPainter {
       );
       paint
         ..style = PaintingStyle.fill
-        ..color = const Color(0xFFD4DCFF);
+        ..color = AppColors.blob;
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(44, y - 5, 42, 5),
@@ -350,7 +370,7 @@ class _SurveyIllustration extends CustomPainter {
     }
     canvas.restore();
     paint
-      ..color = const Color(0xFF6065FF)
+      ..color = AppColors.primary
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
     canvas.drawLine(const Offset(188, 53), const Offset(198, 41), paint);
