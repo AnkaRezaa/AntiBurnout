@@ -138,13 +138,19 @@ class _ResultStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(context.ui(AppSpacing.lg)),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ResultHeader(title: 'Hasil Prediksi', onBack: onBack),
-          SizedBox(height: context.ui(AppSpacing.xl)),
-          child,
+          Padding(
+            padding: EdgeInsets.all(context.ui(AppSpacing.lg)),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 720),
+                child: SizedBox(width: double.infinity, child: child),
+              ),
+            ),
+          ),
         ],
       ),
     );

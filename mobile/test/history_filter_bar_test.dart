@@ -37,9 +37,13 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        final scrollable = find.descendant(
+          of: find.byType(HistoryFilterBar),
+          matching: find.byType(Scrollable),
+        );
         for (final filter in HistoryFilter.values) {
           final button = find.widgetWithText(TextButton, filter.label);
-          await tester.ensureVisible(button);
+          await tester.scrollUntilVisible(button, 100, scrollable: scrollable);
           await tester.pumpAndSettle();
           final pill = tester.getRect(
             find.descendant(of: button, matching: find.byType(Material)).first,
@@ -50,7 +54,7 @@ void main() {
           expect(tester.getRect(button).height, greaterThanOrEqualTo(48));
         }
         final button = find.widgetWithText(TextButton, 'Rendah');
-        await tester.ensureVisible(button);
+        await tester.scrollUntilVisible(button, -100, scrollable: scrollable);
         await tester.pumpAndSettle();
         final pill = tester.getRect(
           find.descendant(of: button, matching: find.byType(Material)).first,

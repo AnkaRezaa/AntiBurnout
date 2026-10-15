@@ -29,45 +29,60 @@ class RecommendationPage extends ConsumerWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           key: PageStorageKey('recommendation-scroll-$assessmentId'),
-          padding: EdgeInsets.fromLTRB(
-            context.ui(AppSpacing.lg),
-            context.ui(AppSpacing.md),
-            context.ui(AppSpacing.lg),
-            context.ui(AppSpacing.lg),
-          ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               RecommendationHeader(
                 onBack: onBack ?? () => Navigator.of(context).maybePop(),
               ),
-              SizedBox(height: context.ui(AppSpacing.md)),
-              assessment.when(
-                loading: () => Padding(
-                  padding: EdgeInsets.all(context.ui(AppSpacing.xl)),
-                  child: const Center(child: CircularProgressIndicator()),
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.ui(AppSpacing.lg),
+                  0,
+                  context.ui(AppSpacing.lg),
+                  context.ui(AppSpacing.lg),
                 ),
-                error: (error, stackTrace) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Asesmen belum dapat dimuat.',
-                      style: AppTextStyles.subtitle(context),
+                child: Center(
+                  child: SizedBox(
+                    width: 720,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: context.ui(AppSpacing.md)),
+                        assessment.when(
+                          loading: () => Padding(
+                            padding: EdgeInsets.all(context.ui(AppSpacing.xl)),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          error: (error, stackTrace) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Asesmen belum dapat dimuat.',
+                                style: AppTextStyles.subtitle(context),
+                              ),
+                              TextButton(
+                                onPressed: () => ref.invalidate(
+                                  assessmentByIdProvider(assessmentId),
+                                ),
+                                child: const Text('Coba lagi'),
+                              ),
+                            ],
+                          ),
+                          data: (item) => item == null
+                              ? Text(
+                                  'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
+                                  'hasil asesmen yang tersedia.',
+                                  style: AppTextStyles.subtitle(context),
+                                )
+                              : const _GeneralRecommendations(),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () =>
-                          ref.invalidate(assessmentByIdProvider(assessmentId)),
-                      child: const Text('Coba lagi'),
-                    ),
-                  ],
+                  ),
                 ),
-                data: (item) => item == null
-                    ? Text(
-                        'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
-                        'hasil asesmen yang tersedia.',
-                        style: AppTextStyles.subtitle(context),
-                      )
-                    : const _GeneralRecommendations(),
               ),
             ],
           ),

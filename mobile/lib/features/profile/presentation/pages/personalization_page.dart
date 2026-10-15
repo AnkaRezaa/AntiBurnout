@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_page_header.dart';
 import '../controllers/personalization_controller.dart';
 import '../widgets/activity_section.dart';
 import '../widgets/additional_information_section.dart';
 import '../widgets/personal_data_section.dart';
 import '../widgets/personalization_fields.dart';
-import '../../../../core/theme/app_text_styles.dart';
 
 class PersonalizationPage extends ConsumerStatefulWidget {
   const PersonalizationPage({
@@ -335,47 +335,12 @@ class _PersonalizationPageState extends ConsumerState<PersonalizationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.ui(24),
-                  context.ui(28),
-                  context.ui(24),
-                  0,
-                ),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: context.ui(30)),
-                      child: Text(
-                        'Personalisasi Profil',
-                        style: AppTextStyles.title(context).copyWith(
-                          color: AppColors.of(context).navy,
-                          fontSize: context.ui(24),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 0,
-                      bottom: 0,
-                      left: -context.ui(12),
-                      width: context.ui(40),
-                      child: IconButton(
-                        onPressed: state.isSaving ? null : widget.onBack,
-                        tooltip: widget.backTooltip,
-                        padding: EdgeInsets.zero,
-                        icon: Icon(
-                          Icons.chevron_left_rounded,
-                          color: AppColors.of(context).navy,
-                          size: context.ui(28),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              AppPageHeader(
+                title: 'Personalisasi Profil',
+                onBack: state.isSaving ? null : widget.onBack,
+                tooltip: widget.backTooltip,
               ),
-              SizedBox(height: context.ui(26)),
+              SizedBox(height: context.ui(16)),
               Expanded(child: body),
             ],
           ),

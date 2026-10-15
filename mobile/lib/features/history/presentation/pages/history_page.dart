@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/app_page_header.dart';
 import '../widgets/assessment_history_item.dart';
 import '../controllers/history_controller.dart';
 import '../widgets/assessment_history_tile.dart';
@@ -27,47 +27,49 @@ class HistoryPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            context.ui(AppSpacing.lg),
-            context.ui(AppSpacing.md),
-            context.ui(AppSpacing.lg),
-            0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Text(
-                'Riwayat Pemeriksaan',
-                style: AppTextStyles.title(context).copyWith(
-                  fontSize: context.ui(20),
-                  fontWeight: FontWeight.w700,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const AppPageHeader(
+              title: 'Riwayat Pemeriksaan',
+              showBackButton: false,
+              fontSize: 20,
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.ui(AppSpacing.lg),
+                  context.ui(18),
+                  context.ui(AppSpacing.lg),
+                  0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    HistorySearchField(onChanged: controller.setQuery),
+                    const SizedBox(height: 14),
+
+                    HistoryFilterBar(
+                      selected: state.filter,
+                      onSelected: controller.setFilter,
+                    ),
+                    const SizedBox(height: 14),
+
+                    Text(
+                      'Hasil asesmen burnout sebelumnya.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.of(context).hint,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    Expanded(child: _buildContent(state, controller)),
+                  ],
                 ),
               ),
-              const SizedBox(height: 18),
-
-              HistorySearchField(onChanged: controller.setQuery),
-              const SizedBox(height: 14),
-
-              HistoryFilterBar(
-                selected: state.filter,
-                onSelected: controller.setFilter,
-              ),
-              const SizedBox(height: 14),
-
-              Text(
-                'Hasil asesmen burnout sebelumnya.',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.of(context).hint,
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              Expanded(child: _buildContent(state, controller)),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

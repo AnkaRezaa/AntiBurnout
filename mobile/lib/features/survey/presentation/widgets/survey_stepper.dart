@@ -4,7 +4,7 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/app_back_button.dart';
+import '../../../../shared/widgets/app_page_header.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../domain/entities/survey_question.dart';
 import '../controllers/survey_state.dart';
@@ -93,133 +93,168 @@ class _SurveyStepperState extends State<SurveyStepper> {
               LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(
                   key: PageStorageKey('survey-step-$_step'),
-                  padding: EdgeInsets.fromLTRB(
-                    context.ui(AppSpacing.lg),
-                    context.ui(AppSpacing.md),
-                    context.ui(AppSpacing.lg),
-                    context.ui(AppSpacing.lg),
-                  ),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 560,
-                        minHeight:
-                            (constraints.maxHeight -
-                                    context.ui(AppSpacing.md + AppSpacing.lg))
-                                .clamp(0.0, double.infinity)
-                                .toDouble(),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Keep the title anchored to progress on every step.
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: AppBackButton(
-                                  tooltip: _step == 0
-                                      ? 'Kembali ke pengantar survei'
-                                      : 'Kembali',
-                                  onPressed: widget.state.isSubmitting
-                                      ? null
-                                      : _back,
-                                ),
+                  padding: EdgeInsets.only(bottom: context.ui(AppSpacing.lg)),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight:
+                          (constraints.maxHeight - context.ui(AppSpacing.lg))
+                              .clamp(0.0, double.infinity)
+                              .toDouble(),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Keep the title anchored to progress on every step.
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            AppPageHeader(
+                              tooltip: _step == 0
+                                  ? 'Kembali ke pengantar survei'
+                                  : 'Kembali',
+                              onBack: widget.state.isSubmitting ? null : _back,
+                            ),
+                            SizedBox(height: context.ui(AppSpacing.lg)),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.ui(AppSpacing.lg),
                               ),
-                              SizedBox(height: context.ui(AppSpacing.lg)),
-                              Text(
-                                'Langkah ${_step + 1} dari $_total',
-                                style: _subtitleStyle(context, 13).copyWith(
-                                  color: AppColors.of(context).navy,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              SizedBox(height: context.ui(12)),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  context.ui(AppSpacing.radius),
-                                ),
-                                child: LinearProgressIndicator(
-                                  value: progress,
-                                  minHeight: context.ui(9),
-                                  color: AppColors.of(context).primary,
-                                  backgroundColor: AppColors.of(context).blob,
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    top: context.ui(AppSpacing.sm),
+                              child: Center(
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 560,
                                   ),
-                                  child: Text(
-                                    '${(progress * 100).round()}%',
-                                    style: AppTextStyles.link(context)
-                                        .copyWith(fontSize: context.ui(12)),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: context.ui(AppSpacing.md),
-                                  bottom: context.ui(
-                                    AppSpacing.xl + AppSpacing.md,
-                                  ),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Text(
-                                      title,
-                                      style: AppTextStyles.title(context)
-                                          .copyWith(fontSize: context.ui(23)),
-                                    ),
-                                    SizedBox(height: context.ui(12)),
-                                    Text(
-                                      subtitle,
-                                      style: _subtitleStyle(context, 13),
-                                    ),
-                                    SizedBox(height: context.ui(AppSpacing.xl)),
-                                    IgnorePointer(
-                                      ignoring: widget.state.isSubmitting,
-                                      child: _isReview
-                                          ? _review(context)
-                                          : _input(context, _question),
-                                    ),
-                                    if (widget.state.errorMessage != null) ...[
-                                      SizedBox(
-                                        height: context.ui(AppSpacing.lg),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(
+                                        'Langkah ${_step + 1} dari $_total',
+                                        style: _subtitleStyle(context, 13)
+                                            .copyWith(
+                                              color: AppColors.of(context).navy,
+                                              fontWeight: FontWeight.w700,
+                                            ),
                                       ),
-                                      Semantics(
-                                        liveRegion: true,
-                                        child: Text(
-                                          widget.state.errorMessage!,
-                                          style: _subtitleStyle(context, 13)
-                                              .copyWith(
-                                                color: AppColors.of(context)
-                                                    .error,
+                                      SizedBox(height: context.ui(12)),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          context.ui(AppSpacing.radius),
+                                        ),
+                                        child: LinearProgressIndicator(
+                                          value: progress,
+                                          minHeight: context.ui(9),
+                                          color: AppColors.of(context).primary,
+                                          backgroundColor: AppColors.of(context)
+                                              .blob,
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            top: context.ui(AppSpacing.sm),
+                                          ),
+                                          child: Text(
+                                            '${(progress * 100).round()}%',
+                                            style: AppTextStyles.link(context)
+                                                .copyWith(
+                                                  fontSize: context.ui(12),
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          top: context.ui(AppSpacing.md),
+                                          bottom: context.ui(
+                                            AppSpacing.xl + AppSpacing.md,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            Text(
+                                              title,
+                                              style:
+                                                  AppTextStyles.title(
+                                                    context,
+                                                  ).copyWith(
+                                                    fontSize: context.ui(23),
+                                                  ),
+                                            ),
+                                            SizedBox(height: context.ui(12)),
+                                            Text(
+                                              subtitle,
+                                              style: _subtitleStyle(
+                                                context,
+                                                13,
                                               ),
+                                            ),
+                                            SizedBox(
+                                              height: context.ui(AppSpacing.xl),
+                                            ),
+                                            IgnorePointer(
+                                              ignoring:
+                                                  widget.state.isSubmitting,
+                                              child: _isReview
+                                                  ? _review(context)
+                                                  : _input(context, _question),
+                                            ),
+                                            if (widget.state.errorMessage !=
+                                                null) ...[
+                                              SizedBox(
+                                                height: context.ui(
+                                                  AppSpacing.lg,
+                                                ),
+                                              ),
+                                              Semantics(
+                                                liveRegion: true,
+                                                child: Text(
+                                                  widget.state.errorMessage!,
+                                                  style:
+                                                      _subtitleStyle(
+                                                        context,
+                                                        13,
+                                                      ).copyWith(
+                                                        color: AppColors.of(
+                                                          context,
+                                                        ).error,
+                                                      ),
+                                                ),
+                                              ),
+                                            ],
+                                          ],
                                         ),
                                       ),
                                     ],
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.ui(AppSpacing.lg),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _actions(context),
-                              SizedBox(height: context.ui(AppSpacing.lg)),
-                              _TipCard(text: tip),
-                            ],
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 560),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _actions(context),
+                                  SizedBox(height: context.ui(AppSpacing.lg)),
+                                  _TipCard(text: tip),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

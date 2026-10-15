@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/app_back_button.dart';
+import '../../../../shared/widgets/app_page_header.dart';
 
 class ProfileSubpageScaffold extends StatelessWidget {
   const ProfileSubpageScaffold({
@@ -22,50 +22,29 @@ class ProfileSubpageScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
       body: SafeArea(
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 640),
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    context.ui(8),
-                    context.ui(12),
-                    context.ui(24),
-                    context.ui(8),
-                  ),
-                  child: Row(
-                    children: [
-                      AppBackButton(onPressed: onBack),
-                      SizedBox(width: context.ui(4)),
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: AppTextStyles.title(context)
-                              .copyWith(fontSize: context.ui(22)),
-                        ),
-                      ),
-                    ],
-                  ),
+        child: Column(
+          children: [
+            AppPageHeader(title: title, onBack: onBack, fontSize: 22),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  context.ui(24),
+                  context.ui(24),
+                  context.ui(24),
+                  context.ui(32),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                      context.ui(24),
-                      context.ui(16),
-                      context.ui(24),
-                      context.ui(32),
-                    ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 720),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: children,
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

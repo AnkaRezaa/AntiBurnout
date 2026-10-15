@@ -5,7 +5,7 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/app_back_button.dart';
+import '../../../../shared/widgets/app_page_header.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../assessment/domain/entities/assessment.dart';
 import '../../domain/entities/survey_question.dart';
@@ -51,47 +51,29 @@ class SurveyQuestionPage extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: AppColors.of(context).background,
         body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: CustomScrollView(
-                key: const PageStorageKey('survey-questions-scroll'),
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                      context.ui(AppSpacing.page),
-                      context.ui(AppSpacing.md),
-                      context.ui(AppSpacing.page),
-                      0,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: Row(
-                        children: [
-                          AppBackButton(
-                            tooltip: 'Kembali ke pengantar survei',
-                            onPressed: state.isSubmitting ? null : onBack,
-                          ),
-                          SizedBox(width: context.ui(AppSpacing.sm)),
-                          Expanded(
-                            child: Text(
-                              'Survei Harian',
-                              style: AppTextStyles.title(context)
-                                  .copyWith(fontSize: context.ui(22)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.all(context.ui(AppSpacing.page)),
-                    sliver: SliverToBoxAdapter(
+          child: CustomScrollView(
+            key: const PageStorageKey('survey-questions-scroll'),
+            slivers: [
+              SliverToBoxAdapter(
+                child: AppPageHeader(
+                  title: 'Survei Harian',
+                  fontSize: 22,
+                  tooltip: 'Kembali ke pengantar survei',
+                  onBack: state.isSubmitting ? null : onBack,
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: Padding(
+                      padding: EdgeInsets.all(context.ui(AppSpacing.page)),
                       child: _buildContent(context, ref, state),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
