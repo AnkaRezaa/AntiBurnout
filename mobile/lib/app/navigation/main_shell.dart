@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/survey/presentation/pages/survey_intro_page.dart';
+import '../../features/survey/presentation/pages/survey_question_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/results/presentation/pages/result_page.dart';
@@ -11,10 +12,7 @@ import '../../features/results/presentation/pages/result_page.dart';
 class MainShell extends StatefulWidget {
   final int initialIndex;
 
-  const MainShell({
-    super.key,
-    this.initialIndex = 0,
-  });
+  const MainShell({super.key, this.initialIndex = 0});
 
   @override
   State<MainShell> createState() => _MainShellState();
@@ -22,6 +20,7 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   late int _currentIndex;
+  bool _isSurveyQuestionOpen = false;
 
   @override
   void initState() {
@@ -45,7 +44,15 @@ class _MainShellState extends State<MainShell> {
         onViewHistory: () => setState(() => _currentIndex = 3),
         onViewResult: () => setState(() => _currentIndex = 2),
       ),
-      const SurveyIntroPage(),
+      _isSurveyQuestionOpen
+          ? SurveyQuestionPage(
+              onBack: () => setState(() => _isSurveyQuestionOpen = false),
+              onViewResult: () => setState(() => _currentIndex = 2),
+            )
+          : SurveyIntroPage(
+              onStartSurvey: () => setState(() => _isSurveyQuestionOpen = true),
+              onLater: () => setState(() => _currentIndex = 0),
+            ),
       const ResultPage(),
       const HistoryPage(),
       const ProfilePage(),
@@ -59,7 +66,10 @@ class _MainShellState extends State<MainShell> {
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
+          onTap: (index) => setState(() {
+            _currentIndex = index;
+            if (index == 1) _isSurveyQuestionOpen = false;
+          }),
           backgroundColor: Colors.white,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
