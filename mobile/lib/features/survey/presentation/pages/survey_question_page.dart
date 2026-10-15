@@ -63,14 +63,14 @@ class SurveyQuestionPage extends ConsumerWidget {
                 ),
               ),
               SliverToBoxAdapter(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 600),
-                    child: Padding(
-                      padding: EdgeInsets.all(context.ui(AppSpacing.page)),
-                      child: _buildContent(context, ref, state),
-                    ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    context.ui(AppSpacing.lg),
+                    context.ui(AppSpacing.page),
+                    context.ui(AppSpacing.lg),
+                    context.ui(AppSpacing.page),
                   ),
+                  child: _buildContent(context, ref, state),
                 ),
               ),
             ],
@@ -208,9 +208,16 @@ class _QuestionInput extends StatelessWidget {
             onChanged: onChanged,
             minLines: 1,
             maxLines: 5,
-            decoration: const InputDecoration(
+            style: AppTextStyles.subtitle(context)
+                .copyWith(fontSize: context.ui(14)),
+            decoration: InputDecoration(
               hintText: 'Tulis jawabanmu',
-              border: OutlineInputBorder(),
+              hintStyle: AppTextStyles.subtitle(context).copyWith(
+                color: AppColors.of(context).hint,
+                fontSize: context.ui(14),
+              ),
+              contentPadding: EdgeInsets.all(context.ui(16)),
+              border: const OutlineInputBorder(),
             ),
           )
         else
@@ -221,6 +228,16 @@ class _QuestionInput extends StatelessWidget {
               for (final option in question.options)
                 ChoiceChip(
                   label: Text(option),
+                  labelStyle: AppTextStyles.subtitle(context).copyWith(
+                    fontSize: context.ui(14),
+                    color: value == option
+                        ? AppColors.of(context).primary
+                        : AppColors.of(context).body,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.ui(8),
+                    vertical: context.ui(8),
+                  ),
                   selected: value == option,
                   onSelected: enabled ? (_) => onChanged(option) : null,
                 ),

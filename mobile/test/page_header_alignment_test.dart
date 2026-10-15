@@ -4,9 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/app/app.dart';
 import 'package:mobile/app/router/app_router.dart';
 import 'package:mobile/app/router/route_paths.dart';
+import 'package:mobile/core/responsive/app_scale.dart';
 import 'package:mobile/features/auth/domain/entities/auth_user.dart';
 import 'package:mobile/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mobile/features/auth/presentation/controllers/auth_state.dart';
+import 'package:mobile/features/profile/presentation/pages/profile_page.dart';
 import 'package:mobile/shared/widgets/app_back_button.dart';
 import 'package:mobile/shared/widgets/app_page_header.dart';
 
@@ -65,12 +67,26 @@ void _expectSameAnchor(Offset actual, Offset reference, String page) {
 }
 
 void main() {
-  for (final viewport in [const Size(390, 844), const Size(1024, 1366)]) {
+  for (final viewport in [
+    const Size(390, 844),
+    const Size(1024, 1366),
+    const Size(1440, 900),
+  ]) {
     testWidgets(
       'page headers share dashboard and personalization anchors at $viewport',
       (tester) async {
         final container = await _start(tester, viewport);
         final dashboardAnchor = tester.getTopLeft(find.text('Halo,'));
+        await _go(tester, container, RoutePaths.profile);
+        final profileTitle = find.descendant(
+          of: find.byType(ProfilePage),
+          matching: find.text('Profil'),
+        );
+        final profileContext = tester.element(profileTitle);
+        final profileAnchor = tester.getTopLeft(profileTitle);
+        _expectSameAnchor(dashboardAnchor, profileAnchor, 'Dashboard');
+        expect(profileAnchor.dx, closeTo(profileContext.ui(24), 0.1));
+        expect(profileAnchor.dy, closeTo(profileContext.ui(28), 0.1));
 
         for (final page in [
           (RoutePaths.survey, 'Survei Harian'),

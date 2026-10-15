@@ -83,13 +83,6 @@ class AppPageHeader extends StatelessWidget {
       );
     }
 
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        // Dashboard caps its content at 720, excluding the page margins.
-        constraints: BoxConstraints(maxWidth: 720 + margin * 2),
-        child: SizedBox(width: double.infinity, child: content),
-      ),
-    );
+    return SizedBox(width: double.infinity, child: content);
   }
 }

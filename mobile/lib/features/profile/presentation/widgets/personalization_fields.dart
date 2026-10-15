@@ -44,6 +44,10 @@ class PersonalizationFieldStyle {
       errorBorder: border(AppColors.of(context).error),
       focusedErrorBorder: border(AppColors.of(context).error),
       errorMaxLines: 2,
+      errorStyle: TextStyle(
+        color: AppColors.of(context).error,
+        fontSize: context.ui(12),
+      ),
     );
   }
 }
@@ -189,7 +193,7 @@ class PersonalizationDateField extends StatelessWidget {
                         IconButton(
                           tooltip: 'Hapus tanggal lahir',
                           onPressed: () => onChanged(null),
-                          icon: const Icon(Icons.close_rounded),
+                          icon: Icon(Icons.close_rounded, size: context.ui(24)),
                         ),
                       Padding(
                         padding: EdgeInsets.symmetric(
@@ -198,6 +202,7 @@ class PersonalizationDateField extends StatelessWidget {
                         child: Icon(
                           Icons.calendar_today_outlined,
                           color: AppColors.of(context).primary,
+                          size: context.ui(24),
                         ),
                       ),
                     ],
@@ -262,6 +267,7 @@ class PersonalizationDropdown extends StatelessWidget {
             key: ValueKey(selectedValue),
             initialValue: selectedValue,
             isExpanded: true,
+            itemHeight: context.ui(48).clamp(48.0, double.infinity).toDouble(),
             decoration: PersonalizationFieldStyle.decoration(
               context,
               hint: hint,

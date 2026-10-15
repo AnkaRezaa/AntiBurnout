@@ -47,24 +47,24 @@ class HistoryPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     HistorySearchField(onChanged: controller.setQuery),
-                    const SizedBox(height: 14),
+                    SizedBox(height: context.ui(14)),
 
                     HistoryFilterBar(
                       selected: state.filter,
                       onSelected: controller.setFilter,
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: context.ui(14)),
 
                     Text(
                       'Hasil asesmen burnout sebelumnya.',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: context.ui(12),
                         color: AppColors.of(context).hint,
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: context.ui(14)),
 
-                    Expanded(child: _buildContent(state, controller)),
+                    Expanded(child: _buildContent(context, state, controller)),
                   ],
                 ),
               ),
@@ -75,7 +75,11 @@ class HistoryPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(HistoryState state, HistoryController controller) {
+  Widget _buildContent(
+    BuildContext context,
+    HistoryState state,
+    HistoryController controller,
+  ) {
     if (state.isLoading && state.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -100,9 +104,9 @@ class HistoryPage extends ConsumerWidget {
       onRefresh: controller.load,
       child: ListView.separated(
         key: const PageStorageKey('history-scroll'),
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: context.ui(16)),
         itemCount: visible.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 14),
+        separatorBuilder: (_, _) => SizedBox(height: context.ui(14)),
         itemBuilder: (context, index) {
           final item = visible[index];
           return AssessmentHistoryTile(

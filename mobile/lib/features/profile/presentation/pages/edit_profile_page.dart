@@ -102,6 +102,63 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final fieldStyle = AppTextStyles.subtitle(context)
+        .copyWith(color: AppColors.of(context).navy, fontSize: context.ui(16));
+    final actionStyle = TextButton.styleFrom(
+      textStyle: TextStyle(fontSize: context.ui(14)),
+      iconSize: context.ui(24),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.ui(16),
+        vertical: context.ui(10),
+      ),
+    );
+
+    InputDecoration decoration({
+      required String label,
+      required IconData icon,
+      String? hint,
+      String? helper,
+      bool disabled = false,
+    }) {
+      final colors = AppColors.of(context);
+      OutlineInputBorder border(Color color) => OutlineInputBorder(
+        borderRadius: BorderRadius.circular(context.ui(14)),
+        borderSide: BorderSide(color: color),
+      );
+      return InputDecoration(
+        labelText: label,
+        hintText: hint,
+        helperText: helper,
+        labelStyle: TextStyle(
+          color: disabled ? colors.hint : colors.body,
+          fontSize: context.ui(16),
+        ),
+        hintStyle: TextStyle(color: colors.hint, fontSize: context.ui(14)),
+        helperStyle: TextStyle(color: colors.body, fontSize: context.ui(12)),
+        errorStyle: TextStyle(color: colors.error, fontSize: context.ui(12)),
+        counterStyle: TextStyle(color: colors.hint, fontSize: context.ui(12)),
+        errorMaxLines: 3,
+        helperMaxLines: 3,
+        filled: true,
+        fillColor: disabled ? colors.disabledSurface : colors.surface,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: context.ui(16),
+          vertical: context.ui(16),
+        ),
+        prefixIconConstraints: BoxConstraints(
+          minWidth: context.ui(48).clamp(48.0, double.infinity).toDouble(),
+          minHeight: context.ui(48).clamp(48.0, double.infinity).toDouble(),
+        ),
+        prefixIcon: Icon(icon, color: colors.hint, size: context.ui(24)),
+        border: border(colors.border),
+        enabledBorder: border(colors.border),
+        disabledBorder: border(colors.border),
+        focusedBorder: border(colors.primary),
+        errorBorder: border(colors.error),
+        focusedErrorBorder: border(colors.error),
+      );
+    }
+
     return ProfileSubpageScaffold(
       title: 'Edit Profil',
       onBack: widget.onBack,
@@ -122,10 +179,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Center(
                 child: TextButton.icon(
                   onPressed: _isPickingPhoto ? null : _pickPhoto,
+                  style: actionStyle,
                   icon: _isPickingPhoto
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
+                      ? SizedBox(
+                          width: context.ui(18),
+                          height: context.ui(18),
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.photo_library_outlined),
@@ -137,6 +195,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               if (_photoBytes != null || _photoUrl?.isNotEmpty == true)
                 Center(
                   child: TextButton(
+                    style: actionStyle,
                     onPressed: _isPickingPhoto
                         ? null
                         : () => setState(() {
@@ -165,10 +224,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.done,
                 maxLength: 60,
-                decoration: const InputDecoration(
-                  labelText: 'Nama',
-                  hintText: 'Masukkan nama kamu',
-                  prefixIcon: Icon(Icons.person_outline_rounded),
+                style: fieldStyle,
+                decoration: decoration(
+                  label: 'Nama',
+                  hint: 'Masukkan nama kamu',
+                  icon: Icons.person_outline_rounded,
                 ),
                 validator: (value) => value == null || value.trim().isEmpty
                     ? 'Nama tidak boleh kosong.'
@@ -180,17 +240,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 initialValue: _email,
                 enabled: false,
                 readOnly: true,
-                style: TextStyle(color: AppColors.of(context).hint),
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: TextStyle(color: AppColors.of(context).hint),
-                  helperText: 'Email tidak dapat diubah.',
-                  filled: true,
-                  fillColor: AppColors.of(context).disabledSurface,
-                  prefixIcon: Icon(
-                    Icons.mail_outline_rounded,
-                    color: AppColors.of(context).hint,
-                  ),
+                style: fieldStyle.copyWith(color: AppColors.of(context).hint),
+                decoration: decoration(
+                  label: 'Email',
+                  helper: 'Email tidak dapat diubah.',
+                  icon: Icons.mail_outline_rounded,
+                  disabled: true,
                 ),
               ),
               SizedBox(height: context.ui(26)),
@@ -205,7 +260,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 onPressed: _isPickingPhoto ? null : _save,
               ),
               SizedBox(height: context.ui(8)),
-              TextButton(onPressed: widget.onBack, child: const Text('Batal')),
+              TextButton(
+                onPressed: widget.onBack,
+                style: actionStyle,
+                child: const Text('Batal'),
+              ),
             ],
           ),
         ),

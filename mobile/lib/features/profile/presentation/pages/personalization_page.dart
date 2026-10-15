@@ -288,31 +288,39 @@ class _PersonalizationPageState extends ConsumerState<PersonalizationPage> {
                     },
             ),
             SizedBox(height: context.ui(8)),
-            Row(
+            Wrap(
+              alignment: _step > 0
+                  ? WrapAlignment.spaceBetween
+                  : WrapAlignment.end,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: context.ui(16),
+              runSpacing: context.ui(8),
               children: [
                 if (_step > 0)
-                  Flexible(
-                    child: TextButton(
-                      onPressed: state.isSaving
-                          ? null
-                          : () => _changeStep(_step - 1),
-                      child: Text(
-                        'Sebelumnya',
-                        style: TextStyle(
-                          color: AppColors.of(context).primary,
-                          fontSize: context.ui(14),
-                        ),
+                  TextButton(
+                    onPressed: state.isSaving
+                        ? null
+                        : () => _changeStep(_step - 1),
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.ui(16),
+                        vertical: context.ui(10),
+                      ),
+                    ),
+                    child: Text(
+                      'Sebelumnya',
+                      style: TextStyle(
+                        color: AppColors.of(context).primary,
+                        fontSize: context.ui(14),
                       ),
                     ),
                   ),
-                Expanded(
-                  child: Text(
-                    'Langkah ${_step + 1} dari 3',
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                      color: AppColors.of(context).hint,
-                      fontSize: context.ui(12),
-                    ),
+                Text(
+                  'Langkah ${_step + 1} dari 3',
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    color: AppColors.of(context).hint,
+                    fontSize: context.ui(12),
                   ),
                 ),
               ],

@@ -43,7 +43,7 @@ class LatestAssessmentCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             'HASIL ASESMEN TERAKHIR',

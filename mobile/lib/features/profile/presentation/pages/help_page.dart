@@ -82,39 +82,46 @@ class HelpPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(context.ui(16)),
             ),
             clipBehavior: Clip.antiAlias,
-            child: ExpansionTile(
-              key: PageStorageKey('faq-$index'),
-              maintainState: true,
-              shape: const Border(),
-              collapsedShape: const Border(),
-              tilePadding: EdgeInsets.symmetric(
-                horizontal: context.ui(16),
-                vertical: context.ui(6),
-              ),
-              childrenPadding: EdgeInsets.fromLTRB(
-                context.ui(16),
-                0,
-                context.ui(16),
-                context.ui(18),
-              ),
-              title: Text(
-                _questions[index].$1,
-                style: AppTextStyles.subtitle(context).copyWith(
-                  color: AppColors.of(context).navy,
-                  fontWeight: FontWeight.w600,
-                  fontSize: context.ui(14),
+            child: IconTheme.merge(
+              data: IconThemeData(size: context.ui(24)),
+              child: ExpansionTile(
+                key: PageStorageKey('faq-$index'),
+                maintainState: true,
+                minTileHeight: context
+                    .ui(56)
+                    .clamp(48.0, double.infinity)
+                    .toDouble(),
+                shape: const Border(),
+                collapsedShape: const Border(),
+                tilePadding: EdgeInsets.symmetric(
+                  horizontal: context.ui(16),
+                  vertical: context.ui(6),
                 ),
-              ),
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    _questions[index].$2,
-                    style: AppTextStyles.subtitle(context)
-                        .copyWith(fontSize: context.ui(13), height: 1.6),
+                childrenPadding: EdgeInsets.fromLTRB(
+                  context.ui(16),
+                  0,
+                  context.ui(16),
+                  context.ui(18),
+                ),
+                title: Text(
+                  _questions[index].$1,
+                  style: AppTextStyles.subtitle(context).copyWith(
+                    color: AppColors.of(context).navy,
+                    fontWeight: FontWeight.w600,
+                    fontSize: context.ui(14),
                   ),
                 ),
-              ],
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      _questions[index].$2,
+                      style: AppTextStyles.subtitle(context)
+                          .copyWith(fontSize: context.ui(13), height: 1.6),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(height: context.ui(12)),

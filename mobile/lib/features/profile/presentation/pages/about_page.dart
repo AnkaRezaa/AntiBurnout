@@ -100,7 +100,11 @@ class AboutPage extends StatelessWidget {
                   color: AppColors.of(context).blob,
                   borderRadius: BorderRadius.circular(context.ui(12)),
                 ),
-                child: Icon(feature.$1, color: AppColors.of(context).primary),
+                child: Icon(
+                  feature.$1,
+                  color: AppColors.of(context).primary,
+                  size: context.ui(24),
+                ),
               ),
               SizedBox(width: context.ui(14)),
               Expanded(

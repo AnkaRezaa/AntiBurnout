@@ -42,46 +42,45 @@ class RecommendationPage extends ConsumerWidget {
                   context.ui(AppSpacing.lg),
                   context.ui(AppSpacing.lg),
                 ),
-                child: Center(
-                  child: SizedBox(
-                    width: 720,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: context.ui(AppSpacing.md)),
-                        assessment.when(
-                          loading: () => Padding(
-                            padding: EdgeInsets.all(context.ui(AppSpacing.xl)),
-                            child: const Center(
-                              child: CircularProgressIndicator(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: context.ui(AppSpacing.md)),
+                    assessment.when(
+                      loading: () => Padding(
+                        padding: EdgeInsets.all(context.ui(AppSpacing.xl)),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                      error: (error, stackTrace) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Asesmen belum dapat dimuat.',
+                            style: AppTextStyles.subtitle(context)
+                                .copyWith(fontSize: context.ui(14)),
+                          ),
+                          TextButton(
+                            onPressed: () => ref.invalidate(
+                              assessmentByIdProvider(assessmentId),
                             ),
+                            style: TextButton.styleFrom(
+                              textStyle: TextStyle(fontSize: context.ui(14)),
+                              padding: EdgeInsets.all(context.ui(12)),
+                            ),
+                            child: const Text('Coba lagi'),
                           ),
-                          error: (error, stackTrace) => Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Asesmen belum dapat dimuat.',
-                                style: AppTextStyles.subtitle(context),
-                              ),
-                              TextButton(
-                                onPressed: () => ref.invalidate(
-                                  assessmentByIdProvider(assessmentId),
-                                ),
-                                child: const Text('Coba lagi'),
-                              ),
-                            ],
-                          ),
-                          data: (item) => item == null
-                              ? Text(
-                                  'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
-                                  'hasil asesmen yang tersedia.',
-                                  style: AppTextStyles.subtitle(context),
-                                )
-                              : const _GeneralRecommendations(),
-                        ),
-                      ],
+                        ],
+                      ),
+                      data: (item) => item == null
+                          ? Text(
+                              'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
+                              'hasil asesmen yang tersedia.',
+                              style: AppTextStyles.subtitle(context)
+                                  .copyWith(fontSize: context.ui(14)),
+                            )
+                          : const _GeneralRecommendations(),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ],

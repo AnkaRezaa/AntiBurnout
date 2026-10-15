@@ -83,200 +83,184 @@ class RiskSummaryCard extends StatelessWidget {
               context.ui(AppSpacing.lg),
               context.ui(AppSpacing.lg),
             ),
-            child: Center(
-              child: SizedBox(
-                width: 720,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: context.ui(AppSpacing.md)),
+                _RiskRing(
+                  level: level,
+                  color: levelColor,
+                  ringColor: ringColor,
+                  bodyStyle: bodyStyle,
+                ),
+                SizedBox(height: context.ui(AppSpacing.md)),
+                Text(description, style: bodyStyle),
+                SizedBox(height: context.ui(AppSpacing.xs)),
+                Wrap(
+                  spacing: context.ui(AppSpacing.sm),
+                  runSpacing: context.ui(AppSpacing.sm),
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    SizedBox(height: context.ui(AppSpacing.md)),
-                    _RiskRing(
-                      level: level,
-                      color: levelColor,
-                      ringColor: ringColor,
-                      bodyStyle: bodyStyle,
+                    Text(
+                      'Asesmen $assessmentDate',
+                      style: bodyStyle.copyWith(fontSize: context.ui(12)),
                     ),
-                    SizedBox(height: context.ui(AppSpacing.md)),
-                    Text(description, style: bodyStyle),
-                    SizedBox(height: context.ui(AppSpacing.xs)),
-                    Wrap(
-                      spacing: context.ui(AppSpacing.sm),
-                      runSpacing: context.ui(AppSpacing.sm),
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Text(
-                          'Asesmen $assessmentDate',
-                          style: bodyStyle.copyWith(fontSize: context.ui(12)),
+                    if (isExample)
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.ui(AppSpacing.sm),
+                          vertical: context.ui(AppSpacing.xs),
                         ),
-                        if (isExample)
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.ui(AppSpacing.sm),
-                              vertical: context.ui(AppSpacing.xs),
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.of(context).blob,
-                              borderRadius: BorderRadius.circular(
-                                context.ui(20),
-                              ),
-                            ),
-                            child: Text(
-                              'Data contoh',
-                              style: bodyStyle.copyWith(
-                                fontSize: context.ui(11),
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.of(context).primaryDark,
-                              ),
-                            ),
+                        decoration: BoxDecoration(
+                          color: AppColors.of(context).blob,
+                          borderRadius: BorderRadius.circular(context.ui(20)),
+                        ),
+                        child: Text(
+                          'Data contoh',
+                          style: bodyStyle.copyWith(
+                            fontSize: context.ui(11),
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.of(context).primaryDark,
                           ),
-                      ],
-                    ),
-                    SizedBox(height: context.ui(AppSpacing.md)),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(context.ui(AppSpacing.md)),
-                      decoration: BoxDecoration(
-                        color: AssessmentColors.tint(
-                          context,
-                          AssessmentColors.disclaimerTint,
-                        ),
-                        borderRadius: BorderRadius.circular(
-                          context.ui(AppSpacing.radius),
-                        ),
-                        border: Border.all(
-                          color: AssessmentColors.disclaimerBorder,
                         ),
                       ),
+                  ],
+                ),
+                SizedBox(height: context.ui(AppSpacing.md)),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(context.ui(AppSpacing.md)),
+                  decoration: BoxDecoration(
+                    color: AssessmentColors.tint(
+                      context,
+                      AssessmentColors.disclaimerTint,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      context.ui(AppSpacing.radius),
+                    ),
+                    border: Border.all(
+                      color: AssessmentColors.disclaimerBorder,
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.error_rounded,
+                        color: AssessmentColors.disclaimerIcon,
+                        size: context.ui(28),
+                      ),
+                      SizedBox(width: context.ui(AppSpacing.sm)),
+                      Expanded(
+                        child: Text(
+                          disclaimer,
+                          style: bodyStyle.copyWith(fontSize: context.ui(12)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: context.ui(AppSpacing.lg)),
+                Text('Faktor yang Mempengaruhi', style: sectionStyle),
+                SizedBox(height: context.ui(AppSpacing.sm)),
+                if (factors.isEmpty)
+                  Text(
+                    'Faktor dari model belum tersedia untuk asesmen ini.',
+                    style: bodyStyle,
+                  )
+                else ...[
+                  Text(
+                    isExample ? 'Faktor pada contoh hasil asesmen ini.' : 'Faktor yang disertakan dalam hasil model untuk asesmen ini.',
+                    style: bodyStyle.copyWith(fontSize: context.ui(12)),
+                  ),
+                  SizedBox(height: context.ui(AppSpacing.sm)),
+                  for (final factor in factors)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: context.ui(10)),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.error_rounded,
-                            color: AssessmentColors.disclaimerIcon,
-                            size: context.ui(28),
-                          ),
-                          SizedBox(width: context.ui(AppSpacing.sm)),
-                          Expanded(
-                            child: Text(
-                              disclaimer,
-                              style: bodyStyle.copyWith(
-                                fontSize: context.ui(12),
+                          Container(
+                            width: context.ui(38),
+                            height: context.ui(38),
+                            decoration: BoxDecoration(
+                              color: AssessmentColors.tint(
+                                context,
+                                factor.backgroundColor,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                context.ui(12),
                               ),
                             ),
+                            child: Icon(
+                              factor.icon,
+                              size: context.ui(20),
+                              color: factor.iconColor,
+                            ),
                           ),
+                          SizedBox(width: context.ui(12)),
+                          Expanded(child: Text(factor.label, style: bodyStyle)),
                         ],
                       ),
                     ),
-                    SizedBox(height: context.ui(AppSpacing.lg)),
-                    Text('Faktor yang Mempengaruhi', style: sectionStyle),
-                    SizedBox(height: context.ui(AppSpacing.sm)),
-                    if (factors.isEmpty)
-                      Text(
-                        'Faktor dari model belum tersedia untuk asesmen ini.',
-                        style: bodyStyle,
-                      )
-                    else ...[
-                      Text(
-                        isExample ? 'Faktor pada contoh hasil asesmen ini.' : 'Faktor yang disertakan dalam hasil model untuk asesmen ini.',
-                        style: bodyStyle.copyWith(fontSize: context.ui(12)),
-                      ),
-                      SizedBox(height: context.ui(AppSpacing.sm)),
-                      for (final factor in factors)
-                        Padding(
-                          padding: EdgeInsets.only(bottom: context.ui(10)),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: context.ui(38),
-                                height: context.ui(38),
-                                decoration: BoxDecoration(
-                                  color: AssessmentColors.tint(
-                                    context,
-                                    factor.backgroundColor,
-                                  ),
-                                  borderRadius: BorderRadius.circular(
-                                    context.ui(12),
-                                  ),
-                                ),
-                                child: Icon(
-                                  factor.icon,
-                                  size: context.ui(20),
-                                  color: factor.iconColor,
-                                ),
-                              ),
-                              SizedBox(width: context.ui(12)),
-                              Expanded(
-                                child: Text(factor.label, style: bodyStyle),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                    SizedBox(height: context.ui(AppSpacing.lg)),
-                    Text('Ringkasan Jawaban', style: sectionStyle),
-                    SizedBox(height: context.ui(AppSpacing.sm)),
-                    Text(
-                      isExample ? 'Ringkasan jawaban pada contoh asesmen ini.' : 'Ringkasan jawaban survei, bukan kontribusi model prediksi.',
-                      style: bodyStyle.copyWith(fontSize: context.ui(12)),
-                    ),
-                    SizedBox(height: context.ui(AppSpacing.sm)),
-                    if (answerSummary.isEmpty)
-                      Text(
-                        'Ringkasan jawaban belum tersedia.',
-                        style: bodyStyle,
-                      )
-                    else
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(context.ui(AppSpacing.md)),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: AppColors.of(context).border,
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            context.ui(AppSpacing.radius),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            for (var i = 0; i < answerSummary.length; i++) ...[
-                              if (i > 0)
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: context.ui(AppSpacing.sm),
-                                  ),
-                                  child: Divider(
-                                    height: 1,
-                                    color: AppColors.of(context).border,
-                                  ),
-                                ),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${answerSummary[i].label}: ',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    TextSpan(text: answerSummary[i].value),
-                                  ],
-                                ),
-                                style: bodyStyle,
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    SizedBox(height: context.ui(AppSpacing.lg)),
-                    AppButton(
-                      label: 'Lihat Rekomendasi',
-                      onPressed: onRecommendationTap,
-                    ),
-                  ],
+                ],
+                SizedBox(height: context.ui(AppSpacing.lg)),
+                Text('Ringkasan Jawaban', style: sectionStyle),
+                SizedBox(height: context.ui(AppSpacing.sm)),
+                Text(
+                  isExample ? 'Ringkasan jawaban pada contoh asesmen ini.' : 'Ringkasan jawaban survei, bukan kontribusi model prediksi.',
+                  style: bodyStyle.copyWith(fontSize: context.ui(12)),
                 ),
-              ),
+                SizedBox(height: context.ui(AppSpacing.sm)),
+                if (answerSummary.isEmpty)
+                  Text('Ringkasan jawaban belum tersedia.', style: bodyStyle)
+                else
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(context.ui(AppSpacing.md)),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.of(context).border),
+                      borderRadius: BorderRadius.circular(
+                        context.ui(AppSpacing.radius),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (var i = 0; i < answerSummary.length; i++) ...[
+                          if (i > 0)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: context.ui(AppSpacing.sm),
+                              ),
+                              child: Divider(
+                                height: 1,
+                                color: AppColors.of(context).border,
+                              ),
+                            ),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '${answerSummary[i].label}: ',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                TextSpan(text: answerSummary[i].value),
+                              ],
+                            ),
+                            style: bodyStyle,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                SizedBox(height: context.ui(AppSpacing.lg)),
+                AppButton(
+                  label: 'Lihat Rekomendasi',
+                  onPressed: onRecommendationTap,
+                ),
+              ],
             ),
           ),
         ],

@@ -40,44 +40,39 @@ class DashboardPage extends ConsumerWidget {
             context.ui(AppSpacing.lg),
             context.ui(AppSpacing.xl),
           ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 1. Header
-                  DashboardHeader(
-                    userName: profile.name,
-                    photoUrl: profile.photoUrl,
-                    photoBytes: profile.photoBytes,
-                    onProfileTap: onProfileTap,
-                  ),
-                  SizedBox(height: context.ui(AppSpacing.lg)),
-
-                  // 2. Kartu Hasil Asesmen Terakhir
-                  LatestAssessmentCard(
-                    riskLevel: latest?.riskLevel,
-                    date: latest == null
-                        ? 'Belum ada asesmen'
-                        : formatAssessmentDate(latest.takenAt),
-                    onHistoryTap: onViewHistory,
-                  ),
-                  SizedBox(height: context.ui(AppSpacing.md)),
-
-                  // 3. Tombol Pintasan (Mulai Survei & Riwayat)
-                  DashboardShortcuts(
-                    onSurveyTap: onStartSurvey,
-                    onHistoryTap: onViewHistory,
-                  ),
-                  SizedBox(height: context.ui(AppSpacing.lg)),
-
-                  // 4. Kartu Motivasi
-                  const MotivationCard(),
-                  SizedBox(height: context.ui(AppSpacing.md)),
-                ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. Header
+              DashboardHeader(
+                userName: profile.name,
+                photoUrl: profile.photoUrl,
+                photoBytes: profile.photoBytes,
+                onProfileTap: onProfileTap,
               ),
-            ),
+              SizedBox(height: context.ui(AppSpacing.lg)),
+
+              // 2. Kartu Hasil Asesmen Terakhir
+              LatestAssessmentCard(
+                riskLevel: latest?.riskLevel,
+                date: latest == null
+                    ? 'Belum ada asesmen'
+                    : formatAssessmentDate(latest.takenAt),
+                onHistoryTap: onViewHistory,
+              ),
+              SizedBox(height: context.ui(AppSpacing.md)),
+
+              // 3. Tombol Pintasan (Mulai Survei & Riwayat)
+              DashboardShortcuts(
+                onSurveyTap: onStartSurvey,
+                onHistoryTap: onViewHistory,
+              ),
+              SizedBox(height: context.ui(AppSpacing.lg)),
+
+              // 4. Kartu Motivasi
+              const MotivationCard(),
+              SizedBox(height: context.ui(AppSpacing.md)),
+            ],
           ),
         ),
       ),

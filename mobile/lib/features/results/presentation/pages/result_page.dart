@@ -43,11 +43,16 @@ class ResultPage extends ConsumerWidget {
               children: [
                 Text(
                   'Hasil asesmen belum dapat dimuat.',
-                  style: AppTextStyles.subtitle(context),
+                  style: AppTextStyles.subtitle(context)
+                      .copyWith(fontSize: context.ui(14)),
                 ),
                 TextButton(
                   onPressed: () =>
                       ref.invalidate(assessmentByIdProvider(assessmentId)),
+                  style: TextButton.styleFrom(
+                    textStyle: TextStyle(fontSize: context.ui(14)),
+                    padding: EdgeInsets.all(context.ui(12)),
+                  ),
                   child: const Text('Coba lagi'),
                 ),
               ],
@@ -60,7 +65,8 @@ class ResultPage extends ConsumerWidget {
                 child: Text(
                   'Hasil asesmen tidak ditemukan. Buka hasil dari riwayat '
                   'atau selesaikan survei terlebih dahulu.',
-                  style: AppTextStyles.subtitle(context),
+                  style: AppTextStyles.subtitle(context)
+                      .copyWith(fontSize: context.ui(14)),
                 ),
               );
             }
@@ -144,12 +150,7 @@ class _ResultStatus extends StatelessWidget {
           ResultHeader(title: 'Hasil Prediksi', onBack: onBack),
           Padding(
             padding: EdgeInsets.all(context.ui(AppSpacing.lg)),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 720),
-                child: SizedBox(width: double.infinity, child: child),
-              ),
-            ),
+            child: SizedBox(width: double.infinity, child: child),
           ),
         ],
       ),

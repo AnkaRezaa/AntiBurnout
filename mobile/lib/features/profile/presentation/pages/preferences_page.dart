@@ -98,9 +98,17 @@ class PreferencesPage extends ConsumerWidget {
           child: Column(
             children: [
               SwitchListTile(
-                title: const Text('Pengingat harian'),
-                subtitle: const Text(
+                title: Text(
+                  'Pengingat harian',
+                  style: AppTextStyles.subtitle(context).copyWith(
+                    color: AppColors.of(context).navy,
+                    fontSize: context.ui(16),
+                  ),
+                ),
+                subtitle: Text(
                   'Luangkan waktu untuk memeriksa kondisi diri.',
+                  style: AppTextStyles.subtitle(context)
+                      .copyWith(fontSize: context.ui(14)),
                 ),
                 value: preferences.dailyReminder,
                 onChanged: controller.setDailyReminder,
@@ -109,9 +117,17 @@ class PreferencesPage extends ConsumerWidget {
               ),
               Divider(height: 1, color: AppColors.of(context).border),
               SwitchListTile(
-                title: const Text('Tips kesehatan mental'),
-                subtitle: const Text(
+                title: Text(
+                  'Tips kesehatan mental',
+                  style: AppTextStyles.subtitle(context).copyWith(
+                    color: AppColors.of(context).navy,
+                    fontSize: context.ui(16),
+                  ),
+                ),
+                subtitle: Text(
                   'Inspirasi singkat untuk merawat keseharian.',
+                  style: AppTextStyles.subtitle(context)
+                      .copyWith(fontSize: context.ui(14)),
                 ),
                 value: preferences.wellbeingTips,
                 onChanged: controller.setWellbeingTips,
@@ -159,6 +175,7 @@ class _ThemeOptionCard extends StatelessWidget {
       label,
       textAlign: TextAlign.center,
       style: AppTextStyles.subtitle(context).copyWith(
+        fontSize: context.ui(14),
         color: selected ? colors.primary : colors.body,
         fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
       ),
@@ -189,7 +206,11 @@ class _ThemeOptionCard extends StatelessWidget {
                       SizedBox(width: context.ui(12)),
                       Expanded(child: text),
                       if (selected)
-                        Icon(Icons.check_rounded, color: colors.primary),
+                        Icon(
+                          Icons.check_rounded,
+                          color: colors.primary,
+                          size: context.ui(24),
+                        ),
                     ],
                   )
                 : Column(

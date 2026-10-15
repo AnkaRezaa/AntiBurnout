@@ -120,118 +120,94 @@ class _SurveyStepperState extends State<SurveyStepper> {
                               padding: EdgeInsets.symmetric(
                                 horizontal: context.ui(AppSpacing.lg),
                               ),
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 560,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    'Langkah ${_step + 1} dari $_total',
+                                    style: _subtitleStyle(context, 13).copyWith(
+                                      color: AppColors.of(context).navy,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text(
-                                        'Langkah ${_step + 1} dari $_total',
-                                        style: _subtitleStyle(context, 13)
-                                            .copyWith(
-                                              color: AppColors.of(context).navy,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                  SizedBox(height: context.ui(12)),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                      context.ui(AppSpacing.radius),
+                                    ),
+                                    child: LinearProgressIndicator(
+                                      value: progress,
+                                      minHeight: context.ui(9),
+                                      color: AppColors.of(context).primary,
+                                      backgroundColor: AppColors.of(context)
+                                          .blob,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        top: context.ui(AppSpacing.sm),
                                       ),
-                                      SizedBox(height: context.ui(12)),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                          context.ui(AppSpacing.radius),
-                                        ),
-                                        child: LinearProgressIndicator(
-                                          value: progress,
-                                          minHeight: context.ui(9),
-                                          color: AppColors.of(context).primary,
-                                          backgroundColor: AppColors.of(context)
-                                              .blob,
-                                        ),
+                                      child: Text(
+                                        '${(progress * 100).round()}%',
+                                        style: AppTextStyles.link(context)
+                                            .copyWith(fontSize: context.ui(12)),
                                       ),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                            top: context.ui(AppSpacing.sm),
-                                          ),
-                                          child: Text(
-                                            '${(progress * 100).round()}%',
-                                            style: AppTextStyles.link(context)
-                                                .copyWith(
-                                                  fontSize: context.ui(12),
-                                                ),
-                                          ),
-                                        ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                      top: context.ui(AppSpacing.md),
+                                      bottom: context.ui(
+                                        AppSpacing.xl + AppSpacing.md,
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          top: context.ui(AppSpacing.md),
-                                          bottom: context.ui(
-                                            AppSpacing.xl + AppSpacing.md,
-                                          ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(
+                                          title,
+                                          style: AppTextStyles.title(
+                                            context,
+                                          ).copyWith(fontSize: context.ui(23)),
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            Text(
-                                              title,
-                                              style:
-                                                  AppTextStyles.title(
-                                                    context,
-                                                  ).copyWith(
-                                                    fontSize: context.ui(23),
+                                        SizedBox(height: context.ui(12)),
+                                        Text(
+                                          subtitle,
+                                          style: _subtitleStyle(context, 13),
+                                        ),
+                                        SizedBox(
+                                          height: context.ui(AppSpacing.xl),
+                                        ),
+                                        IgnorePointer(
+                                          ignoring: widget.state.isSubmitting,
+                                          child: _isReview
+                                              ? _review(context)
+                                              : _input(context, _question),
+                                        ),
+                                        if (widget.state.errorMessage !=
+                                            null) ...[
+                                          SizedBox(
+                                            height: context.ui(AppSpacing.lg),
+                                          ),
+                                          Semantics(
+                                            liveRegion: true,
+                                            child: Text(
+                                              widget.state.errorMessage!,
+                                              style: _subtitleStyle(context, 13)
+                                                  .copyWith(
+                                                    color: AppColors.of(context)
+                                                        .error,
                                                   ),
                                             ),
-                                            SizedBox(height: context.ui(12)),
-                                            Text(
-                                              subtitle,
-                                              style: _subtitleStyle(
-                                                context,
-                                                13,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: context.ui(AppSpacing.xl),
-                                            ),
-                                            IgnorePointer(
-                                              ignoring:
-                                                  widget.state.isSubmitting,
-                                              child: _isReview
-                                                  ? _review(context)
-                                                  : _input(context, _question),
-                                            ),
-                                            if (widget.state.errorMessage !=
-                                                null) ...[
-                                              SizedBox(
-                                                height: context.ui(
-                                                  AppSpacing.lg,
-                                                ),
-                                              ),
-                                              Semantics(
-                                                liveRegion: true,
-                                                child: Text(
-                                                  widget.state.errorMessage!,
-                                                  style:
-                                                      _subtitleStyle(
-                                                        context,
-                                                        13,
-                                                      ).copyWith(
-                                                        color: AppColors.of(
-                                                          context,
-                                                        ).error,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                          ),
+                                        ],
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ],
@@ -240,18 +216,13 @@ class _SurveyStepperState extends State<SurveyStepper> {
                           padding: EdgeInsets.symmetric(
                             horizontal: context.ui(AppSpacing.lg),
                           ),
-                          child: Center(
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 560),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  _actions(context),
-                                  SizedBox(height: context.ui(AppSpacing.lg)),
-                                  _TipCard(text: tip),
-                                ],
-                              ),
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _actions(context),
+                              SizedBox(height: context.ui(AppSpacing.lg)),
+                              _TipCard(text: tip),
+                            ],
                           ),
                         ),
                       ],
@@ -269,7 +240,7 @@ class _SurveyStepperState extends State<SurveyStepper> {
   Widget _actions(BuildContext context) {
     final back = OutlinedButton.icon(
       onPressed: widget.state.isSubmitting ? null : _back,
-      icon: const Icon(Icons.chevron_left_rounded),
+      icon: Icon(Icons.chevron_left_rounded, size: context.ui(24)),
       label: const Text('Kembali'),
       style: _backStyle(context),
     );
@@ -417,29 +388,55 @@ class _SurveyStepperState extends State<SurveyStepper> {
             Text(value.round().toString(), style: _numberStyle(context, 46)),
             Text(question.unit, style: _subtitleStyle(context, 13)),
             SizedBox(height: context.ui(18)),
-            Wrap(
-              spacing: context.ui(8),
-              runSpacing: context.ui(8),
-              children: [
-                for (final minutes in [0, 5, 10, 15])
-                  FilledButton(
-                    onPressed: () => _number(question, minutes.toDouble()),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: value == minutes
-                          ? AppColors.of(context).primary
-                          : AppColors.of(context).blob.withValues(alpha: .7),
-                      foregroundColor: value == minutes
-                          ? AppColors.of(context).onPrimary
-                          : AppColors.of(context).primary,
-                      minimumSize: const Size(64, 48),
-                      padding: EdgeInsets.all(context.ui(12)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(context.ui(10)),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final gap = context.ui(8);
+                final columns =
+                    constraints.maxWidth < context.ui(280) ||
+                        MediaQuery.textScalerOf(context).scale(14) > 20
+                    ? 2
+                    : 4;
+                final width =
+                    (constraints.maxWidth - gap * (columns - 1)) / columns;
+                return Wrap(
+                  spacing: gap,
+                  runSpacing: gap,
+                  children: [
+                    for (final minutes in [0, 5, 10, 15])
+                      SizedBox(
+                        width: width,
+                        child: FilledButton(
+                          onPressed: () =>
+                              _number(question, minutes.toDouble()),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: value == minutes
+                                ? AppColors.of(context).primary
+                                : AppColors.of(context).blob
+                                      .withValues(alpha: .7),
+                            foregroundColor: value == minutes
+                                ? AppColors.of(context).onPrimary
+                                : AppColors.of(context).primary,
+                            minimumSize: Size(
+                              context.ui(64),
+                              context.ui(48).clamp(48.0, double.infinity),
+                            ),
+                            textStyle: _subtitleStyle(
+                              context,
+                              14,
+                            ).copyWith(fontWeight: FontWeight.w700),
+                            padding: EdgeInsets.all(context.ui(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                context.ui(10),
+                              ),
+                            ),
+                          ),
+                          child: Text(minutes.toString()),
+                        ),
                       ),
-                    ),
-                    child: Text(minutes.toString()),
-                  ),
-              ],
+                  ],
+                );
+              },
             ),
             SizedBox(height: context.ui(16)),
             _SurveyAnswerField(
@@ -553,6 +550,13 @@ class _SurveyStepperState extends State<SurveyStepper> {
                   ),
                   TextButton(
                     onPressed: () => setState(() => _step = index),
+                    style: TextButton.styleFrom(
+                      textStyle: _subtitleStyle(context, 14),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.ui(12),
+                        vertical: context.ui(8),
+                      ),
+                    ),
                     child: const Text('Ubah'),
                   ),
                   Icon(
@@ -620,9 +624,17 @@ class _SurveyAnswerFieldState extends State<_SurveyAnswerField> {
       keyboardType: minutes ? TextInputType.number : TextInputType.multiline,
       minLines: 1,
       maxLines: minutes ? 1 : 5,
+      style: _subtitleStyle(context, 14),
       decoration: InputDecoration(
         hintText: minutes ? 'Atau isi durasi sendiri' : 'Tulis jawabanmu',
         suffixText: minutes ? 'menit' : null,
+        hintStyle: _subtitleStyle(
+          context,
+          14,
+        ).copyWith(color: AppColors.of(context).hint),
+        suffixStyle: _subtitleStyle(context, 14),
+        errorStyle: _subtitleStyle(context, 12),
+        contentPadding: EdgeInsets.all(context.ui(16)),
       ),
       onChanged: widget.onChanged,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -639,6 +651,11 @@ ButtonStyle _backStyle(BuildContext context) => OutlinedButton.styleFrom(
   foregroundColor: AppColors.of(context).navy,
   side: BorderSide(color: AppColors.of(context).border),
   minimumSize: Size(0, context.ui(52)),
+  textStyle: _subtitleStyle(context, 16).copyWith(fontWeight: FontWeight.w700),
+  padding: EdgeInsets.symmetric(
+    horizontal: context.ui(16),
+    vertical: context.ui(14),
+  ),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(context.ui(AppSpacing.fieldRadius)),
   ),
@@ -682,7 +699,9 @@ class _ValueBox extends StatelessWidget {
   final double value;
   @override
   Widget build(BuildContext context) => Container(
-    constraints: const BoxConstraints(minHeight: 48),
+    constraints: BoxConstraints(
+      minHeight: context.ui(48).clamp(48.0, double.infinity),
+    ),
     padding: EdgeInsets.all(context.ui(8)),
     alignment: Alignment.center,
     decoration: BoxDecoration(
