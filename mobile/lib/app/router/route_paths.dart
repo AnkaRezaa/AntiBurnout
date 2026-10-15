@@ -11,6 +11,11 @@ abstract final class RoutePaths {
   static const survey = '/survey';
   static const history = '/history';
   static const profile = '/profile';
+  static const editProfile = '$profile/edit';
+  static const preferences = '$profile/preferences';
+  static const help = '$profile/help';
+  static const about = '$profile/about';
+  static const personalization = '$profile/personalization';
   static const dashboardSurvey = '$home/survey';
 
   static String questionsFor(SurveyOrigin origin) => switch (origin) {

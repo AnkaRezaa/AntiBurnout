@@ -11,6 +11,11 @@ import '../../features/auth/presentation/pages/welcome_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/profile/presentation/pages/edit_profile_page.dart';
+import '../../features/profile/presentation/pages/preferences_page.dart';
+import '../../features/profile/presentation/pages/help_page.dart';
+import '../../features/profile/presentation/pages/about_page.dart';
+import '../../features/profile/presentation/pages/personalization_page.dart';
 import '../../features/recommendations/presentation/pages/recommendation_page.dart';
 import '../../features/results/presentation/pages/result_page.dart';
 import '../../features/survey/presentation/pages/survey_intro_page.dart';
@@ -125,7 +130,51 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RoutePaths.profile,
-                builder: (context, state) => const ProfilePage(),
+                builder: (context, state) => ProfilePage(
+                  onEditProfile: () => context.push(RoutePaths.editProfile),
+                  onPreferences: () => context.push(RoutePaths.preferences),
+                  onHelp: () => context.push(RoutePaths.help),
+                  onAbout: () => context.push(RoutePaths.about),
+                  onPersonalization: () =>
+                      context.push(RoutePaths.personalization),
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => Consumer(
+                      builder: (context, ref, child) => EditProfilePage(
+                        key: ValueKey(
+                          ref.watch(
+                            authControllerProvider.select(
+                              (auth) => auth.user?.id,
+                            ),
+                          ),
+                        ),
+                        onBack: () => context.pop(),
+                      ),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'preferences',
+                    builder: (context, state) =>
+                        PreferencesPage(onBack: () => context.pop()),
+                  ),
+                  GoRoute(
+                    path: 'help',
+                    builder: (context, state) =>
+                        HelpPage(onBack: () => context.pop()),
+                  ),
+                  GoRoute(
+                    path: 'about',
+                    builder: (context, state) =>
+                        AboutPage(onBack: () => context.pop()),
+                  ),
+                  GoRoute(
+                    path: 'personalization',
+                    builder: (context, state) =>
+                        PersonalizationPage(onBack: () => context.pop()),
+                  ),
+                ],
               ),
             ],
           ),

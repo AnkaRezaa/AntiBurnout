@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/responsive/app_scale.dart';
@@ -11,12 +13,14 @@ class DashboardHeader extends StatelessWidget {
     super.key,
     required this.userName,
     this.photoUrl,
+    this.photoBytes,
     this.onProfileTap,
     this.subtitle = 'Jaga kesehatan mentalmu, mulai dari sekarang.',
   });
 
   final String userName;
   final String? photoUrl;
+  final Uint8List? photoBytes;
   final VoidCallback? onProfileTap;
   final String subtitle;
 
@@ -57,7 +61,9 @@ class DashboardHeader extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(48, 48),
               ),
-              icon: ExcludeSemantics(child: UserAvatar(photoUrl: photoUrl)),
+              icon: ExcludeSemantics(
+                child: UserAvatar(photoUrl: photoUrl, photoBytes: photoBytes),
+              ),
             ),
           ],
         ),

@@ -5,7 +5,7 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/utils/date_formatter.dart';
-import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../profile/presentation/controllers/profile_controller.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/dashboard_header.dart';
 import '../widgets/dashboard_shortcuts.dart';
@@ -26,8 +26,7 @@ class DashboardPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authControllerProvider).user;
-    final displayName = user?.name ?? 'Pengguna';
+    final profile = ref.watch(profileControllerProvider);
     final latest = ref.watch(latestAssessmentProvider);
 
     return Scaffold(
@@ -49,8 +48,9 @@ class DashboardPage extends ConsumerWidget {
                 children: [
                   // 1. Header
                   DashboardHeader(
-                    userName: displayName,
-                    photoUrl: user?.photoUrl,
+                    userName: profile.name,
+                    photoUrl: profile.photoUrl,
+                    photoBytes: profile.photoBytes,
                     onProfileTap: onProfileTap,
                   ),
                   SizedBox(height: context.ui(AppSpacing.lg)),
