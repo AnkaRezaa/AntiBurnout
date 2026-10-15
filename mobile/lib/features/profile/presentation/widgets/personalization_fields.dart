@@ -22,15 +22,9 @@ class PersonalizationFieldStyle {
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(
-        color: AppColors.hint,
-        fontSize: context.ui(14),
-      ),
+      hintStyle: TextStyle(color: AppColors.hint, fontSize: context.ui(14)),
       suffixText: suffix,
-      suffixStyle: TextStyle(
-        color: AppColors.hint,
-        fontSize: context.ui(12),
-      ),
+      suffixStyle: TextStyle(color: AppColors.hint, fontSize: context.ui(12)),
       filled: true,
       fillColor: Colors.white,
       contentPadding: EdgeInsets.symmetric(
@@ -119,13 +113,8 @@ class PersonalizationNumberField extends StatelessWidget {
             initialValue: value,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-            style: TextStyle(
-              color: AppColors.navy,
-              fontSize: context.ui(14),
-            ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            style: TextStyle(color: AppColors.navy, fontSize: context.ui(14)),
             decoration: PersonalizationFieldStyle.decoration(
               context,
               hint: hint,
@@ -133,6 +122,96 @@ class PersonalizationNumberField extends StatelessWidget {
             ),
             validator: validator,
             onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PersonalizationDateField extends StatelessWidget {
+  const PersonalizationDateField({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.firstDate,
+    required this.lastDate,
+    required this.onChanged,
+  });
+
+  final String label;
+  final DateTime? value;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final ValueChanged<DateTime?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final date = value;
+    final text = date == null
+        ? ''
+        : '${date.day.toString().padLeft(2, '0')}/'
+              '${date.month.toString().padLeft(2, '0')}/${date.year}';
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.ui(14)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          PersonalizationLabel(label),
+          TextFormField(
+            key: ValueKey(value),
+            initialValue: text,
+            readOnly: true,
+            showCursor: false,
+            style: TextStyle(color: AppColors.navy, fontSize: context.ui(14)),
+            decoration:
+                PersonalizationFieldStyle.decoration(
+                  context,
+                  hint: 'Pilih tanggal lahir (DD/MM/YYYY)',
+                ).copyWith(
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (date != null)
+                        IconButton(
+                          tooltip: 'Hapus tanggal lahir',
+                          onPressed: () => onChanged(null),
+                          icon: const Icon(Icons.close_rounded),
+                        ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.ui(12),
+                        ),
+                        child: const Icon(
+                          Icons.calendar_today_outlined,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            onTap: () async {
+              FocusScope.of(context).unfocus();
+              final initialDate = date == null || date.isAfter(lastDate)
+                  ? lastDate
+                  : date.isBefore(firstDate)
+                  ? firstDate
+                  : date;
+              final selected = await showDatePicker(
+                context: context,
+                initialDate: initialDate,
+                firstDate: firstDate,
+                lastDate: lastDate,
+                initialEntryMode: DatePickerEntryMode.calendarOnly,
+                initialDatePickerMode: date == null
+                    ? DatePickerMode.year
+                    : DatePickerMode.day,
+                helpText: 'Pilih tanggal lahir',
+                cancelText: 'Batal',
+                confirmText: 'Pilih',
+              );
+              if (context.mounted && selected != null) onChanged(selected);
+            },
           ),
         ],
       ),
@@ -179,18 +258,12 @@ class PersonalizationDropdown extends StatelessWidget {
               color: AppColors.hint,
               size: context.ui(24),
             ),
-            style: TextStyle(
-              color: AppColors.navy,
-              fontSize: context.ui(14),
-            ),
+            style: TextStyle(color: AppColors.navy, fontSize: context.ui(14)),
             dropdownColor: Colors.white,
             items: options.map((option) {
               return DropdownMenuItem<String>(
                 value: option,
-                child: Text(
-                  option,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Text(option, overflow: TextOverflow.ellipsis),
               );
             }).toList(),
             onChanged: (value) {
@@ -229,8 +302,7 @@ class PersonalizationChoices extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           PersonalizationLabel(label),
-          if (description != null)
-            PersonalizationDescription(description!),
+          if (description != null) PersonalizationDescription(description!),
           Row(
             children: [
               for (var index = 0; index < options.length; index++) ...[
@@ -262,17 +334,13 @@ class PersonalizationChoices extends StatelessWidget {
                               : PersonalizationFieldStyle.borderColor,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            context.ui(14),
-                          ),
+                          borderRadius: BorderRadius.circular(context.ui(14)),
                         ),
                       ),
                       child: Text(
                         options[index],
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: context.ui(12),
-                        ),
+                        style: TextStyle(fontSize: context.ui(12)),
                       ),
                     ),
                   ),

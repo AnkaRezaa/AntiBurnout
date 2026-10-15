@@ -15,41 +15,26 @@ class PersonalDataSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const PersonalizationDescription(
-          'Ceritakan sedikit tentang dirimu.',
-        ),
-        PersonalizationNumberField(
+        const PersonalizationDescription('Ceritakan sedikit tentang dirimu.'),
+        PersonalizationDateField(
           label: 'Tanggal Lahir',
-          hint: 'Masukkan tanggal lahir',
-          value: data.age,
+          value: data.birthDate,
+          firstDate: DateTime(1900),
+          lastDate: DateTime(now.year, now.month, now.day),
           onChanged: (value) {
-            onChanged(data.copyWith(age: value));
-          },
-          validator: (value) {
-            final text = value?.trim() ?? '';
-
-            if (text.isEmpty) return null;
-
-            final age = int.tryParse(text);
-
-            if (age == null || age < 1 || age > 120) {
-              return 'Masukkan usia antara 1–120 tahun.';
-            }
-
-            return null;
+            onChanged(
+              data.copyWith(birthDate: value, clearBirthDate: value == null),
+            );
           },
         ),
         PersonalizationChoices(
           label: 'Jenis kelamin',
           value: data.gender,
-          options: const [
-            'Perempuan',
-            'Laki-laki',
-            'Lainnya',
-          ],
+          options: const ['Perempuan', 'Laki-laki', 'Lainnya'],
           onChanged: (value) {
             onChanged(data.copyWith(gender: value));
           },

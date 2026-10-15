@@ -1,6 +1,6 @@
 class Personalization {
   const Personalization({
-    this.age = '',
+    this.birthDate,
     this.gender = '',
     this.country = '',
     this.education = '',
@@ -14,7 +14,7 @@ class Personalization {
     this.professionalSupport = '',
   });
 
-  final String age;
+  final DateTime? birthDate;
   final String gender;
   final String country;
   final String education;
@@ -28,7 +28,8 @@ class Personalization {
   final String professionalSupport;
 
   Personalization copyWith({
-    String? age,
+    DateTime? birthDate,
+    bool clearBirthDate = false,
     String? gender,
     String? country,
     String? education,
@@ -42,7 +43,7 @@ class Personalization {
     String? professionalSupport,
   }) {
     return Personalization(
-      age: age ?? this.age,
+      birthDate: clearBirthDate ? null : birthDate ?? this.birthDate,
       gender: gender ?? this.gender,
       country: country ?? this.country,
       education: education ?? this.education,

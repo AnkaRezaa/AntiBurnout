@@ -302,24 +302,28 @@ class _PersonalizationPageState
             Row(
               children: [
                 if (_step > 0)
-                  TextButton(
-                    onPressed: state.isSaving
-                        ? null
-                        : () => _changeStep(_step - 1),
-                    child: Text(
-                      'Sebelumnya',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: context.ui(14),
+                  Flexible(
+                    child: TextButton(
+                      onPressed: state.isSaving
+                          ? null
+                          : () => _changeStep(_step - 1),
+                      child: Text(
+                        'Sebelumnya',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: context.ui(14),
+                        ),
                       ),
                     ),
                   ),
-                const Spacer(),
-                Text(
-                  'Langkah ${_step + 1} dari 3',
-                  style: TextStyle(
-                    color: AppColors.hint,
-                    fontSize: context.ui(12),
+                Expanded(
+                  child: Text(
+                    'Langkah ${_step + 1} dari 3',
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      color: AppColors.hint,
+                      fontSize: context.ui(12),
+                    ),
                   ),
                 ),
               ],

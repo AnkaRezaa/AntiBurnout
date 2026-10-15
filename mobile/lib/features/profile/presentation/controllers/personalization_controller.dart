@@ -36,10 +36,7 @@ class PersonalizationController extends Notifier<PersonalizationState> {
       await _load(repository, userId, generation);
     });
 
-    return PersonalizationState(
-      userId: userId,
-      isLoading: true,
-    );
+    return PersonalizationState(userId: userId, isLoading: true);
   }
 
   Future<void> _load(
@@ -75,10 +72,7 @@ class PersonalizationController extends Notifier<PersonalizationState> {
     final generation = ++_generation;
     final repository = _repository;
 
-    state = state.copyWith(
-      isLoading: true,
-      clearError: true,
-    );
+    state = state.copyWith(isLoading: true, clearError: true);
 
     await _load(repository, userId, generation);
   }
@@ -86,10 +80,7 @@ class PersonalizationController extends Notifier<PersonalizationState> {
   void update(Personalization data) {
     if (!state.isLoaded || state.isSaving) return;
 
-    state = state.copyWith(
-      data: data,
-      clearError: true,
-    );
+    state = state.copyWith(data: data, clearError: true);
   }
 
   Future<bool> save() async {
@@ -102,14 +93,17 @@ class PersonalizationController extends Notifier<PersonalizationState> {
       return false;
     }
 
-    final ageText = state.data.age.trim();
-
-    if (ageText.isNotEmpty) {
-      final age = int.tryParse(ageText);
-
-      if (age == null || age < 1 || age > 120) {
+    final selectedDate = state.data.birthDate;
+    final birthDate = selectedDate == null
+        ? null
+        : DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    if (birthDate != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      if (birthDate.isBefore(DateTime(1900)) || birthDate.isAfter(today)) {
         state = state.copyWith(
-          errorMessage: 'Masukkan usia antara 1–120 tahun.',
+          errorMessage:
+              'Pilih tanggal lahir antara 1 Januari 1900 dan hari ini.',
         );
 
         return false;
@@ -119,14 +113,11 @@ class PersonalizationController extends Notifier<PersonalizationState> {
     final generation = _generation;
     final repository = _repository;
     final data = state.data.copyWith(
-      age: ageText,
+      birthDate: birthDate,
       income: state.data.income.trim(),
     );
 
-    state = state.copyWith(
-      isSaving: true,
-      clearError: true,
-    );
+    state = state.copyWith(isSaving: true, clearError: true);
 
     try {
       await repository.savePersonalization(
@@ -136,11 +127,7 @@ class PersonalizationController extends Notifier<PersonalizationState> {
 
       if (generation != _generation) return false;
 
-      state = state.copyWith(
-        data: data,
-        isSaving: false,
-        clearError: true,
-      );
+      state = state.copyWith(data: data, isSaving: false, clearError: true);
 
       return true;
     } catch (_) {
@@ -158,5 +145,5 @@ class PersonalizationController extends Notifier<PersonalizationState> {
 
 final personalizationControllerProvider =
     NotifierProvider<PersonalizationController, PersonalizationState>(
-  PersonalizationController.new,
-);
+      PersonalizationController.new,
+    );
