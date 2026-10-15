@@ -164,8 +164,9 @@ class _SurveyStepperState extends State<SurveyStepper> {
                             ],
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: context.ui(AppSpacing.xl),
+                            padding: EdgeInsets.only(
+                              top: context.ui(AppSpacing.md),
+                              bottom: context.ui(AppSpacing.xl + AppSpacing.md),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
