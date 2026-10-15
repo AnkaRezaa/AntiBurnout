@@ -22,9 +22,8 @@ class PersonalDataSection extends StatelessWidget {
           'Ceritakan sedikit tentang dirimu.',
         ),
         PersonalizationNumberField(
-          label: 'Usia',
-          hint: 'Masukkan usia',
-          suffix: 'tahun',
+          label: 'Tanggal Lahir',
+          hint: 'Masukkan tanggal lahir',
           value: data.age,
           onChanged: (value) {
             onChanged(data.copyWith(age: value));

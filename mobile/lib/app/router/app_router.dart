@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,6 +25,9 @@ import 'route_paths.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
+  final surveyNavigatorKey = GlobalKey<NavigatorState>();
+  // An unfinished flow keeps its entry origin, even while only its intro is open.
+  var surveyHasEntry = false;
   ref.listen(authControllerProvider, (previous, next) => refresh.value++);
 
   final router = GoRouter(
@@ -66,49 +69,59 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ForgotPasswordPage(),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, shell) => MainShell(navigationShell: shell),
+        builder: (context, state, shell) => MainShell(
+          navigationShell: shell,
+          onBranchSelected: (index) {
+            if (index == 1) surveyHasEntry = true;
+          },
+        ),
         branches: [
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: RoutePaths.home,
                 builder: (context, state) => DashboardPage(
-                  onStartSurvey: () => context.push(RoutePaths.dashboardSurvey),
+                  onStartSurvey: () {
+                    final surveyNavigator = surveyNavigatorKey.currentState;
+                    if (surveyNavigator != null &&
+                        (surveyHasEntry || surveyNavigator.canPop())) {
+                      StatefulNavigationShell.of(context).goBranch(1);
+                    } else {
+                      surveyHasEntry = true;
+                      context.go(RoutePaths.dashboardSurvey);
+                    }
+                  },
                   onViewHistory: () =>
                       StatefulNavigationShell.of(context).goBranch(2),
                   onProfileTap: () =>
                       StatefulNavigationShell.of(context).goBranch(3),
                 ),
-                routes: [
-                  GoRoute(
-                    path: 'survey',
-                    builder: (context, state) => SurveyIntroPage(
-                      onStartSurvey: () => context.push(
-                        RoutePaths.questionsFor(SurveyOrigin.dashboard),
-                      ),
-                      onLater: () => context.pop(),
-                    ),
-                    routes: [_questionsRoute(SurveyOrigin.dashboard)],
-                  ),
-                  _resultRoute(),
-                ],
               ),
             ],
           ),
           StatefulShellBranch(
+            navigatorKey: surveyNavigatorKey,
             routes: [
               GoRoute(
                 path: RoutePaths.survey,
-                builder: (context, state) => SurveyIntroPage(
-                  onStartSurvey: () => context.push(
-                    RoutePaths.questionsFor(SurveyOrigin.surveyTab),
-                  ),
-                  onLater: () =>
-                      StatefulNavigationShell.of(context).goBranch(0),
-                ),
+                builder: (context, state) {
+                  return SurveyIntroPage(
+                    onStartSurvey: () {
+                      surveyHasEntry = true;
+                      context.push(
+                        RoutePaths.questionsFor(_surveyOrigin(state)),
+                      );
+                    },
+                    onLater: () =>
+                        StatefulNavigationShell.of(context).goBranch(0),
+                  );
+                },
                 routes: [
-                  _questionsRoute(SurveyOrigin.surveyTab),
-                  _resultRoute(),
+                  _questionsRoute(),
+                  _resultRoute(
+                    fromSurvey: true,
+                    onSurveyFinished: () => surveyHasEntry = false,
+                  ),
                 ],
               ),
             ],
@@ -189,27 +202,74 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
-GoRoute _questionsRoute(SurveyOrigin origin) => GoRoute(
+SurveyOrigin _surveyOrigin(GoRouterState state) =>
+    state.uri.queryParameters['origin'] == 'dashboard'
+    ? SurveyOrigin.dashboard
+    : SurveyOrigin.surveyTab;
+
+GoRoute _questionsRoute() => GoRoute(
   path: 'questions',
-  builder: (context, state) => SurveyQuestionPage(
-    sessionKey: origin.name,
-    onBack: () => context.pop(),
-    onSubmitted: (assessment) {
-      // Replace the completed form and entry pages with the correct branch
-      // root + result. UI and Android back then share the same stack.
-      context.go(RoutePaths.submittedResultFor(origin, assessment.id));
-    },
-  ),
+  builder: (context, state) {
+    final origin = _surveyOrigin(state);
+    return SurveyQuestionPage(
+      sessionKey: origin.name,
+      onBack: () => context.pop(),
+      onSubmitted: (assessment) {
+        // Replace completed questions within the Survey branch so its cached
+        // stack cannot restore a submitted form after switching tabs.
+        context.go(RoutePaths.submittedResultFor(origin, assessment.id));
+      },
+    );
+  },
 );
 
-GoRoute _resultRoute() => GoRoute(
+void _finishSurveyFlow(
+  BuildContext context,
+  SurveyOrigin origin,
+  VoidCallback? onFinished,
+) {
+  final router = GoRouter.of(context);
+  router.go(RoutePaths.survey);
+  // Let the shell cache the cleared Survey stack before switching branches.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (router.routeInformationProvider.value.uri ==
+        Uri.parse(RoutePaths.survey)) {
+      onFinished?.call();
+      if (origin == SurveyOrigin.dashboard) router.go(RoutePaths.home);
+    }
+  });
+}
+
+GoRoute _resultRoute({
+  bool fromSurvey = false,
+  VoidCallback? onSurveyFinished,
+}) => GoRoute(
   path: 'result/:assessmentId',
-  builder: (context, state) => ResultPage(
-    assessmentId: state.pathParameters['assessmentId']!,
-    onBack: () => context.pop(),
-    onRecommendationTap: () =>
-        context.push('${state.uri.path}/recommendations'),
-  ),
+  builder: (context, state) {
+    void onBack() {
+      if (fromSurvey) {
+        _finishSurveyFlow(context, _surveyOrigin(state), onSurveyFinished);
+      } else {
+        context.pop();
+      }
+    }
+
+    final page = ResultPage(
+      assessmentId: state.pathParameters['assessmentId']!,
+      onBack: onBack,
+      onRecommendationTap: () => context.push(
+        state.uri.replace(path: '${state.uri.path}/recommendations').toString(),
+      ),
+    );
+    if (!fromSurvey) return page;
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) onBack();
+      },
+      child: page,
+    );
+  },
   routes: [
     GoRoute(
       path: 'recommendations',

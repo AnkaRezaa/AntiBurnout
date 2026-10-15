@@ -6,9 +6,14 @@ import '../../core/theme/app_colors.dart';
 
 /// Each branch owns its Navigator and keeps its pages mounted for the session.
 class MainShell extends StatelessWidget {
-  const MainShell({super.key, required this.navigationShell});
+  const MainShell({
+    super.key,
+    required this.navigationShell,
+    this.onBranchSelected,
+  });
 
   final StatefulNavigationShell navigationShell;
+  final ValueChanged<int>? onBranchSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +32,10 @@ class MainShell extends StatelessWidget {
           child: BottomNavigationBar(
             currentIndex: navigationShell.currentIndex,
             // Re-selecting a tab also preserves its current navigation stack.
-            onTap: (index) => navigationShell.goBranch(index),
+            onTap: (index) {
+              onBranchSelected?.call(index);
+              navigationShell.goBranch(index);
+            },
             backgroundColor: AppColors.background,
             elevation: 0,
             type: BottomNavigationBarType.fixed,

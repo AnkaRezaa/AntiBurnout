@@ -1,5 +1,4 @@
-/// The branch path records the entry point for the entire survey flow.
-/// Intermediate pages and tab switches cannot overwrite it.
+/// The origin travels with the survey routes, independent of the selected tab.
 enum SurveyOrigin { dashboard, surveyTab }
 
 abstract final class RoutePaths {
@@ -16,15 +15,16 @@ abstract final class RoutePaths {
   static const help = '$profile/help';
   static const about = '$profile/about';
   static const personalization = '$profile/personalization';
-  static const dashboardSurvey = '$home/survey';
+  static const dashboardSurvey = '$survey?origin=dashboard';
 
-  static String questionsFor(SurveyOrigin origin) => switch (origin) {
-    SurveyOrigin.dashboard => '$dashboardSurvey/questions',
-    SurveyOrigin.surveyTab => '$survey/questions',
-  };
+  static String questionsFor(SurveyOrigin origin) =>
+      '$survey/questions${_originQuery(origin)}';
 
   static String submittedResultFor(SurveyOrigin origin, String id) =>
-      '${origin == SurveyOrigin.dashboard ? home : survey}/result/${Uri.encodeComponent(id)}';
+      '$survey/result/${Uri.encodeComponent(id)}${_originQuery(origin)}';
+
+  static String _originQuery(SurveyOrigin origin) =>
+      origin == SurveyOrigin.dashboard ? '?origin=dashboard' : '';
 
   static String resultFor(String id) =>
       '$history/result/${Uri.encodeComponent(id)}';
