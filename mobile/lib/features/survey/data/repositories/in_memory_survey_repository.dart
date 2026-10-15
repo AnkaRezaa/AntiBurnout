@@ -1,9 +1,10 @@
 import '../../domain/entities/survey_question.dart';
+import '../fixtures/survey_questions.dart';
 import '../../domain/repositories/survey_repository.dart';
 
-/// No questionnaire has been configured yet. Questions must come from a source.
+/// Local questionnaire UI; assessment submission still requires a real service.
 class InMemorySurveyRepository implements SurveyRepository {
-  const InMemorySurveyRepository({this.questions = const []});
+  const InMemorySurveyRepository({this.questions = surveyQuestions});
 
   final List<SurveyQuestion> questions;
 

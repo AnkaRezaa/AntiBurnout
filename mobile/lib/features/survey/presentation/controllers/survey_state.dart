@@ -24,7 +24,7 @@ class SurveyState {
       completedAssessment == null &&
       questions.isNotEmpty &&
       questions.every(
-        (question) => answers[question.id]?.trim().isNotEmpty == true,
+        (question) => question.isValidAnswer(answers[question.id]),
       );
 
   SurveyState copyWith({

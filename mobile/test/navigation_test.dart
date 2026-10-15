@@ -19,6 +19,7 @@ import 'package:mobile/features/history/presentation/widgets/assessment_history_
 import 'package:mobile/features/history/presentation/widgets/assessment_history_tile.dart';
 import 'package:mobile/features/results/presentation/pages/result_page.dart';
 import 'package:mobile/features/survey/di/survey_providers.dart';
+import 'package:mobile/features/survey/data/repositories/in_memory_survey_repository.dart';
 import 'package:mobile/features/survey/domain/entities/survey_question.dart';
 import 'package:mobile/features/survey/domain/repositories/survey_repository.dart';
 import 'package:mobile/features/survey/presentation/pages/survey_question_page.dart';
@@ -44,6 +45,7 @@ class _Questions implements SurveyRepository {
 
 class _Assessments implements AssessmentRepository {
   int submissions = 0;
+  Map<String, String>? lastAnswers;
   bool fail = false;
   Completer<void>? pending;
   final Map<String, Assessment> items = {
@@ -69,6 +71,7 @@ class _Assessments implements AssessmentRepository {
   @override
   Future<Assessment> submit(Map<String, String> answers) async {
     submissions++;
+    lastAnswers = Map.of(answers);
     await pending?.future;
     if (fail) throw Exception('Test service failed');
     // The UI must also work before getById is updated by the server.
@@ -84,6 +87,7 @@ Future<ProviderContainer> _start(
   WidgetTester tester, {
   _Assessments? repository,
   bool questions = true,
+  bool defaultQuestions = false,
   List<AssessmentHistoryItem>? history,
 }) async {
   final container = ProviderContainer(
@@ -91,7 +95,12 @@ Future<ProviderContainer> _start(
       authControllerProvider.overrideWith(_Authenticated.new),
       if (repository != null)
         assessmentRepositoryProvider.overrideWithValue(repository),
-      if (questions) surveyRepositoryProvider.overrideWithValue(_Questions()),
+      if (!defaultQuestions)
+        surveyRepositoryProvider.overrideWithValue(
+          questions
+              ? _Questions()
+              : const InMemorySurveyRepository(questions: []),
+        ),
       if (history != null) assessmentFixtureProvider.overrideWithValue(history),
     ],
   );
@@ -144,6 +153,131 @@ Future<void> _back(WidgetTester tester, bool android) async {
 }
 
 void main() {
+  for (final origin in SurveyOrigin.values) {
+    testWidgets(
+      'main survey UI retains answers, origin and assessment ID (${origin.name})',
+      (tester) async {
+        final repository = _Assessments();
+        final container = await _start(
+          tester,
+          repository: repository,
+          defaultQuestions: true,
+        );
+        if (origin == SurveyOrigin.dashboard) {
+          await _tap(tester, 'Mulai Survei');
+        } else {
+          await _tab(tester, 'Survei');
+        }
+        await _tap(tester, 'Mulai Survei');
+        expect(find.text('Langkah 1 dari 8'), findsOneWidget);
+        await _tap(tester, 'Baik');
+        await _tap(tester, 'Lanjut');
+        await tester.tap(find.byIcon(Icons.add_rounded));
+        await tester.pumpAndSettle();
+        await _tab(tester, 'Profil');
+        await _tab(
+          tester,
+          origin == SurveyOrigin.dashboard ? 'Beranda' : 'Survei',
+        );
+        expect(find.text('Langkah 2 dari 8'), findsOneWidget);
+        expect(find.text('6.5'), findsOneWidget);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.text('Langkah 1 dari 8'), findsOneWidget);
+        await _tap(tester, 'Lanjut');
+        expect(find.text('6.5'), findsOneWidget);
+        for (var i = 0; i < 6; i++) {
+          await _tap(tester, 'Lanjut');
+        }
+        expect(find.text('Langkah 8 dari 8'), findsOneWidget);
+        expect(find.text('6.5 jam'), findsOneWidget);
+        await _tap(tester, 'Kirim & lihat hasil');
+        expect(repository.lastAnswers, {
+          'sleep_quality': 'Baik',
+          'screen_hours': '6.5',
+          'sleep_hours': '7.0',
+          'coffee_cups': '2',
+          'activity_load': 'Sedang',
+          'meditation_minutes': '10',
+          'mood_rating': '65',
+        });
+        expect(
+          tester.widget<ResultPage>(find.byType(ResultPage)).assessmentId,
+          'submitted-1',
+        );
+        await _back(tester, origin == SurveyOrigin.dashboard);
+        expect(
+          container
+              .read(appRouterProvider)
+              .routeInformationProvider
+              .value
+              .uri
+              .path,
+          origin == SurveyOrigin.dashboard
+              ? RoutePaths.home
+              : RoutePaths.survey,
+        );
+        expect(repository.submissions, 1);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets(
+    'main survey validates custom minutes and synchronizes preset input',
+    (tester) async {
+      await _start(tester, repository: _Assessments(), defaultQuestions: true);
+      await _tab(tester, 'Survei');
+      await _tap(tester, 'Mulai Survei');
+      await _tap(tester, 'Baik');
+      for (var i = 0; i < 5; i++) {
+        await _tap(tester, 'Lanjut');
+      }
+      expect(find.text('Langkah 6 dari 8'), findsOneWidget);
+      final minutes = find.byKey(
+        const ValueKey('survey-answer-meditation_minutes'),
+      );
+      await tester.enterText(minutes, '-1');
+      await _tap(tester, 'Lanjut');
+      expect(find.text('Langkah 6 dari 8'), findsOneWidget);
+      await _tap(tester, '15');
+      expect(tester.widget<TextFormField>(minutes).controller!.text, '15');
+      await _tap(tester, 'Lanjut');
+      expect(find.text('Langkah 7 dari 8'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'main survey works on small screens with large text and reports missing service',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.8;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _start(tester, defaultQuestions: true);
+      await _tab(tester, 'Survei');
+      expect(tester.takeException(), isNull);
+      await _tap(tester, 'Mulai Survei');
+      await _tap(tester, 'Baik');
+      for (var i = 0; i < 7; i++) {
+        expect(tester.takeException(), isNull);
+        await _tap(tester, 'Lanjut');
+      }
+      expect(find.text('Langkah 8 dari 8'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await _tap(tester, 'Kirim & lihat hasil');
+      expect(
+        find.text('Layanan asesmen belum tersedia. Jawaban belum dikirim.'),
+        findsOneWidget,
+      );
+      expect(find.byType(ResultPage), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Android back at survey intro switches to dashboard', (
     tester,
   ) async {

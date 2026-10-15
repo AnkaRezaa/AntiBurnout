@@ -11,6 +11,7 @@ import '../../../assessment/domain/entities/assessment.dart';
 import '../../domain/entities/survey_question.dart';
 import '../controllers/survey_controller.dart';
 import '../controllers/survey_state.dart';
+import '../widgets/survey_stepper.dart';
 
 class SurveyQuestionPage extends ConsumerWidget {
   const SurveyQuestionPage({
@@ -27,6 +28,24 @@ class SurveyQuestionPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(surveyControllerProvider(sessionKey));
+    if (!state.isLoading &&
+        state.questions.any(
+          (question) => question.inputKind != SurveyInputKind.text,
+        )) {
+      final controller = ref.read(
+        surveyControllerProvider(sessionKey).notifier,
+      );
+      return SurveyStepper(
+        state: state,
+        onBack: onBack,
+        onChanged: controller.setAnswer,
+        onSubmit: () async {
+          final assessment = await controller.submit();
+          if (!context.mounted || assessment == null) return;
+          onSubmitted(assessment);
+        },
+      );
+    }
     return PopScope(
       canPop: !state.isSubmitting,
       child: Scaffold(

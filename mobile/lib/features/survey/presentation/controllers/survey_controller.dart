@@ -26,6 +26,12 @@ class SurveyController extends AutoDisposeFamilyNotifier<SurveyState, String> {
       if (_disposed) return;
       state = state.copyWith(
         questions: List.unmodifiable(questions),
+        answers: Map.unmodifiable({
+          for (final question in questions)
+            if (question.initialAnswer != null)
+              question.id: question.initialAnswer!,
+          ...state.answers,
+        }),
         isLoading: false,
       );
     } catch (_) {
