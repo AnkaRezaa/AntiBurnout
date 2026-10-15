@@ -12,6 +12,9 @@ import 'package:mobile/features/auth/presentation/controllers/auth_state.dart';
 import 'package:mobile/features/dashboard/presentation/widgets/latest_assessment_card.dart';
 import 'package:mobile/features/history/presentation/controllers/history_repository.dart';
 import 'package:mobile/features/history/presentation/widgets/assessment_history_tile.dart';
+import 'package:mobile/features/profile/di/profile_providers.dart';
+import 'package:mobile/features/profile/domain/entities/personalization.dart';
+import 'package:mobile/features/profile/presentation/controllers/personalization_controller.dart';
 import 'package:mobile/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:mobile/features/profile/presentation/controllers/preferences_controller.dart';
 import 'package:mobile/features/profile/presentation/pages/edit_profile_page.dart';
@@ -315,6 +318,7 @@ void main() {
         RoutePaths.preferences,
         RoutePaths.help,
         RoutePaths.about,
+        RoutePaths.personalization,
         RoutePaths.resultFor('4'),
       ]) {
         container.read(appRouterProvider).go(location);
@@ -332,7 +336,7 @@ void main() {
   );
 
   testWidgets(
-    'preferences preview retains choices without changing the app theme',
+    'preferences apply and retain theme while reminder choices stay available',
     (tester) async {
       final container = await _start(tester);
       await _tab(tester, 'Profil');
@@ -347,22 +351,94 @@ void main() {
         container.read(preferencesControllerProvider).dailyReminder,
         isTrue,
       );
-      final darkChip = find.ancestor(
-        of: find.text('Gelap'),
-        matching: find.byType(ChoiceChip),
-      );
-      expect(tester.widget<ChoiceChip>(darkChip).selected, isTrue);
-      expect(Theme.of(tester.element(darkChip)).brightness, Brightness.light);
+      final darkOption = find.byKey(const ValueKey('theme-option-dark'));
+      expect(Theme.of(tester.element(darkOption)).brightness, Brightness.dark);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       await _tap(tester, 'Preferensi');
-      expect(tester.widget<ChoiceChip>(darkChip).selected, isTrue);
+      expect(Theme.of(tester.element(darkOption)).brightness, Brightness.dark);
       expect(
         container.read(preferencesControllerProvider).dailyReminder,
         isTrue,
       );
     },
   );
+
+  testWidgets('birth date can be selected, saved, reopened and cleared', (
+    tester,
+  ) async {
+    final container = await _start(tester);
+    final repository = container.read(profileRepositoryProvider);
+    await repository.savePersonalization(
+      userId: 'preview-user',
+      personalization: Personalization(birthDate: DateTime(2000, 1, 15)),
+    );
+    await _tab(tester, 'Profil');
+    await _tap(tester, 'Personalisasi Profil');
+    expect(find.text('Tanggal Lahir'), findsOneWidget);
+    expect(find.text('15/01/2000'), findsOneWidget);
+    expect(find.text('Umur'), findsNothing);
+    await _tap(tester, '15/01/2000');
+    final picker = tester.widget<DatePickerDialog>(
+      find.byType(DatePickerDialog),
+    );
+    expect(picker.lastDate, DateUtils.dateOnly(DateTime.now()));
+    await _tap(tester, 'Batal');
+    expect(find.text('15/01/2000'), findsOneWidget);
+    await _tap(tester, '15/01/2000');
+    await _tap(tester, '16');
+    await _tap(tester, 'Pilih');
+    expect(find.text('16/01/2000'), findsOneWidget);
+    await _tap(tester, 'Aktivitas');
+    await _tap(tester, 'Data Diri');
+    expect(find.text('16/01/2000'), findsOneWidget);
+    await _tab(tester, 'Beranda');
+    await _tab(tester, 'Profil');
+    expect(find.text('16/01/2000'), findsOneWidget);
+    await _tap(tester, 'Tambahan');
+    await _tap(tester, 'Simpan Personalisasi');
+    expect(
+      (await repository.getPersonalization('preview-user'))?.birthDate,
+      DateTime(2000, 1, 16),
+    );
+    await _tap(tester, 'Personalisasi Profil');
+    expect(find.text('16/01/2000'), findsOneWidget);
+    await tester.tap(find.byTooltip('Hapus tanggal lahir'));
+    await tester.pumpAndSettle();
+    expect(find.text('16/01/2000'), findsNothing);
+    await _tap(tester, 'Tambahan');
+    await _tap(tester, 'Simpan Personalisasi');
+    expect(
+      (await repository.getPersonalization('preview-user'))?.birthDate,
+      isNull,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('future birth dates cannot be saved', (tester) async {
+    final container = await _start(tester);
+    await _tab(tester, 'Profil');
+    await _tap(tester, 'Personalisasi Profil');
+    final controller = container.read(
+      personalizationControllerProvider.notifier,
+    );
+    controller.update(
+      Personalization(birthDate: DateTime.now().add(const Duration(days: 1))),
+    );
+    expect(await controller.save(), isFalse);
+    expect(
+      container.read(personalizationControllerProvider).errorMessage,
+      contains('hari ini'),
+    );
+    expect(
+      await container
+          .read(profileRepositoryProvider)
+          .getPersonalization('preview-user'),
+      isNull,
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('FAQ expands and remains expanded after a tab switch', (
     tester,
