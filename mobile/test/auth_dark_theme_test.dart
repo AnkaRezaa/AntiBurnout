@@ -1,4 +1,7 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/app/app.dart';
@@ -20,9 +23,12 @@ Future<ProviderContainer> _startDark(WidgetTester tester) async {
       .read(preferencesControllerProvider.notifier)
       .setThemeMode(ThemeMode.dark);
   await tester.pumpWidget(
-    UncontrolledProviderScope(
-      container: container,
-      child: const AntiBurnoutApp(),
+    RepaintBoundary(
+      key: const ValueKey('auth-dark-app'),
+      child: UncontrolledProviderScope(
+        container: container,
+        child: const AntiBurnoutApp(),
+      ),
     ),
   );
   // Welcome precaches image assets before displaying its content.
@@ -49,16 +55,38 @@ Future<ProviderContainer> _startDark(WidgetTester tester) async {
 
 void main() {
   testWidgets(
-    'Welcome gives its logo contrast without changing its footprint',
+    'Welcome keeps its logo transparent and legible without changing its footprint',
     (tester) async {
       final container = await _startDark(tester);
       final frameFinder = find.byKey(const ValueKey('welcome-logo-frame'));
-      final darkFrame = tester.widget<Container>(frameFinder);
       final darkRect = tester.getRect(frameFinder);
-      expect(
-        (darkFrame.decoration as BoxDecoration).color,
-        AppPalette.light.blob,
+      final logoFinder = find.descendant(
+        of: frameFinder,
+        matching: find.byType(Image),
       );
+      final darkLogo = tester.widget<Image>(logoFinder);
+      expect(darkLogo.color, AppPalette.dark.primary.withValues(alpha: 0.7));
+      expect(darkLogo.colorBlendMode, BlendMode.srcATop);
+      // Empty logo pixels must reveal the page, not a light backing panel.
+      await tester.runAsync(() async {
+        final boundary = tester.renderObject<RenderRepaintBoundary>(
+          find.byKey(const ValueKey('auth-dark-app')),
+        );
+        final image = await boundary.toImage(pixelRatio: 1);
+        final bytes = (await image.toByteData(
+          format: ui.ImageByteFormat.rawRgba,
+        ))!.buffer.asUint8List();
+        List<int> pixel(int x, int y) {
+          final offset = (y * image.width + x) * 4;
+          return bytes.sublist(offset, offset + 4);
+        }
+
+        expect(
+          pixel((darkRect.left + 2).round(), darkRect.center.dy.round()),
+          pixel((darkRect.left - 2).round(), darkRect.center.dy.round()),
+        );
+        image.dispose();
+      });
       expect(find.bySemanticsLabel('Logo AntiBurnout'), findsOneWidget);
       expect(find.text('Mulai Sekarang'), findsOneWidget);
       expect(Theme.of(tester.element(frameFinder)).brightness, Brightness.dark);
@@ -67,7 +95,7 @@ void main() {
           .read(preferencesControllerProvider.notifier)
           .setThemeMode(ThemeMode.light);
       await tester.pumpAndSettle();
-      expect(tester.widget<Container>(frameFinder).decoration, isNull);
+      expect(tester.widget<Image>(logoFinder).color, isNull);
       expect(tester.getRect(frameFinder), darkRect);
       expect(find.bySemanticsLabel('Logo AntiBurnout'), findsOneWidget);
       expect(tester.takeException(), isNull);

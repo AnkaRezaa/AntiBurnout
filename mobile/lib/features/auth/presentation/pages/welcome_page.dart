@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/route_paths.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_button.dart';
 
@@ -159,30 +158,20 @@ class _WelcomeContent extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SizedBox(height: context.ui(16)),
-                                Container(
+                                SizedBox(
                                   key: const ValueKey('welcome-logo-frame'),
                                   width: logoWidth,
                                   height: context.ui(160),
-                                  padding:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? EdgeInsets.all(
-                                          context.ui(AppSpacing.sm),
-                                        )
-                                      : EdgeInsets.zero,
-                                  decoration:
-                                      Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? BoxDecoration(
-                                          color: AppPalette.light.blob,
-                                          borderRadius: BorderRadius.circular(
-                                            context.ui(AppSpacing.radius),
-                                          ),
-                                        )
-                                      : null,
                                   child: Image.asset(
                                     _logoAsset,
                                     fit: BoxFit.contain,
+                                    color:
+                                        Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColors.of(context).primary
+                                              .withValues(alpha: 0.7)
+                                        : null,
+                                    colorBlendMode: BlendMode.srcATop,
                                     semanticLabel: 'Logo AntiBurnout',
                                   ),
                                 ),
