@@ -15,12 +15,14 @@ import '../widgets/motivation_card.dart';
 class DashboardPage extends ConsumerWidget {
   final VoidCallback? onStartSurvey;
   final VoidCallback? onViewHistory;
+  final ValueChanged<String>? onViewLatestAssessment;
   final VoidCallback? onProfileTap;
 
   const DashboardPage({
     super.key,
     this.onStartSurvey,
     this.onViewHistory,
+    this.onViewLatestAssessment,
     this.onProfileTap,
   });
 
@@ -28,6 +30,7 @@ class DashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileControllerProvider);
     final latest = ref.watch(latestAssessmentProvider);
+    final viewLatestAssessment = onViewLatestAssessment;
 
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
@@ -58,7 +61,9 @@ class DashboardPage extends ConsumerWidget {
                 date: latest == null
                     ? 'Belum ada asesmen'
                     : formatAssessmentDate(latest.takenAt),
-                onHistoryTap: onViewHistory,
+                onViewResult: latest == null || viewLatestAssessment == null
+                    ? null
+                    : () => viewLatestAssessment(latest.id),
               ),
               SizedBox(height: context.ui(AppSpacing.md)),
 

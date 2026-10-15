@@ -17,6 +17,7 @@ import 'package:mobile/features/history/presentation/controllers/history_reposit
 import 'package:mobile/features/history/presentation/controllers/history_state.dart';
 import 'package:mobile/features/history/presentation/widgets/assessment_history_item.dart';
 import 'package:mobile/features/history/presentation/widgets/assessment_history_tile.dart';
+import 'package:mobile/features/recommendations/presentation/pages/recommendation_page.dart';
 import 'package:mobile/features/results/presentation/pages/result_page.dart';
 import 'package:mobile/features/survey/di/survey_providers.dart';
 import 'package:mobile/features/survey/data/repositories/in_memory_survey_repository.dart';
@@ -304,7 +305,6 @@ void main() {
         'Riwayat',
         'Profil',
       ]);
-      expect(find.text('Lihat Detail'), findsNothing);
       await tester.tap(find.byTooltip('Buka profil'));
       await tester.pumpAndSettle();
       expect(
@@ -314,6 +314,185 @@ void main() {
         3,
       );
       expect(find.text('Personalisasi Profil'), findsOneWidget);
+    },
+  );
+
+  for (final android in [false, true]) {
+    testWidgets(
+      'dashboard latest detail opens exact assessment in History and backs to list (${android ? 'Android' : 'UI'})',
+      (tester) async {
+        final repository = _Assessments();
+        final container = await _start(
+          tester,
+          repository: repository,
+          history: [
+            for (final item in repository.items.values)
+              AssessmentHistoryItem(
+                id: item.id,
+                riskLevel: item.riskLevel,
+                takenAt: item.takenAt,
+              ),
+          ],
+        );
+        // A is first in the fixture; B is the latest by its assessment date.
+        await _tap(tester, 'Lihat Detail ›');
+        expect(
+          tester.widget<ResultPage>(find.byType(ResultPage)).assessmentId,
+          'B',
+        );
+        expect(
+          tester
+              .widget<BottomNavigationBar>(find.byType(BottomNavigationBar))
+              .currentIndex,
+          2,
+        );
+        await _tap(tester, 'Lihat Rekomendasi');
+        expect(
+          tester
+              .widget<RecommendationPage>(find.byType(RecommendationPage))
+              .assessmentId,
+          'B',
+        );
+        await _back(tester, android);
+        expect(
+          tester.widget<ResultPage>(find.byType(ResultPage)).assessmentId,
+          'B',
+        );
+        await _back(tester, android);
+        expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+        expect(find.byType(ResultPage), findsNothing);
+        expect(
+          container
+              .read(appRouterProvider)
+              .routeInformationProvider
+              .value
+              .uri
+              .path,
+          RoutePaths.history,
+        );
+        expect(
+          tester
+              .widget<BottomNavigationBar>(find.byType(BottomNavigationBar))
+              .currentIndex,
+          2,
+        );
+        expect(repository.submissions, 0);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets(
+    'dashboard latest detail replaces an older retained History detail',
+    (tester) async {
+      final repository = _Assessments();
+      await _start(
+        tester,
+        repository: repository,
+        history: [
+          for (final item in repository.items.values)
+            AssessmentHistoryItem(
+              id: item.id,
+              riskLevel: item.riskLevel,
+              takenAt: item.takenAt,
+            ),
+        ],
+      );
+      await _tab(tester, 'Riwayat');
+      await tester.tap(
+        find.byWidgetPredicate(
+          (widget) => widget is AssessmentHistoryTile && widget.item.id == 'A',
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<ResultPage>(find.byType(ResultPage)).assessmentId,
+        'A',
+      );
+      await _tab(tester, 'Beranda');
+      await _tap(tester, 'Lihat Detail ›');
+      expect(
+        tester.widget<ResultPage>(find.byType(ResultPage)).assessmentId,
+        'B',
+      );
+      await _tab(tester, 'Beranda');
+      await _tab(tester, 'Riwayat');
+      expect(
+        tester.widget<ResultPage>(find.byType(ResultPage)).assessmentId,
+        'B',
+      );
+      await _back(tester, false);
+      expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+      expect(find.byType(ResultPage), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'dashboard latest detail follows a newer session assessment absent from repository',
+    (tester) async {
+      final repository = _Assessments();
+      final container = await _start(
+        tester,
+        repository: repository,
+        history: [
+          for (final item in repository.items.values)
+            AssessmentHistoryItem(
+              id: item.id,
+              riskLevel: item.riskLevel,
+              takenAt: item.takenAt,
+            ),
+        ],
+      );
+      container.read(assessmentSessionCacheProvider.notifier).state = {
+        'session-latest': Assessment(
+          id: 'session-latest',
+          riskLevel: RiskLevel.sedang,
+          takenAt: DateTime(2026, 10, 16),
+          modelFactors: const [AssessmentFactor(label: 'Faktor dari sesi')],
+        ),
+      };
+      await tester.pumpAndSettle();
+      await _tap(tester, 'Lihat Detail ›');
+      expect(
+        tester.widget<ResultPage>(find.byType(ResultPage)).assessmentId,
+        'session-latest',
+      );
+      expect(find.text('Faktor dari sesi'), findsOneWidget);
+      expect(repository.items.containsKey('session-latest'), isFalse);
+      await _tap(tester, 'Lihat Rekomendasi');
+      expect(
+        tester
+            .widget<RecommendationPage>(find.byType(RecommendationPage))
+            .assessmentId,
+        'session-latest',
+      );
+      await _back(tester, true);
+      await _back(tester, false);
+      expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is AssessmentHistoryTile &&
+              widget.item.id == 'session-latest',
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'dashboard without assessments does not expose a result shortcut',
+    (tester) async {
+      await _start(tester, history: []);
+      expect(find.text('Belum ada asesmen'), findsOneWidget);
+      expect(find.text('Lihat Detail ›'), findsNothing);
+      expect(find.text('Riwayat Saya'), findsOneWidget);
+      await _tap(tester, 'Riwayat Saya');
+      expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+      expect(find.byType(ResultPage), findsNothing);
+      expect(tester.takeException(), isNull);
     },
   );
 

@@ -95,6 +95,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   },
                   onViewHistory: () =>
                       StatefulNavigationShell.of(context).goBranch(2),
+                  onViewLatestAssessment: (id) =>
+                      context.go(RoutePaths.resultFor(id)),
                   onProfileTap: () =>
                       StatefulNavigationShell.of(context).goBranch(3),
                 ),

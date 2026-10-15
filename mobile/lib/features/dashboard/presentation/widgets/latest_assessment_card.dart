@@ -12,12 +12,12 @@ class LatestAssessmentCard extends StatelessWidget {
     super.key,
     required this.riskLevel,
     required this.date,
-    this.onHistoryTap,
+    this.onViewResult,
   });
 
   final RiskLevel? riskLevel;
   final String date;
-  final VoidCallback? onHistoryTap;
+  final VoidCallback? onViewResult;
 
   Color _riskColor(BuildContext context) => switch (riskLevel) {
     RiskLevel.rendah => AssessmentColors.riskLow,
@@ -106,15 +106,15 @@ class LatestAssessmentCard extends StatelessWidget {
                   color: AppColors.of(context).hint,
                 ),
               ),
-              if (onHistoryTap != null)
+              if (onViewResult != null)
                 TextButton(
-                  onPressed: onHistoryTap,
+                  onPressed: onViewResult,
                   style: TextButton.styleFrom(
                     minimumSize: const Size(48, 48),
                     padding: EdgeInsets.symmetric(horizontal: context.ui(4)),
                   ),
                   child: Text(
-                    'Lihat Riwayat ›',
+                    'Lihat Detail ›',
                     style: AppTextStyles.link(context)
                         .copyWith(fontSize: context.ui(12)),
                   ),
