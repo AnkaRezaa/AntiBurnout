@@ -54,35 +54,7 @@ class LatestAssessmentCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: context.ui(AppSpacing.sm)),
-          Wrap(
-            spacing: context.ui(AppSpacing.md),
-            runSpacing: context.ui(AppSpacing.sm),
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Text(
-                'Risiko Burnout',
-                style: AppTextStyles.title.copyWith(fontSize: context.ui(22)),
-              ),
-              if (riskLevel != null)
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.ui(12),
-                    vertical: context.ui(6),
-                  ),
-                  decoration: BoxDecoration(
-                    color: _riskColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(context.ui(20)),
-                  ),
-                  child: Text(
-                    riskLevel!.label.toUpperCase(),
-                    style: AppTextStyles.link.copyWith(
-                      fontSize: context.ui(11),
-                      color: _riskColor,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+          _buildRiskHeading(context),
           SizedBox(height: context.ui(AppSpacing.lg)),
           if (riskLevel == null)
             Text(
@@ -149,6 +121,56 @@ class LatestAssessmentCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRiskHeading(BuildContext context) {
+    final title = Text(
+      'Risiko Burnout',
+      style: AppTextStyles.title.copyWith(fontSize: context.ui(22)),
+    );
+    if (riskLevel == null) return title;
+
+    final badge = Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.ui(12),
+        vertical: context.ui(6),
+      ),
+      decoration: BoxDecoration(
+        color: _riskColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(context.ui(20)),
+      ),
+      child: Text(
+        riskLevel!.label.toUpperCase(),
+        style: AppTextStyles.link.copyWith(
+          fontSize: context.ui(11),
+          color: _riskColor,
+        ),
+      ),
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textScaler = MediaQuery.textScalerOf(context);
+        if (constraints.maxWidth < context.ui(270) ||
+            textScaler.scale(14) > 20) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              title,
+              SizedBox(height: context.ui(AppSpacing.sm)),
+              Align(alignment: Alignment.centerRight, child: badge),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: title),
+            SizedBox(width: context.ui(AppSpacing.sm)),
+            badge,
+          ],
+        );
+      },
     );
   }
 
