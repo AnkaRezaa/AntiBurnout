@@ -4,11 +4,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/user_avatar.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../controllers/profile_controller.dart';
+import 'about_page.dart';
+import 'edit_profile_page.dart';
+import 'help_page.dart';
 import 'personalization_page.dart';
+import 'preferences_page.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({
+    super.key,
+    this.onEditProfile,
+    this.onPreferences,
+    this.onHelp,
+    this.onAbout,
+    this.onPersonalization,
+  });
+
+  final VoidCallback? onEditProfile;
+  final VoidCallback? onPreferences;
+  final VoidCallback? onHelp;
+  final VoidCallback? onAbout;
+  final VoidCallback? onPersonalization;
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
@@ -16,16 +35,14 @@ class ProfilePage extends ConsumerStatefulWidget {
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   bool _isLoggingOut = false;
-  bool _showPersonalization = false;
+  String? _localPage;
 
-  void _showComingSoon(String feature) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('$feature belum tersedia.'),
-        ),
-      );
+  void _openPage(String page, VoidCallback? onOpen) {
+    if (onOpen != null) {
+      onOpen();
+    } else {
+      setState(() => _localPage = page);
+    }
   }
 
   Future<void> _logout() async {
@@ -41,9 +58,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Gagal keluar. Silakan coba lagi.'),
-        ),
+        const SnackBar(content: Text('Gagal keluar. Silakan coba lagi.')),
       );
     } finally {
       if (mounted) {
@@ -56,19 +71,21 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_showPersonalization) {
-      return PersonalizationPage(
-        onBack: () {
-          setState(() {
-            _showPersonalization = false;
-          });
-        },
-      );
+    void closeLocalPage() => setState(() => _localPage = null);
+    switch (_localPage) {
+      case 'edit':
+        return EditProfilePage(onBack: closeLocalPage);
+      case 'preferences':
+        return PreferencesPage(onBack: closeLocalPage);
+      case 'help':
+        return HelpPage(onBack: closeLocalPage);
+      case 'about':
+        return AboutPage(onBack: closeLocalPage);
+      case 'personalization':
+        return PersonalizationPage(onBack: closeLocalPage);
     }
 
-    final user = ref.watch(authControllerProvider).user;
-    final name = user?.name ?? 'Pengguna';
-    final email = user?.email ?? '';
+    final profile = ref.watch(profileControllerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -95,30 +112,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    'assets/images/profile-male.png',
-                    width: context.ui(98),
-                    height: context.ui(98),
-                    fit: BoxFit.contain,
-                    semanticLabel: 'Avatar pengguna',
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: context.ui(104),
-                        height: context.ui(104),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFFEEF1FF),
-                          border: Border.all(
-                            color: const Color(0xFFE0E6F2),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.person_outline_rounded,
-                          size: context.ui(48),
-                          color: AppColors.hint,
-                        ),
-                      );
-                    },
+                  UserAvatar(
+                    size: 98,
+                    photoUrl: profile.photoUrl,
+                    photoBytes: profile.photoBytes,
                   ),
                   SizedBox(width: context.ui(14)),
                   Expanded(
@@ -126,7 +123,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          name,
+                          profile.name,
                           style: AppTextStyles.title.copyWith(
                             color: AppColors.navy,
                             fontSize: context.ui(20),
@@ -135,7 +132,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         ),
                         SizedBox(height: context.ui(8)),
                         Text(
-                          email,
+                          profile.email,
                           style: AppTextStyles.subtitle.copyWith(
                             color: AppColors.hint,
                             fontSize: context.ui(14),
@@ -144,15 +141,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         SizedBox(height: context.ui(12)),
                         TextButton(
                           onPressed: () {
-                            _showComingSoon('Edit Profil');
+                            _openPage('edit', widget.onEditProfile);
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.primary,
                             backgroundColor: const Color(0xFFEEF0FF),
-                            minimumSize: Size(
-                              context.ui(100),
-                              context.ui(40),
-                            ),
+                            minimumSize: Size(context.ui(100), context.ui(40)),
                             padding: EdgeInsets.symmetric(
                               horizontal: context.ui(18),
                               vertical: context.ui(6),
@@ -179,9 +173,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 clipBehavior: Clip.antiAlias,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(context.ui(16)),
-                  side: const BorderSide(
-                    color: Color(0xFFE0E6F2),
-                  ),
+                  side: const BorderSide(color: Color(0xFFE0E6F2)),
                 ),
                 child: Column(
                   children: [
@@ -190,9 +182,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       iconColor: Colors.black,
                       label: 'Personalisasi Profil',
                       onTap: () {
-                        setState(() {
-                          _showPersonalization = true;
-                        });
+                        _openPage('personalization', widget.onPersonalization);
                       },
                     ),
                     const _ProfileDivider(),
@@ -201,7 +191,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       iconColor: Colors.black,
                       label: 'Preferensi',
                       onTap: () {
-                        _showComingSoon('Preferensi');
+                        _openPage('preferences', widget.onPreferences);
                       },
                     ),
                     const _ProfileDivider(),
@@ -209,7 +199,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       icon: Icons.question_mark_rounded,
                       label: 'Bantuan',
                       onTap: () {
-                        _showComingSoon('Bantuan');
+                        _openPage('help', widget.onHelp);
                       },
                     ),
                     const _ProfileDivider(),
@@ -217,7 +207,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       icon: Icons.info_outline_rounded,
                       label: 'Tentang Aplikasi',
                       onTap: () {
-                        _showComingSoon('Tentang Aplikasi');
+                        _openPage('about', widget.onAbout);
                       },
                     ),
                   ],
@@ -236,10 +226,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     horizontal: context.ui(20),
                     vertical: context.ui(14),
                   ),
-                  side: const BorderSide(
-                    color: Color(0xFFFF526B),
-                    width: 1,
-                  ),
+                  side: const BorderSide(color: Color(0xFFFF526B), width: 1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(context.ui(14)),
                   ),
@@ -297,11 +284,7 @@ class _ProfileMenuItem extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(
-                icon,
-                color: iconColor,
-                size: context.ui(24),
-              ),
+              Icon(icon, color: iconColor, size: context.ui(24)),
               SizedBox(width: context.ui(16)),
               Expanded(
                 child: Text(
@@ -331,10 +314,6 @@ class _ProfileDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(
-      height: 1,
-      thickness: 1,
-      color: Color(0xFFE5E9F2),
-    );
+    return const Divider(height: 1, thickness: 1, color: Color(0xFFE5E9F2));
   }
 }

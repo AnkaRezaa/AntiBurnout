@@ -6,36 +6,43 @@ abstract class HistoryRepository {
   Future<List<AssessmentHistoryItem>> fetchHistory();
 }
 
-/// Data dummy. Ganti dengan implementasi API nanti, lalu ubah provider di bawah.
+final assessmentFixtureProvider = Provider<List<AssessmentHistoryItem>>(
+  (ref) => [
+    AssessmentHistoryItem(
+      id: '4',
+      riskLevel: RiskLevel.sedang,
+      takenAt: DateTime(2026, 9, 18, 20, 15),
+    ),
+    AssessmentHistoryItem(
+      id: '3',
+      riskLevel: RiskLevel.rendah,
+      takenAt: DateTime(2026, 9, 10, 19, 40),
+    ),
+    AssessmentHistoryItem(
+      id: '2',
+      riskLevel: RiskLevel.sedang,
+      takenAt: DateTime(2026, 9, 2, 21, 10),
+    ),
+    AssessmentHistoryItem(
+      id: '1',
+      riskLevel: RiskLevel.tinggi,
+      takenAt: DateTime(2026, 8, 24, 18, 25),
+    ),
+  ],
+);
+
 class DummyHistoryRepository implements HistoryRepository {
+  DummyHistoryRepository(this._items);
+
+  final List<AssessmentHistoryItem> _items;
+
   @override
   Future<List<AssessmentHistoryItem>> fetchHistory() async {
     await Future.delayed(const Duration(milliseconds: 400));
-    return [
-      AssessmentHistoryItem(
-        id: '4',
-        riskLevel: RiskLevel.sedang,
-        takenAt: DateTime(2026, 9, 18, 20, 15),
-      ),
-      AssessmentHistoryItem(
-        id: '3',
-        riskLevel: RiskLevel.rendah,
-        takenAt: DateTime(2026, 9, 10, 19, 40),
-      ),
-      AssessmentHistoryItem(
-        id: '2',
-        riskLevel: RiskLevel.sedang,
-        takenAt: DateTime(2026, 9, 2, 21, 10),
-      ),
-      AssessmentHistoryItem(
-        id: '1',
-        riskLevel: RiskLevel.tinggi,
-        takenAt: DateTime(2026, 8, 24, 18, 25),
-      ),
-    ];
+    return List.unmodifiable(_items);
   }
 }
 
 final historyRepositoryProvider = Provider<HistoryRepository>(
-  (ref) => DummyHistoryRepository(),
+  (ref) => DummyHistoryRepository(ref.watch(assessmentFixtureProvider)),
 );

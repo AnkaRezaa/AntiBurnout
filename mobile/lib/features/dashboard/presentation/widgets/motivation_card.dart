@@ -1,60 +1,60 @@
 import 'package:flutter/material.dart';
 
-class MotivationCard extends StatelessWidget {
-  final String quote;
+import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/assessment_colors.dart';
 
+class MotivationCard extends StatelessWidget {
   const MotivationCard({
     super.key,
-    this.quote = '"Istirahat bukanlah kemalasan, tapi bagian dari proses."',
+    this.quote = 'Tidur yang cukup membantu menjaga kesehatan mental dan produktivitasmu.',
   });
+
+  final String quote;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Motivasi Hari Ini',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFF0F172A),
+          style: AppTextStyles.title.copyWith(
+            fontSize: context.ui(17),
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: context.ui(AppSpacing.md)),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: EdgeInsets.all(context.ui(18)),
           decoration: BoxDecoration(
-            color: const Color(0xFFF0FDF4),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFDCFCE7), width: 1.2),
+            color: AssessmentColors.motivationTint,
+            borderRadius: BorderRadius.circular(context.ui(18)),
           ),
           child: Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: context.ui(48),
+                height: context.ui(48),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFDCFCE7),
+                  color: AssessmentColors.motivationIcon,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.sync_alt_rounded,
-                  size: 18,
-                  color: Color(0xFF059669),
+                child: Icon(
+                  Icons.lightbulb_outline_rounded,
+                  size: context.ui(26),
+                  color: AppColors.background,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: context.ui(AppSpacing.md)),
               Expanded(
                 child: Text(
                   quote,
-                  style: const TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 13,
-                    color: Color(0xFF065F46),
-                    fontWeight: FontWeight.w500,
-                    height: 1.4,
+                  style: AppTextStyles.subtitle.copyWith(
+                    fontSize: context.ui(12),
                   ),
                 ),
               ),
