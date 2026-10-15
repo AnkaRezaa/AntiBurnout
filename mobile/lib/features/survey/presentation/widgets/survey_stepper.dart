@@ -72,7 +72,7 @@ class _SurveyStepperState extends State<SurveyStepper> {
         if (!didPop) _back();
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.of(context).background,
         body: SafeArea(
           child: Stack(
             children: [
@@ -83,8 +83,8 @@ class _SurveyStepperState extends State<SurveyStepper> {
                   child: Container(
                     width: context.ui(150),
                     height: context.ui(150),
-                    decoration: const BoxDecoration(
-                      color: AppColors.blob,
+                    decoration: BoxDecoration(
+                      color: AppColors.of(context).blob,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -113,6 +113,7 @@ class _SurveyStepperState extends State<SurveyStepper> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          // Keep the title anchored to progress on every step.
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -131,7 +132,7 @@ class _SurveyStepperState extends State<SurveyStepper> {
                               Text(
                                 'Langkah ${_step + 1} dari $_total',
                                 style: _subtitleStyle(context, 13).copyWith(
-                                  color: AppColors.navy,
+                                  color: AppColors.of(context).navy,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -143,8 +144,8 @@ class _SurveyStepperState extends State<SurveyStepper> {
                                 child: LinearProgressIndicator(
                                   value: progress,
                                   minHeight: context.ui(9),
-                                  color: AppColors.primary,
-                                  backgroundColor: AppColors.blob,
+                                  color: AppColors.of(context).primary,
+                                  backgroundColor: AppColors.of(context).blob,
                                 ),
                               ),
                               Align(
@@ -155,55 +156,59 @@ class _SurveyStepperState extends State<SurveyStepper> {
                                   ),
                                   child: Text(
                                     '${(progress * 100).round()}%',
-                                    style: AppTextStyles.link.copyWith(
-                                      fontSize: context.ui(12),
-                                    ),
+                                    style: AppTextStyles.link(context)
+                                        .copyWith(fontSize: context.ui(12)),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: context.ui(AppSpacing.md),
-                              bottom: context.ui(AppSpacing.xl + AppSpacing.md),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  title,
-                                  style: AppTextStyles.title.copyWith(
-                                    fontSize: context.ui(23),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: context.ui(AppSpacing.md),
+                                  bottom: context.ui(
+                                    AppSpacing.xl + AppSpacing.md,
                                   ),
                                 ),
-                                SizedBox(height: context.ui(12)),
-                                Text(
-                                  subtitle,
-                                  style: _subtitleStyle(context, 13),
-                                ),
-                                SizedBox(height: context.ui(AppSpacing.xl)),
-                                IgnorePointer(
-                                  ignoring: widget.state.isSubmitting,
-                                  child: _isReview
-                                      ? _review(context)
-                                      : _input(context, _question),
-                                ),
-                                if (widget.state.errorMessage != null) ...[
-                                  SizedBox(height: context.ui(AppSpacing.lg)),
-                                  Semantics(
-                                    liveRegion: true,
-                                    child: Text(
-                                      widget.state.errorMessage!,
-                                      style: _subtitleStyle(
-                                        context,
-                                        13,
-                                      ).copyWith(color: AppColors.error),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      title,
+                                      style: AppTextStyles.title(context)
+                                          .copyWith(fontSize: context.ui(23)),
                                     ),
-                                  ),
-                                ],
-                              ],
-                            ),
+                                    SizedBox(height: context.ui(12)),
+                                    Text(
+                                      subtitle,
+                                      style: _subtitleStyle(context, 13),
+                                    ),
+                                    SizedBox(height: context.ui(AppSpacing.xl)),
+                                    IgnorePointer(
+                                      ignoring: widget.state.isSubmitting,
+                                      child: _isReview
+                                          ? _review(context)
+                                          : _input(context, _question),
+                                    ),
+                                    if (widget.state.errorMessage != null) ...[
+                                      SizedBox(
+                                        height: context.ui(AppSpacing.lg),
+                                      ),
+                                      Semantics(
+                                        liveRegion: true,
+                                        child: Text(
+                                          widget.state.errorMessage!,
+                                          style: _subtitleStyle(context, 13)
+                                              .copyWith(
+                                                color: AppColors.of(context)
+                                                    .error,
+                                              ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -386,11 +391,11 @@ class _SurveyStepperState extends State<SurveyStepper> {
                     onPressed: () => _number(question, minutes.toDouble()),
                     style: FilledButton.styleFrom(
                       backgroundColor: value == minutes
-                          ? AppColors.primary
-                          : AppColors.blob.withValues(alpha: .7),
+                          ? AppColors.of(context).primary
+                          : AppColors.of(context).blob.withValues(alpha: .7),
                       foregroundColor: value == minutes
-                          ? AppColors.background
-                          : AppColors.primary,
+                          ? AppColors.of(context).onPrimary
+                          : AppColors.of(context).primary,
                       minimumSize: const Size(64, 48),
                       padding: EdgeInsets.all(context.ui(12)),
                       shape: RoundedRectangleBorder(
@@ -463,8 +468,8 @@ class _SurveyStepperState extends State<SurveyStepper> {
 
   Widget _review(BuildContext context) => Container(
     decoration: BoxDecoration(
-      color: AppColors.background,
-      border: Border.all(color: AppColors.border),
+      color: AppColors.of(context).surface,
+      border: Border.all(color: AppColors.of(context).border),
       borderRadius: BorderRadius.circular(context.ui(AppSpacing.radius)),
     ),
     child: Column(
@@ -480,14 +485,16 @@ class _SurveyStepperState extends State<SurveyStepper> {
               decoration: BoxDecoration(
                 border: index == widget.state.questions.length - 1
                     ? null
-                    : const Border(bottom: BorderSide(color: AppColors.border)),
+                    : Border(
+                        bottom: BorderSide(color: AppColors.of(context).border),
+                      ),
               ),
               child: Row(
                 children: [
                   Icon(
                     _reviewIcon(question.id),
                     size: context.ui(19),
-                    color: AppColors.navy,
+                    color: AppColors.of(context).navy,
                   ),
                   SizedBox(width: context.ui(12)),
                   Expanded(
@@ -502,7 +509,7 @@ class _SurveyStepperState extends State<SurveyStepper> {
                           '${widget.state.answers[question.id] ?? '—'} ${question.unit}'
                               .trim(),
                           style: _subtitleStyle(context, 12).copyWith(
-                            color: AppColors.navy,
+                            color: AppColors.of(context).navy,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -515,7 +522,7 @@ class _SurveyStepperState extends State<SurveyStepper> {
                   ),
                   Icon(
                     Icons.chevron_right_rounded,
-                    color: AppColors.primary,
+                    color: AppColors.of(context).primary,
                     size: context.ui(18),
                   ),
                 ],
@@ -594,17 +601,20 @@ class _SurveyAnswerFieldState extends State<_SurveyAnswerField> {
 }
 
 ButtonStyle _backStyle(BuildContext context) => OutlinedButton.styleFrom(
-  foregroundColor: AppColors.navy,
-  side: const BorderSide(color: AppColors.border),
+  foregroundColor: AppColors.of(context).navy,
+  side: BorderSide(color: AppColors.of(context).border),
   minimumSize: Size(0, context.ui(52)),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(context.ui(AppSpacing.fieldRadius)),
   ),
 );
 TextStyle _subtitleStyle(BuildContext context, double size) =>
-    AppTextStyles.subtitle.copyWith(fontSize: context.ui(size));
-TextStyle _numberStyle(BuildContext context, double size) => AppTextStyles.title
-    .copyWith(color: AppColors.primary, fontSize: context.ui(size));
+    AppTextStyles.subtitle(context).copyWith(fontSize: context.ui(size));
+TextStyle _numberStyle(BuildContext context, double size) =>
+    AppTextStyles.title(context).copyWith(
+      color: AppColors.of(context).primary,
+      fontSize: context.ui(size),
+    );
 
 class _CleanSlider extends StatelessWidget {
   const _CleanSlider({
@@ -625,8 +635,8 @@ class _CleanSlider extends StatelessWidget {
       value: value,
       min: 0,
       max: maximum,
-      activeColor: AppColors.primary,
-      inactiveColor: AppColors.blob,
+      activeColor: AppColors.of(context).primary,
+      inactiveColor: AppColors.of(context).blob,
       onChanged: (v) => onChanged((v * 2).round() / 2),
     ),
   );
@@ -641,22 +651,22 @@ class _ValueBox extends StatelessWidget {
     padding: EdgeInsets.all(context.ui(8)),
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      border: Border.all(color: AppColors.border),
+      border: Border.all(color: AppColors.of(context).border),
       borderRadius: BorderRadius.circular(context.ui(12)),
     ),
     child: RichText(
       textScaler: MediaQuery.textScalerOf(context),
       text: TextSpan(
-        style: _subtitleStyle(
-          context,
-          14,
-        ).copyWith(color: AppColors.navy, fontWeight: FontWeight.w700),
+        style: _subtitleStyle(context, 14).copyWith(
+          color: AppColors.of(context).navy,
+          fontWeight: FontWeight.w700,
+        ),
         children: [
           TextSpan(text: value.toStringAsFixed(1)),
-          const TextSpan(
+          TextSpan(
             text: ' jam',
             style: TextStyle(
-              color: AppColors.body,
+              color: AppColors.of(context).body,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -679,7 +689,9 @@ class _ChoiceTile extends StatelessWidget {
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) => Material(
-    color: selected ? AppColors.blob.withValues(alpha: .55) : Colors.white,
+    color: selected
+        ? AppColors.of(context).blob.withValues(alpha: .55)
+        : AppColors.of(context).surface,
     borderRadius: BorderRadius.circular(context.ui(AppSpacing.fieldRadius)),
     child: InkWell(
       onTap: onTap,
@@ -697,7 +709,9 @@ class _ChoiceTile extends StatelessWidget {
             context.ui(AppSpacing.fieldRadius),
           ),
           border: Border.all(
-            color: selected ? AppColors.primary : AppColors.border,
+            color: selected
+                ? AppColors.of(context).primary
+                : AppColors.of(context).border,
             width: selected ? 1.4 : 1,
           ),
         ),
@@ -707,7 +721,9 @@ class _ChoiceTile extends StatelessWidget {
               selected
                   ? Icons.radio_button_checked_rounded
                   : Icons.radio_button_unchecked_rounded,
-              color: selected ? AppColors.primary : AppColors.hint,
+              color: selected
+                  ? AppColors.of(context).primary
+                  : AppColors.of(context).hint,
               size: context.ui(21),
             ),
             SizedBox(width: context.ui(12)),
@@ -719,7 +735,7 @@ class _ChoiceTile extends StatelessWidget {
                   Text(
                     label,
                     style: _subtitleStyle(context, 13).copyWith(
-                      color: AppColors.navy,
+                      color: AppColors.of(context).navy,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -748,9 +764,9 @@ class _SquareButton extends StatelessWidget {
     child: IconButton(
       onPressed: onPressed,
       style: IconButton.styleFrom(
-        backgroundColor: AppColors.blob.withValues(alpha: .6),
-        foregroundColor: AppColors.primary,
-        disabledForegroundColor: AppColors.hint,
+        backgroundColor: AppColors.of(context).blob.withValues(alpha: .6),
+        foregroundColor: AppColors.of(context).primary,
+        disabledForegroundColor: AppColors.of(context).hint,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(context.ui(12)),
         ),
@@ -767,14 +783,14 @@ class _TipCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: EdgeInsets.all(context.ui(14)),
     decoration: BoxDecoration(
-      color: AppColors.blob.withValues(alpha: .65),
+      color: AppColors.of(context).blob.withValues(alpha: .65),
       borderRadius: BorderRadius.circular(context.ui(AppSpacing.fieldRadius)),
     ),
     child: Row(
       children: [
         Icon(
           Icons.lightbulb_outline_rounded,
-          color: AppColors.primary,
+          color: AppColors.of(context).primary,
           size: context.ui(22),
         ),
         SizedBox(width: context.ui(10)),
