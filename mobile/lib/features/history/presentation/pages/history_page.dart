@@ -5,7 +5,6 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/app_back_button.dart';
 import '../widgets/assessment_history_item.dart';
 import '../controllers/history_controller.dart';
 import '../widgets/assessment_history_tile.dart';
@@ -39,23 +38,12 @@ class HistoryPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
-                children: [
-                  AppBackButton(
-                    onPressed: onBack,
-                    tooltip: 'Kembali ke beranda',
-                  ),
-                  SizedBox(width: context.ui(AppSpacing.xs)),
-                  Expanded(
-                    child: Text(
-                      'Riwayat Pemeriksaan',
-                      style: AppTextStyles.title.copyWith(
-                        fontSize: context.ui(20),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
+              Text(
+                'Riwayat Pemeriksaan',
+                style: AppTextStyles.title.copyWith(
+                  fontSize: context.ui(20),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 18),
 

@@ -4,7 +4,6 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../shared/widgets/app_back_button.dart';
 import '../../../../shared/widgets/app_button.dart';
 
 class SurveyIntroPage extends StatelessWidget {
@@ -29,23 +28,12 @@ class SurveyIntroPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      AppBackButton(
-                        tooltip: 'Kembali ke beranda',
-                        onPressed: onLater,
-                      ),
-                      SizedBox(width: context.ui(12)),
-                      Expanded(
-                        child: Text(
-                          'Survei Harian',
-                          style: AppTextStyles.title.copyWith(
-                            fontSize: context.ui(24),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Survei Harian',
+                    style: AppTextStyles.title.copyWith(
+                      fontSize: context.ui(24),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   SizedBox(height: context.ui(12)),
                   Container(
