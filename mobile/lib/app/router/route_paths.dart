@@ -15,6 +15,8 @@ abstract final class RoutePaths {
   static const help = '$profile/help';
   static const about = '$profile/about';
   static const personalization = '$profile/personalization';
+  static const registrationPersonalization =
+      '$personalization?origin=registration';
   static const dashboardSurvey = '$survey?origin=dashboard';
 
   static String questionsFor(SurveyOrigin origin) =>

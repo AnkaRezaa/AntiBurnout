@@ -44,23 +44,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     FocusScope.of(context).unfocus();
 
-    final ok = await ref.read(authControllerProvider.notifier).register(
+    // The router handles the authenticated registration destination.
+    await ref
+        .read(authControllerProvider.notifier)
+        .register(
           name: _name.text.trim(),
           email: _email.text.trim(),
           password: _password.text,
         );
-
-    if (!mounted) return;
-
-    if (ok) {
-      context.go(RoutePaths.login);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Registrasi berhasil. Silakan masuk dengan akunmu.'),
-        ),
-      );
-    }
   }
 
   @override
@@ -68,7 +59,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final auth = ref.watch(authControllerProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       resizeToAvoidBottomInset: true,
       body: Stack(
         fit: StackFit.expand,
@@ -92,9 +83,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     vertical: verticalPadding,
                   ),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: minimumHeight,
-                    ),
+                    constraints: BoxConstraints(minHeight: minimumHeight),
                     child: Center(
                       child: SizedBox(
                         width: double.infinity,
@@ -102,13 +91,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           key: _formKey,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment:
-                                CrossAxisAlignment.stretch,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
                                 'Buat Akun',
-                                style: AppTextStyles.title.copyWith(
-                                  color: AppColors.primaryDark,
+                                style: AppTextStyles.title(context).copyWith(
+                                  color: AppColors.of(context).primaryDark,
                                   fontSize: context.ui(32),
                                 ),
                               ),
@@ -116,9 +104,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               Text(
                                 'Daftar untuk mulai menjaga kesehatan '
                                 'mentalmu bersama AntiBurnout.',
-                                style: AppTextStyles.subtitle.copyWith(
-                                  fontSize: context.ui(16),
-                                ),
+                                style: AppTextStyles.subtitle(context)
+                                    .copyWith(fontSize: context.ui(16)),
                               ),
 
                               // Jarak deskripsi ke input pertama.
@@ -130,12 +117,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 textInputAction: TextInputAction.next,
                                 prefix: Icon(
                                   Icons.person_outline,
-                                  color: AppColors.hint,
+                                  color: AppColors.of(context).hint,
                                   size: context.ui(24),
                                 ),
                                 validator: (value) {
-                                  if (value == null ||
-                                      value.trim().isEmpty) {
+                                  if (value == null || value.trim().isEmpty) {
                                     return 'Nama lengkap wajib diisi.';
                                   }
                                   return null;
@@ -149,12 +135,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 textInputAction: TextInputAction.next,
                                 prefix: Icon(
                                   Icons.alternate_email,
-                                  color: AppColors.hint,
+                                  color: AppColors.of(context).hint,
                                   size: context.ui(24),
                                 ),
                                 validator: (value) {
-                                  if (value == null ||
-                                      !value.contains('@')) {
+                                  if (value == null || !value.contains('@')) {
                                     return 'Masukkan email yang valid.';
                                   }
                                   return null;
@@ -193,7 +178,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 Text(
                                   auth.errorMessage!,
                                   style: TextStyle(
-                                    color: AppColors.error,
+                                    color: AppColors.of(context).error,
                                     fontSize: context.ui(13),
                                   ),
                                 ),
@@ -211,20 +196,21 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
                               Wrap(
                                 alignment: WrapAlignment.center,
-                                crossAxisAlignment:
-                                    WrapCrossAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
                                   Text(
                                     'Sudah punya akun?',
                                     style: TextStyle(
-                                      color: AppColors.body,
+                                      color: AppColors.of(context).body,
                                       fontSize: context.ui(15),
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: () {
-                                      context.go(RoutePaths.login);
-                                    },
+                                    onPressed: auth.isSubmitting
+                                        ? null
+                                        : () {
+                                            context.go(RoutePaths.login);
+                                          },
                                     style: TextButton.styleFrom(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: context.ui(8),
@@ -233,9 +219,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                     ),
                                     child: Text(
                                       'Masuk',
-                                      style: AppTextStyles.link.copyWith(
-                                        fontSize: context.ui(15),
-                                      ),
+                                      style: AppTextStyles.link(context)
+                                          .copyWith(fontSize: context.ui(15)),
                                     ),
                                   ),
                                 ],

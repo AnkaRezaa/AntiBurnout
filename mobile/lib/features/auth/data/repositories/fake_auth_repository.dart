@@ -59,6 +59,7 @@ class FakeAuthRepository implements AuthRepository {
     );
 
     _accounts[key] = _StoredAccount(user: user, password: password);
+    _currentUser = user;
 
     return user;
   }

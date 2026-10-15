@@ -29,48 +29,30 @@ class AuthController extends Notifier<AuthState> {
     required String name,
     required String email,
     required String password,
-  }) async {
-    if (state.isSubmitting) return false;
-
-    state = state.copyWith(
-      isSubmitting: true,
-      clearError: true,
-    );
-
-    try {
-      await _repository.register(
+  }) {
+    return _submit(
+      () => _repository.register(
         name: name.trim(),
         email: email.trim(),
         password: password,
-      );
-
-      state = const AuthState.unauthenticated();
-      return true;
-    } catch (error) {
-      state = AuthState(
-        status: AuthStatus.unauthenticated,
-        isSubmitting: false,
-        errorMessage: error.toString().replaceFirst('Exception: ', ''),
-      );
-
-      return false;
-    }
-  }
-
-  Future<bool> login({
-    required String email,
-    required String password,
-  }) {
-    return _submit(
-      () => _repository.login(email: email, password: password),
+      ),
+      justRegistered: true,
     );
   }
 
-  Future<bool> _submit(Future<AuthUser> Function() action) async {
+  Future<bool> login({required String email, required String password}) {
+    return _submit(() => _repository.login(email: email, password: password));
+  }
+
+  Future<bool> _submit(
+    Future<AuthUser> Function() action, {
+    bool justRegistered = false,
+  }) async {
+    if (state.isSubmitting) return false;
     state = state.copyWith(isSubmitting: true, clearError: true);
     try {
       final user = await action();
-      state = AuthState.authenticated(user);
+      state = AuthState.authenticated(user, justRegistered: justRegistered);
       return true;
     } catch (error) {
       state = state.copyWith(
@@ -79,6 +61,12 @@ class AuthController extends Notifier<AuthState> {
         errorMessage: error.toString().replaceFirst('Exception: ', ''),
       );
       return false;
+    }
+  }
+
+  void finishRegistrationFlow() {
+    if (state.justRegistered) {
+      state = state.copyWith(justRegistered: false);
     }
   }
 

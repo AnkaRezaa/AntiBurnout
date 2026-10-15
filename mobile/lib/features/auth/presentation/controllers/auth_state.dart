@@ -8,25 +8,32 @@ class AuthState {
     this.user,
     this.errorMessage,
     this.isSubmitting = false,
+    this.justRegistered = false,
   });
 
   const AuthState.unknown() : this(status: AuthStatus.unknown);
 
   const AuthState.unauthenticated() : this(status: AuthStatus.unauthenticated);
 
-  const AuthState.authenticated(AuthUser user)
-    : this(status: AuthStatus.authenticated, user: user);
+  const AuthState.authenticated(AuthUser user, {bool justRegistered = false})
+    : this(
+        status: AuthStatus.authenticated,
+        user: user,
+        justRegistered: justRegistered,
+      );
 
   final AuthStatus status;
   final AuthUser? user;
   final String? errorMessage;
   final bool isSubmitting;
+  final bool justRegistered;
 
   AuthState copyWith({
     AuthStatus? status,
     AuthUser? user,
     String? errorMessage,
     bool? isSubmitting,
+    bool? justRegistered,
     bool clearError = false,
   }) {
     return AuthState(
@@ -34,6 +41,7 @@ class AuthState {
       user: user ?? this.user,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       isSubmitting: isSubmitting ?? this.isSubmitting,
+      justRegistered: justRegistered ?? this.justRegistered,
     );
   }
 }

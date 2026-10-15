@@ -44,7 +44,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       if (auth.status == AuthStatus.unknown) return null;
       if (auth.status == AuthStatus.authenticated && isAuthRoute) {
-        return RoutePaths.home;
+        return auth.justRegistered
+            ? RoutePaths.registrationPersonalization
+            : RoutePaths.home;
       }
       if (auth.status == AuthStatus.unauthenticated && !isAuthRoute) {
         return RoutePaths.welcome;
@@ -184,8 +186,29 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'personalization',
-                    builder: (context, state) =>
-                        PersonalizationPage(onBack: () => context.pop()),
+                    builder: (context, state) {
+                      final fromRegistration =
+                          state.uri.queryParameters['origin'] == 'registration';
+                      return PersonalizationPage(
+                        backTooltip: fromRegistration
+                            ? 'Kembali ke beranda'
+                            : 'Kembali ke profil',
+                        onBack: () {
+                          if (fromRegistration) {
+                            ref
+                                .read(authControllerProvider.notifier)
+                                .finishRegistrationFlow();
+                            _resetBranch(
+                              context,
+                              RoutePaths.profile,
+                              returnHome: true,
+                            );
+                          } else {
+                            context.pop();
+                          }
+                        },
+                      );
+                    },
                   ),
                 ],
               ),
@@ -223,19 +246,19 @@ GoRoute _questionsRoute() => GoRoute(
   },
 );
 
-void _finishSurveyFlow(
+void _resetBranch(
   BuildContext context,
-  SurveyOrigin origin,
-  VoidCallback? onFinished,
-) {
+  String branchRoot, {
+  bool returnHome = false,
+  VoidCallback? onReset,
+}) {
   final router = GoRouter.of(context);
-  router.go(RoutePaths.survey);
-  // Let the shell cache the cleared Survey stack before switching branches.
+  router.go(branchRoot);
+  // Let the shell cache the cleared branch stack before switching to Home.
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (router.routeInformationProvider.value.uri ==
-        Uri.parse(RoutePaths.survey)) {
-      onFinished?.call();
-      if (origin == SurveyOrigin.dashboard) router.go(RoutePaths.home);
+    if (router.routeInformationProvider.value.uri == Uri.parse(branchRoot)) {
+      onReset?.call();
+      if (returnHome) router.go(RoutePaths.home);
     }
   });
 }
@@ -248,7 +271,12 @@ GoRoute _resultRoute({
   builder: (context, state) {
     void onBack() {
       if (fromSurvey) {
-        _finishSurveyFlow(context, _surveyOrigin(state), onSurveyFinished);
+        _resetBranch(
+          context,
+          RoutePaths.survey,
+          returnHome: _surveyOrigin(state) == SurveyOrigin.dashboard,
+          onReset: onSurveyFinished,
+        );
       } else {
         context.pop();
       }
