@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/presentation/controllers/auth_controller.dart';
 import '../../history/presentation/controllers/history_repository.dart';
+import '../data/fixtures/assessment_fixtures.dart';
 import '../data/repositories/fake_assessment_repository.dart';
 import '../domain/entities/assessment.dart';
 import '../domain/repositories/assessment_repository.dart';
@@ -11,7 +12,7 @@ final assessmentRepositoryProvider = Provider<AssessmentRepository>((ref) {
   final samples = ref.read(assessmentFixtureProvider);
   return FakeAssessmentRepository(
     samples.map(
-      (item) => Assessment(
+      (item) => createExampleAssessment(
         id: item.id,
         riskLevel: item.riskLevel,
         takenAt: item.takenAt,

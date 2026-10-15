@@ -84,13 +84,32 @@ class ResultPage extends ConsumerWidget {
               disclaimer:
                   'Ini bukan diagnosis medis, tetapi indikasi awal '
                   'yang dapat membantumu lebih memahami kondisi diri.',
+              isExample: item.isExample,
               factors: [
-                for (final factor in item.modelFactors)
+                for (var index = 0; index < item.modelFactors.length; index++)
                   FactorItemData(
-                    icon: Icons.insights_outlined,
-                    label: factor.label,
-                    backgroundColor: AssessmentColors.activityTint,
-                    iconColor: AppColors.primary,
+                    icon: item.isExample
+                        ? switch (index) {
+                            0 => Icons.nightlight_outlined,
+                            1 => Icons.bar_chart_rounded,
+                            _ => Icons.favorite_rounded,
+                          }
+                        : Icons.insights_outlined,
+                    label: item.modelFactors[index].label,
+                    backgroundColor: item.isExample
+                        ? switch (index) {
+                            0 => AppColors.blob,
+                            1 => AssessmentColors.sleepTint,
+                            _ => AssessmentColors.relaxationTint,
+                          }
+                        : AssessmentColors.activityTint,
+                    iconColor: item.isExample
+                        ? switch (index) {
+                            0 => AppColors.primary,
+                            1 => AppColors.leaf,
+                            _ => AssessmentColors.riskHigh,
+                          }
+                        : AppColors.primary,
                   ),
               ],
               answerSummary: [

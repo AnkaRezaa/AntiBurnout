@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/assessment_colors.dart';
@@ -43,6 +44,7 @@ class RiskSummaryCard extends StatelessWidget {
     required this.disclaimer,
     required this.factors,
     required this.answerSummary,
+    this.isExample = false,
     this.onBackTap,
     this.onRecommendationTap,
   });
@@ -57,6 +59,7 @@ class RiskSummaryCard extends StatelessWidget {
   final String disclaimer;
   final List<FactorItemData> factors;
   final List<AnswerSummaryItemData> answerSummary;
+  final bool isExample;
   final VoidCallback? onBackTap;
   final VoidCallback? onRecommendationTap;
 
@@ -90,9 +93,35 @@ class RiskSummaryCard extends StatelessWidget {
           SizedBox(height: context.ui(AppSpacing.md)),
           Text(description, style: bodyStyle),
           SizedBox(height: context.ui(AppSpacing.xs)),
-          Text(
-            'Asesmen $assessmentDate',
-            style: bodyStyle.copyWith(fontSize: context.ui(12)),
+          Wrap(
+            spacing: context.ui(AppSpacing.sm),
+            runSpacing: context.ui(AppSpacing.sm),
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                'Asesmen $assessmentDate',
+                style: bodyStyle.copyWith(fontSize: context.ui(12)),
+              ),
+              if (isExample)
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.ui(AppSpacing.sm),
+                    vertical: context.ui(AppSpacing.xs),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.blob,
+                    borderRadius: BorderRadius.circular(context.ui(20)),
+                  ),
+                  child: Text(
+                    'Data contoh',
+                    style: bodyStyle.copyWith(
+                      fontSize: context.ui(11),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryDark,
+                    ),
+                  ),
+                ),
+            ],
           ),
           SizedBox(height: context.ui(AppSpacing.md)),
           Container(
@@ -133,7 +162,7 @@ class RiskSummaryCard extends StatelessWidget {
             )
           else ...[
             Text(
-              'Faktor yang disertakan dalam hasil model untuk asesmen ini.',
+              isExample ? 'Faktor pada contoh hasil asesmen ini.' : 'Faktor yang disertakan dalam hasil model untuk asesmen ini.',
               style: bodyStyle.copyWith(fontSize: context.ui(12)),
             ),
             SizedBox(height: context.ui(AppSpacing.sm)),
@@ -165,29 +194,54 @@ class RiskSummaryCard extends StatelessWidget {
           Text('Ringkasan Jawaban', style: sectionStyle),
           SizedBox(height: context.ui(AppSpacing.sm)),
           Text(
-            'Ringkasan jawaban survei, bukan kontribusi model prediksi.',
+            isExample
+                ? 'Ringkasan jawaban pada contoh asesmen ini.'
+                : 'Ringkasan jawaban survei, bukan kontribusi model prediksi.',
             style: bodyStyle.copyWith(fontSize: context.ui(12)),
           ),
           SizedBox(height: context.ui(AppSpacing.sm)),
           if (answerSummary.isEmpty)
             Text('Ringkasan jawaban belum tersedia.', style: bodyStyle)
           else
-            for (final answer in answerSummary)
-              Padding(
-                padding: EdgeInsets.only(bottom: context.ui(AppSpacing.sm)),
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '${answer.label}: ',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      TextSpan(text: answer.value),
-                    ],
-                  ),
-                  style: bodyStyle,
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(context.ui(AppSpacing.md)),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(
+                  context.ui(AppSpacing.radius),
                 ),
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < answerSummary.length; i++) ...[
+                    if (i > 0)
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: context.ui(AppSpacing.sm),
+                        ),
+                        child: const Divider(
+                          height: 1,
+                          color: AppColors.border,
+                        ),
+                      ),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${answerSummary[i].label}: ',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(text: answerSummary[i].value),
+                        ],
+                      ),
+                      style: bodyStyle,
+                    ),
+                  ],
+                ],
+              ),
+            ),
           SizedBox(height: context.ui(AppSpacing.lg)),
           AppButton(label: 'Lihat Rekomendasi', onPressed: onRecommendationTap),
         ],

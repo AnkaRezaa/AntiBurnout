@@ -9,16 +9,22 @@ class Assessment {
     required this.takenAt,
     this.modelFactors = const [],
     this.answerSummary = const [],
+    this.isExample = false,
   });
 
   final String id;
   final RiskLevel riskLevel;
   final DateTime takenAt;
 
-  /// Factors supplied by the assessment service, never inferred by the UI.
+  /// Identifies static UI examples, never a successful service prediction.
+  final bool isExample;
+
+  /// Factors supplied by the assessment service or explicitly marked examples.
+  /// The UI never infers model contributions from submitted answers.
   final List<AssessmentFactor> modelFactors;
 
-  /// A summary of submitted answers, distinct from model explanations.
+  /// Submitted answers or explicitly marked examples, distinct from model
+  /// explanations.
   final List<AssessmentAnswerSummary> answerSummary;
 }
 
