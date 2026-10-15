@@ -1,12 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../../core/responsive/app_scale.dart';
 import '../../core/theme/app_colors.dart';
 
 class UserAvatar extends StatelessWidget {
-  const UserAvatar({super.key, this.photoUrl, this.size = 48});
+  const UserAvatar({super.key, this.photoUrl, this.photoBytes, this.size = 48});
 
   final String? photoUrl;
+  final Uint8List? photoBytes;
   final double size;
 
   @override
@@ -24,6 +27,16 @@ class UserAvatar extends StatelessWidget {
       ),
     );
 
+    Widget networkOrFallback() => url == null || url.isEmpty
+        ? fallback()
+        : Image.network(
+            url,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, progress) =>
+                progress == null ? child : fallback(),
+            errorBuilder: (context, error, stackTrace) => fallback(),
+          );
+
     return Semantics(
       image: true,
       label: 'Avatar pengguna',
@@ -37,15 +50,14 @@ class UserAvatar extends StatelessWidget {
           border: Border.all(color: AppColors.blob),
         ),
         child: ClipOval(
-          child: url == null || url.isEmpty
-              ? fallback()
-              : Image.network(
-                  url,
+          child: photoBytes != null
+              ? Image.memory(
+                  photoBytes!,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) =>
-                      progress == null ? child : fallback(),
-                  errorBuilder: (context, error, stackTrace) => fallback(),
-                ),
+                  errorBuilder: (context, error, stackTrace) =>
+                      networkOrFallback(),
+                )
+              : networkOrFallback(),
         ),
       ),
     );
