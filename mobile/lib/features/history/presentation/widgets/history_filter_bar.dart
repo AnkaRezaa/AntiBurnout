@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/responsive/app_scale.dart';
@@ -19,43 +21,53 @@ class HistoryFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const filters = HistoryFilter.values;
+    final fontSize = context.ui(12);
+    final verticalPadding = context.ui(AppSpacing.sm);
+    final visualHeight = math.max(
+      context.ui(36),
+      MediaQuery.textScalerOf(context).scale(fontSize) * 1.2 +
+          verticalPadding * 2,
+    );
 
     return SizedBox(
-      height:
-          (MediaQuery.textScalerOf(context).scale(context.ui(12)) * 1.5 +
-                  context.ui(AppSpacing.md))
-              .clamp(48.0, double.infinity),
+      height: math.max(48.0, visualHeight).ceilToDouble(),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => SizedBox(width: context.ui(10)),
         itemBuilder: (context, index) {
           final filter = filters[index];
           final isSelected = filter == selected;
 
-          return Material(
-            color: isSelected
-                ? AppColors.of(context).primary
-                : AppColors.of(context).blob,
-            borderRadius: BorderRadius.circular(20),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20),
-              onTap: () => onSelected(filter),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 8,
-                ),
-                child: Text(
-                  filter.label,
-                  style: AppTextStyles.subtitle(context).copyWith(
-                    fontSize: context.ui(12),
+          return Semantics(
+            selected: isSelected,
+            child: Align(
+              widthFactor: 1,
+              child: TextButton(
+                onPressed: () => onSelected(filter),
+                style: TextButton.styleFrom(
+                  backgroundColor: isSelected
+                      ? AppColors.of(context).primary
+                      : AppColors.of(context).blob,
+                  foregroundColor: isSelected
+                      ? AppColors.of(context).onPrimary
+                      : AppColors.of(context).body,
+                  minimumSize: Size(0, context.ui(36)),
+                  tapTargetSize: MaterialTapTargetSize.padded,
+                  visualDensity: VisualDensity.standard,
+                  shape: const StadiumBorder(),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.ui(18),
+                    vertical: verticalPadding,
+                  ),
+                  alignment: Alignment.center,
+                  textStyle: AppTextStyles.subtitle(context).copyWith(
+                    fontSize: fontSize,
                     fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? AppColors.of(context).onPrimary
-                        : AppColors.of(context).body,
+                    height: 1.2,
                   ),
                 ),
+                child: Text(filter.label),
               ),
             ),
           );
