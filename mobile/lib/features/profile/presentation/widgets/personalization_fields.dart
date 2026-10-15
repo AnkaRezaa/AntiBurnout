@@ -5,8 +5,9 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class PersonalizationFieldStyle {
-  static const softColor = Color(0xFFEEF0FF);
-  static const borderColor = Color(0xFFD8DFFF);
+  static Color softColor(BuildContext context) => AppColors.of(context).blob;
+  static Color borderColor(BuildContext context) =>
+      AppColors.of(context).border;
 
   static InputDecoration decoration(
     BuildContext context, {
@@ -22,20 +23,26 @@ class PersonalizationFieldStyle {
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: AppColors.hint, fontSize: context.ui(14)),
+      hintStyle: TextStyle(
+        color: AppColors.of(context).hint,
+        fontSize: context.ui(14),
+      ),
       suffixText: suffix,
-      suffixStyle: TextStyle(color: AppColors.hint, fontSize: context.ui(12)),
+      suffixStyle: TextStyle(
+        color: AppColors.of(context).hint,
+        fontSize: context.ui(12),
+      ),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: AppColors.of(context).surface,
       contentPadding: EdgeInsets.symmetric(
         horizontal: context.ui(16),
         vertical: context.ui(16),
       ),
-      border: border(borderColor),
-      enabledBorder: border(borderColor),
-      focusedBorder: border(AppColors.primary),
-      errorBorder: border(AppColors.error),
-      focusedErrorBorder: border(AppColors.error),
+      border: border(borderColor(context)),
+      enabledBorder: border(borderColor(context)),
+      focusedBorder: border(AppColors.of(context).primary),
+      errorBorder: border(AppColors.of(context).error),
+      focusedErrorBorder: border(AppColors.of(context).error),
       errorMaxLines: 2,
     );
   }
@@ -53,7 +60,7 @@ class PersonalizationLabel extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: AppColors.navy,
+          color: AppColors.of(context).navy,
           fontSize: context.ui(14),
           fontWeight: FontWeight.w600,
         ),
@@ -74,7 +81,7 @@ class PersonalizationDescription extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: AppColors.hint,
+          color: AppColors.of(context).hint,
           fontSize: context.ui(13),
           height: 1.4,
         ),
@@ -114,7 +121,10 @@ class PersonalizationNumberField extends StatelessWidget {
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: TextStyle(color: AppColors.navy, fontSize: context.ui(14)),
+            style: TextStyle(
+              color: AppColors.of(context).navy,
+              fontSize: context.ui(14),
+            ),
             decoration: PersonalizationFieldStyle.decoration(
               context,
               hint: hint,
@@ -163,7 +173,10 @@ class PersonalizationDateField extends StatelessWidget {
             initialValue: text,
             readOnly: true,
             showCursor: false,
-            style: TextStyle(color: AppColors.navy, fontSize: context.ui(14)),
+            style: TextStyle(
+              color: AppColors.of(context).navy,
+              fontSize: context.ui(14),
+            ),
             decoration:
                 PersonalizationFieldStyle.decoration(
                   context,
@@ -182,9 +195,9 @@ class PersonalizationDateField extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                           horizontal: context.ui(12),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.calendar_today_outlined,
-                          color: AppColors.primary,
+                          color: AppColors.of(context).primary,
                         ),
                       ),
                     ],
@@ -255,11 +268,14 @@ class PersonalizationDropdown extends StatelessWidget {
             ),
             icon: Icon(
               Icons.keyboard_arrow_down_rounded,
-              color: AppColors.hint,
+              color: AppColors.of(context).hint,
               size: context.ui(24),
             ),
-            style: TextStyle(color: AppColors.navy, fontSize: context.ui(14)),
-            dropdownColor: Colors.white,
+            style: TextStyle(
+              color: AppColors.of(context).navy,
+              fontSize: context.ui(14),
+            ),
+            dropdownColor: AppColors.of(context).surface,
             items: options.map((option) {
               return DropdownMenuItem<String>(
                 value: option,
@@ -318,11 +334,11 @@ class PersonalizationChoices extends StatelessWidget {
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: value == options[index]
-                            ? AppColors.primary
-                            : AppColors.hint,
+                            ? AppColors.of(context).primary
+                            : AppColors.of(context).hint,
                         backgroundColor: value == options[index]
-                            ? PersonalizationFieldStyle.softColor
-                            : Colors.white,
+                            ? PersonalizationFieldStyle.softColor(context)
+                            : AppColors.of(context).surface,
                         minimumSize: const Size(0, 48),
                         padding: EdgeInsets.symmetric(
                           horizontal: context.ui(4),
@@ -330,8 +346,8 @@ class PersonalizationChoices extends StatelessWidget {
                         ),
                         side: BorderSide(
                           color: value == options[index]
-                              ? AppColors.primary
-                              : PersonalizationFieldStyle.borderColor,
+                              ? AppColors.of(context).primary
+                              : PersonalizationFieldStyle.borderColor(context),
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(context.ui(14)),

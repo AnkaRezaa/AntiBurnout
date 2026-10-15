@@ -14,7 +14,7 @@ class EncouragementCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(context.ui(AppSpacing.md)),
       decoration: BoxDecoration(
-        color: AssessmentColors.motivationTint,
+        color: AssessmentColors.tint(context, AssessmentColors.motivationTint),
         borderRadius: BorderRadius.circular(context.ui(AppSpacing.radius)),
       ),
       child: Row(
@@ -36,7 +36,8 @@ class EncouragementCard extends StatelessWidget {
           Expanded(
             child: Text(
               'Prioritaskan kesehatan mentalmu.',
-              style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(13)),
+              style: AppTextStyles.subtitle(context)
+                  .copyWith(fontSize: context.ui(13)),
             ),
           ),
         ],

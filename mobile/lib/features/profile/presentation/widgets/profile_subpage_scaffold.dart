@@ -20,7 +20,7 @@ class ProfileSubpageScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: Align(
           alignment: Alignment.topCenter,
@@ -42,9 +42,8 @@ class ProfileSubpageScaffold extends StatelessWidget {
                       Expanded(
                         child: Text(
                           title,
-                          style: AppTextStyles.title.copyWith(
-                            fontSize: context.ui(22),
-                          ),
+                          style: AppTextStyles.title(context)
+                              .copyWith(fontSize: context.ui(22)),
                         ),
                       ),
                     ],
@@ -88,18 +87,23 @@ class ProfileInfoCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(context.ui(16)),
       decoration: BoxDecoration(
-        color: AppColors.blob.withValues(alpha: 0.6),
+        color: AppColors.of(context).blob.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(context.ui(16)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primary, size: context.ui(22)),
+          Icon(
+            icon,
+            color: AppColors.of(context).primary,
+            size: context.ui(22),
+          ),
           SizedBox(width: context.ui(12)),
           Expanded(
             child: Text(
               text,
-              style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(13)),
+              style: AppTextStyles.subtitle(context)
+                  .copyWith(fontSize: context.ui(13)),
             ),
           ),
         ],

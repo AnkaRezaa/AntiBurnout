@@ -25,7 +25,7 @@ class RecommendationPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final assessment = ref.watch(assessmentByIdProvider(assessmentId));
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: SingleChildScrollView(
           key: PageStorageKey('recommendation-scroll-$assessmentId'),
@@ -50,9 +50,9 @@ class RecommendationPage extends ConsumerWidget {
                 error: (error, stackTrace) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Asesmen belum dapat dimuat.',
-                      style: AppTextStyles.subtitle,
+                      style: AppTextStyles.subtitle(context),
                     ),
                     TextButton(
                       onPressed: () =>
@@ -62,10 +62,10 @@ class RecommendationPage extends ConsumerWidget {
                   ],
                 ),
                 data: (item) => item == null
-                    ? const Text(
+                    ? Text(
                         'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
                         'hasil asesmen yang tersedia.',
-                        style: AppTextStyles.subtitle,
+                        style: AppTextStyles.subtitle(context),
                       )
                     : const _GeneralRecommendations(),
               ),
@@ -119,12 +119,14 @@ class _GeneralRecommendations extends StatelessWidget {
         Text(
           'Berikut beberapa langkah yang bisa kamu lakukan untuk '
           'membantu menjaga kesehatan mental.',
-          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(14)),
+          style: AppTextStyles.subtitle(context)
+              .copyWith(fontSize: context.ui(14)),
         ),
         SizedBox(height: context.ui(AppSpacing.sm)),
         Text(
           'Panduan umum, belum dipersonalisasi berdasarkan hasil asesmen.',
-          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(12)),
+          style: AppTextStyles.subtitle(context)
+              .copyWith(fontSize: context.ui(12)),
         ),
         SizedBox(height: context.ui(AppSpacing.md)),
         for (final item in _items) ...[

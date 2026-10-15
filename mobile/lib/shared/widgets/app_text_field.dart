@@ -34,13 +34,8 @@ class AppTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     OutlineInputBorder border(Color color, {double width = 1}) {
       return OutlineInputBorder(
-        borderRadius: BorderRadius.circular(
-          context.ui(AppSpacing.fieldRadius),
-        ),
-        borderSide: BorderSide(
-          color: color,
-          width: context.ui(width),
-        ),
+        borderRadius: BorderRadius.circular(context.ui(AppSpacing.fieldRadius)),
+        borderSide: BorderSide(color: color, width: context.ui(width)),
       );
     }
 
@@ -53,17 +48,17 @@ class AppTextField extends StatelessWidget {
       autocorrect: autocorrect,
       enableSuggestions: enableSuggestions,
       style: TextStyle(
-        color: AppColors.navy,
+        color: AppColors.of(context).navy,
         fontSize: context.ui(16),
       ),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
-          color: AppColors.hint,
+          color: AppColors.of(context).hint,
           fontSize: context.ui(16),
         ),
         filled: true,
-        fillColor: AppColors.background,
+        fillColor: AppColors.of(context).surface,
 
         // Mengatur ruang di dalam input.
         contentPadding: EdgeInsets.symmetric(
@@ -81,7 +76,7 @@ class AppTextField extends StatelessWidget {
                 child: IconTheme(
                   data: IconThemeData(
                     size: context.ui(24),
-                    color: AppColors.hint,
+                    color: AppColors.of(context).hint,
                   ),
                   child: prefix!,
                 ),
@@ -93,16 +88,16 @@ class AppTextField extends StatelessWidget {
 
         suffixIcon: suffix,
 
-        border: border(AppColors.border),
-        enabledBorder: border(AppColors.border),
-        focusedBorder: border(AppColors.primary, width: 1.4),
-        errorBorder: border(AppColors.error),
-        focusedErrorBorder: border(AppColors.error, width: 1.4),
+        border: border(AppColors.of(context).border),
+        enabledBorder: border(AppColors.of(context).border),
+        focusedBorder: border(AppColors.of(context).primary, width: 1.4),
+        errorBorder: border(AppColors.of(context).error),
+        focusedErrorBorder: border(AppColors.of(context).error, width: 1.4),
 
         // Pesan validasi dapat menambah tinggi field.
         errorMaxLines: 2,
         errorStyle: TextStyle(
-          color: AppColors.error,
+          color: AppColors.of(context).error,
           fontSize: context.ui(12),
         ),
       ),

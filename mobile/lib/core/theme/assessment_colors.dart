@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
+
 /// Semantic colors shared by assessment results and general guidance.
 abstract final class AssessmentColors {
+  /// Keep category hues recognizable without using bright cards in dark mode.
+  static Color tint(BuildContext context, Color lightTint) {
+    if (Theme.of(context).brightness == Brightness.light) return lightTint;
+    return Color.alphaBlend(
+      lightTint.withValues(alpha: 0.12),
+      AppColors.of(context).surface,
+    );
+  }
+
   static const riskLow = Color(0xFF2BC751);
   static const riskMedium = Color(0xFFF5A60B);
   static const riskHigh = Color(0xFFE5636B);

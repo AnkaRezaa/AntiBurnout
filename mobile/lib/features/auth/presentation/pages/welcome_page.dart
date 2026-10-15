@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/router/route_paths.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_button.dart';
 
@@ -73,20 +74,18 @@ class _WelcomePageState extends State<WelcomePage> {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       child: _imagesReady
-          ? const _WelcomeContent(
-              key: ValueKey('welcome-content'),
-            )
+          ? const _WelcomeContent(key: ValueKey('welcome-content'))
           : Scaffold(
               key: const ValueKey('welcome-loading'),
-              backgroundColor: AppColors.background,
+              backgroundColor: AppColors.of(context).background,
               body: Center(
                 child: _loadFailed
                     ? TextButton(
                         onPressed: _retry,
                         child: const Text('Muat ulang gambar'),
                       )
-                    : const CircularProgressIndicator(
-                        color: AppColors.primary,
+                    : CircularProgressIndicator(
+                        color: AppColors.of(context).primary,
                       ),
               ),
             ),
@@ -105,7 +104,7 @@ class _WelcomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -117,15 +116,9 @@ class _WelcomeContent extends StatelessWidget {
               constraints.maxWidth - horizontalPadding * 2,
             );
 
-            final logoWidth = math.min(
-              contentWidth,
-              context.ui(270),
-            );
+            final logoWidth = math.min(contentWidth, context.ui(270));
 
-            final illustrationWidth = math.min(
-              contentWidth,
-              context.ui(360),
-            );
+            final illustrationWidth = math.min(contentWidth, context.ui(360));
 
             final minimumContentHeight = math.max(
               0.0,
@@ -138,12 +131,12 @@ class _WelcomeContent extends StatelessWidget {
                 Positioned(
                   top: context.ui(42),
                   left: -context.ui(76),
-                  child: _blob(context.ui(150)),
+                  child: _blob(context, context.ui(150)),
                 ),
                 Positioned(
                   top: context.ui(74),
                   right: -context.ui(84),
-                  child: _blob(context.ui(160)),
+                  child: _blob(context, context.ui(160)),
                 ),
                 SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
@@ -166,12 +159,32 @@ class _WelcomeContent extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 SizedBox(height: context.ui(16)),
-                                Image.asset(
-                                  _logoAsset,
+                                Container(
+                                  key: const ValueKey('welcome-logo-frame'),
                                   width: logoWidth,
                                   height: context.ui(160),
-                                  fit: BoxFit.contain,
-                                  semanticLabel: 'Logo AntiBurnout',
+                                  padding:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? EdgeInsets.all(
+                                          context.ui(AppSpacing.sm),
+                                        )
+                                      : EdgeInsets.zero,
+                                  decoration:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? BoxDecoration(
+                                          color: AppPalette.light.blob,
+                                          borderRadius: BorderRadius.circular(
+                                            context.ui(AppSpacing.radius),
+                                          ),
+                                        )
+                                      : null,
+                                  child: Image.asset(
+                                    _logoAsset,
+                                    fit: BoxFit.contain,
+                                    semanticLabel: 'Logo AntiBurnout',
+                                  ),
                                 ),
                                 SizedBox(height: context.ui(24)),
                               ],
@@ -200,11 +213,12 @@ class _WelcomeContent extends StatelessWidget {
                                 Text(
                                   'Langkah kecil untuk kesehatan mental yang lebih baik.',
                                   textAlign: TextAlign.center,
-                                  style: AppTextStyles.subtitle.copyWith(
-                                    color: AppColors.navy,
-                                    fontSize: context.ui(16),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: AppTextStyles.subtitle(context)
+                                      .copyWith(
+                                        color: AppColors.of(context).navy,
+                                        fontSize: context.ui(16),
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                                 SizedBox(height: context.ui(22)),
                                 AppButton(
@@ -230,13 +244,13 @@ class _WelcomeContent extends StatelessWidget {
     );
   }
 
-  Widget _blob(double size) {
+  Widget _blob(BuildContext context, double size) {
     return IgnorePointer(
       child: Container(
         width: size,
         height: size,
-        decoration: const BoxDecoration(
-          color: AppColors.blob,
+        decoration: BoxDecoration(
+          color: AppColors.of(context).blob,
           shape: BoxShape.circle,
         ),
       ),
@@ -296,9 +310,7 @@ class _WelcomeIllustration extends StatelessWidget {
               ),
               Positioned.fill(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: girlPadding,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: girlPadding),
                   child: Image.asset(
                     girlAsset,
                     fit: BoxFit.contain,

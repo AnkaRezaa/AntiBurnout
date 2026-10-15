@@ -29,7 +29,7 @@ class ResultPage extends ConsumerWidget {
     final goBack = onBack ?? () => Navigator.of(context).maybePop();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: assessment.when(
           loading: () => _ResultStatus(
@@ -41,9 +41,9 @@ class ResultPage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Hasil asesmen belum dapat dimuat.',
-                  style: AppTextStyles.subtitle,
+                  style: AppTextStyles.subtitle(context),
                 ),
                 TextButton(
                   onPressed: () =>
@@ -57,10 +57,10 @@ class ResultPage extends ConsumerWidget {
             if (item == null) {
               return _ResultStatus(
                 onBack: goBack,
-                child: const Text(
+                child: Text(
                   'Hasil asesmen tidak ditemukan. Buka hasil dari riwayat '
                   'atau selesaikan survei terlebih dahulu.',
-                  style: AppTextStyles.subtitle,
+                  style: AppTextStyles.subtitle(context),
                 ),
               );
             }
@@ -98,18 +98,18 @@ class ResultPage extends ConsumerWidget {
                     label: item.modelFactors[index].label,
                     backgroundColor: item.isExample
                         ? switch (index) {
-                            0 => AppColors.blob,
+                            0 => AppColors.of(context).blob,
                             1 => AssessmentColors.sleepTint,
                             _ => AssessmentColors.relaxationTint,
                           }
                         : AssessmentColors.activityTint,
                     iconColor: item.isExample
                         ? switch (index) {
-                            0 => AppColors.primary,
-                            1 => AppColors.leaf,
+                            0 => AppColors.of(context).primary,
+                            1 => AppColors.of(context).leaf,
                             _ => AssessmentColors.riskHigh,
                           }
-                        : AppColors.primary,
+                        : AppColors.of(context).primary,
                   ),
               ],
               answerSummary: [

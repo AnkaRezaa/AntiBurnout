@@ -19,11 +19,11 @@ class LatestAssessmentCard extends StatelessWidget {
   final String date;
   final VoidCallback? onHistoryTap;
 
-  Color get _riskColor => switch (riskLevel) {
+  Color _riskColor(BuildContext context) => switch (riskLevel) {
     RiskLevel.rendah => AssessmentColors.riskLow,
     RiskLevel.sedang => AssessmentColors.riskMedium,
     RiskLevel.tinggi => AssessmentColors.riskHigh,
-    null => AppColors.hint,
+    null => AppColors.of(context).hint,
   };
 
   @override
@@ -32,11 +32,11 @@ class LatestAssessmentCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(context.ui(22)),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: AppColors.of(context).surface,
         borderRadius: BorderRadius.circular(context.ui(24)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.navy.withValues(alpha: 0.07),
+            color: AppColors.of(context).shadow,
             blurRadius: context.ui(22),
             offset: Offset(0, context.ui(AppSpacing.sm)),
           ),
@@ -47,10 +47,10 @@ class LatestAssessmentCard extends StatelessWidget {
         children: [
           Text(
             'HASIL ASESMEN TERAKHIR',
-            style: AppTextStyles.subtitle.copyWith(
+            style: AppTextStyles.subtitle(context).copyWith(
               fontSize: context.ui(12),
               fontWeight: FontWeight.w700,
-              color: AppColors.hint,
+              color: AppColors.of(context).hint,
             ),
           ),
           SizedBox(height: context.ui(AppSpacing.sm)),
@@ -59,7 +59,8 @@ class LatestAssessmentCard extends StatelessWidget {
           if (riskLevel == null)
             Text(
               'Mulai survei untuk mengenali kondisi keseharianmu.',
-              style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(14)),
+              style: AppTextStyles.subtitle(context)
+                  .copyWith(fontSize: context.ui(14)),
             )
           else ...[
             _buildRiskBar(context),
@@ -75,9 +76,11 @@ class LatestAssessmentCard extends StatelessWidget {
                       RiskLevel.sedang => TextAlign.center,
                       RiskLevel.tinggi => TextAlign.end,
                     },
-                    style: AppTextStyles.subtitle.copyWith(
+                    style: AppTextStyles.subtitle(context).copyWith(
                       fontSize: context.ui(11),
-                      color: isSelected ? AppColors.navy : AppColors.hint,
+                      color: isSelected
+                          ? AppColors.of(context).navy
+                          : AppColors.of(context).hint,
                       fontWeight: isSelected
                           ? FontWeight.w600
                           : FontWeight.w400,
@@ -88,7 +91,7 @@ class LatestAssessmentCard extends StatelessWidget {
             ),
           ],
           SizedBox(height: context.ui(AppSpacing.md)),
-          const Divider(height: 1, color: AppColors.border),
+          Divider(height: 1, color: AppColors.of(context).border),
           SizedBox(height: context.ui(AppSpacing.sm)),
           Wrap(
             spacing: context.ui(AppSpacing.sm),
@@ -98,9 +101,9 @@ class LatestAssessmentCard extends StatelessWidget {
             children: [
               Text(
                 date,
-                style: AppTextStyles.subtitle.copyWith(
+                style: AppTextStyles.subtitle(context).copyWith(
                   fontSize: context.ui(12),
-                  color: AppColors.hint,
+                  color: AppColors.of(context).hint,
                 ),
               ),
               if (onHistoryTap != null)
@@ -112,9 +115,8 @@ class LatestAssessmentCard extends StatelessWidget {
                   ),
                   child: Text(
                     'Lihat Riwayat ›',
-                    style: AppTextStyles.link.copyWith(
-                      fontSize: context.ui(12),
-                    ),
+                    style: AppTextStyles.link(context)
+                        .copyWith(fontSize: context.ui(12)),
                   ),
                 ),
             ],
@@ -127,7 +129,7 @@ class LatestAssessmentCard extends StatelessWidget {
   Widget _buildRiskHeading(BuildContext context) {
     final title = Text(
       'Risiko Burnout',
-      style: AppTextStyles.title.copyWith(fontSize: context.ui(22)),
+      style: AppTextStyles.title(context).copyWith(fontSize: context.ui(22)),
     );
     if (riskLevel == null) return title;
 
@@ -137,15 +139,13 @@ class LatestAssessmentCard extends StatelessWidget {
         vertical: context.ui(6),
       ),
       decoration: BoxDecoration(
-        color: _riskColor.withValues(alpha: 0.12),
+        color: _riskColor(context).withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(context.ui(20)),
       ),
       child: Text(
         riskLevel!.label.toUpperCase(),
-        style: AppTextStyles.link.copyWith(
-          fontSize: context.ui(11),
-          color: _riskColor,
-        ),
+        style: AppTextStyles.link(context)
+            .copyWith(fontSize: context.ui(11), color: _riskColor(context)),
       ),
     );
 
@@ -182,7 +182,10 @@ class LatestAssessmentCard extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Container(height: context.ui(5), color: AppColors.border),
+            Container(
+              height: context.ui(5),
+              color: AppColors.of(context).border,
+            ),
             for (final level in RiskLevel.values)
               Align(
                 alignment: switch (level) {
@@ -196,17 +199,17 @@ class LatestAssessmentCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: level == riskLevel
-                        ? AppColors.blob
-                        : AppColors.border,
+                        ? AppColors.of(context).blob
+                        : AppColors.of(context).border,
                   ),
                   child: level == riskLevel
                       ? Center(
                           child: Container(
                             width: context.ui(10),
                             height: context.ui(10),
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.primary,
+                              color: AppColors.of(context).primary,
                             ),
                           ),
                         )

@@ -65,11 +65,10 @@ class RiskSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = AppTextStyles.subtitle.copyWith(fontSize: context.ui(14));
-    final sectionStyle = AppTextStyles.title.copyWith(
-      fontSize: context.ui(18),
-      fontWeight: FontWeight.w700,
-    );
+    final bodyStyle = AppTextStyles.subtitle(context)
+        .copyWith(fontSize: context.ui(14));
+    final sectionStyle = AppTextStyles.title(context)
+        .copyWith(fontSize: context.ui(18), fontWeight: FontWeight.w700);
 
     return SingleChildScrollView(
       key: scrollKey,
@@ -109,7 +108,7 @@ class RiskSummaryCard extends StatelessWidget {
                     vertical: context.ui(AppSpacing.xs),
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.blob,
+                    color: AppColors.of(context).blob,
                     borderRadius: BorderRadius.circular(context.ui(20)),
                   ),
                   child: Text(
@@ -117,7 +116,7 @@ class RiskSummaryCard extends StatelessWidget {
                     style: bodyStyle.copyWith(
                       fontSize: context.ui(11),
                       fontWeight: FontWeight.w600,
-                      color: AppColors.primaryDark,
+                      color: AppColors.of(context).primaryDark,
                     ),
                   ),
                 ),
@@ -128,7 +127,10 @@ class RiskSummaryCard extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.all(context.ui(AppSpacing.md)),
             decoration: BoxDecoration(
-              color: AssessmentColors.disclaimerTint,
+              color: AssessmentColors.tint(
+                context,
+                AssessmentColors.disclaimerTint,
+              ),
               borderRadius: BorderRadius.circular(
                 context.ui(AppSpacing.radius),
               ),
@@ -175,7 +177,10 @@ class RiskSummaryCard extends StatelessWidget {
                       width: context.ui(38),
                       height: context.ui(38),
                       decoration: BoxDecoration(
-                        color: factor.backgroundColor,
+                        color: AssessmentColors.tint(
+                          context,
+                          factor.backgroundColor,
+                        ),
                         borderRadius: BorderRadius.circular(context.ui(12)),
                       ),
                       child: Icon(
@@ -207,7 +212,7 @@ class RiskSummaryCard extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.all(context.ui(AppSpacing.md)),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.of(context).border),
                 borderRadius: BorderRadius.circular(
                   context.ui(AppSpacing.radius),
                 ),
@@ -221,9 +226,9 @@ class RiskSummaryCard extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                           vertical: context.ui(AppSpacing.sm),
                         ),
-                        child: const Divider(
+                        child: Divider(
                           height: 1,
-                          color: AppColors.border,
+                          color: AppColors.of(context).border,
                         ),
                       ),
                     Text.rich(
@@ -265,7 +270,7 @@ class _RiskRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final levelStyle = AppTextStyles.title.copyWith(
+    final levelStyle = AppTextStyles.title(context).copyWith(
       fontSize: context.ui(32),
       fontWeight: FontWeight.w700,
       color: color,
@@ -440,10 +445,9 @@ class ResultHeader extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: AppTextStyles.title.copyWith(
-              fontSize: context.ui(22),
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.title(
+              context,
+            ).copyWith(fontSize: context.ui(22), fontWeight: FontWeight.w700),
           ),
         ),
       ],

@@ -30,7 +30,7 @@ class DashboardPage extends ConsumerWidget {
     final latest = ref.watch(latestAssessmentProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: SingleChildScrollView(
           key: const PageStorageKey('dashboard-scroll'),

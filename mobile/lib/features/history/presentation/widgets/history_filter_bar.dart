@@ -34,7 +34,9 @@ class HistoryFilterBar extends StatelessWidget {
           final isSelected = filter == selected;
 
           return Material(
-            color: isSelected ? AppColors.primary : AppColors.blob,
+            color: isSelected
+                ? AppColors.of(context).primary
+                : AppColors.of(context).blob,
             borderRadius: BorderRadius.circular(20),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
@@ -46,10 +48,12 @@ class HistoryFilterBar extends StatelessWidget {
                 ),
                 child: Text(
                   filter.label,
-                  style: AppTextStyles.subtitle.copyWith(
+                  style: AppTextStyles.subtitle(context).copyWith(
                     fontSize: context.ui(12),
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? AppColors.background : AppColors.body,
+                    color: isSelected
+                        ? AppColors.of(context).onPrimary
+                        : AppColors.of(context).body,
                   ),
                 ),
               ),

@@ -39,21 +39,17 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       enableSuggestions: false,
 
       // Ukuran ikon mengikuti IconTheme dari AppTextField.
-      prefix: const Icon(
+      prefix: Icon(
         Icons.lock_outline_rounded,
-        color: AppColors.hint,
+        color: AppColors.of(context).hint,
       ),
 
       suffix: IconButton(
-        tooltip: _obscure
-            ? 'Tampilkan kata sandi'
-            : 'Sembunyikan kata sandi',
+        tooltip: _obscure ? 'Tampilkan kata sandi' : 'Sembunyikan kata sandi',
         padding: EdgeInsets.all(context.ui(12)),
         constraints: BoxConstraints(
-          minWidth:
-              context.ui(48).clamp(48.0, double.infinity).toDouble(),
-          minHeight:
-              context.ui(48).clamp(48.0, double.infinity).toDouble(),
+          minWidth: context.ui(48).clamp(48.0, double.infinity).toDouble(),
+          minHeight: context.ui(48).clamp(48.0, double.infinity).toDouble(),
         ),
         onPressed: () {
           setState(() {
@@ -61,10 +57,8 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           });
         },
         icon: Icon(
-          _obscure
-              ? Icons.visibility_off_outlined
-              : Icons.visibility_outlined,
-          color: AppColors.primary,
+          _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+          color: AppColors.of(context).primary,
           size: context.ui(22),
         ),
       ),

@@ -49,7 +49,7 @@ class SurveyQuestionPage extends ConsumerWidget {
     return PopScope(
       canPop: !state.isSubmitting,
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.of(context).background,
         body: SafeArea(
           child: Center(
             child: ConstrainedBox(
@@ -75,9 +75,8 @@ class SurveyQuestionPage extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               'Survei Harian',
-                              style: AppTextStyles.title.copyWith(
-                                fontSize: context.ui(22),
-                              ),
+                              style: AppTextStyles.title(context)
+                                  .copyWith(fontSize: context.ui(22)),
                             ),
                           ),
                         ],
@@ -115,7 +114,7 @@ class SurveyQuestionPage extends ConsumerWidget {
           Icon(
             Icons.assignment_outlined,
             size: context.ui(56),
-            color: AppColors.primary,
+            color: AppColors.of(context).primary,
           ),
           SizedBox(height: context.ui(AppSpacing.md)),
           Text(
@@ -123,7 +122,8 @@ class SurveyQuestionPage extends ConsumerWidget {
                 ? 'Survei belum tersedia'
                 : 'Survei gagal dimuat',
             textAlign: TextAlign.center,
-            style: AppTextStyles.title.copyWith(fontSize: context.ui(20)),
+            style: AppTextStyles.title(context)
+                .copyWith(fontSize: context.ui(20)),
           ),
           SizedBox(height: context.ui(AppSpacing.sm)),
           Text(
@@ -131,7 +131,8 @@ class SurveyQuestionPage extends ConsumerWidget {
                 'Pertanyaan dan layanan asesmen belum tersedia. '
                     'Silakan kembali lagi nanti.',
             textAlign: TextAlign.center,
-            style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(14)),
+            style: AppTextStyles.subtitle(context)
+                .copyWith(fontSize: context.ui(14)),
           ),
           SizedBox(height: context.ui(AppSpacing.lg)),
           if (state.errorMessage != null) ...[
@@ -148,7 +149,8 @@ class SurveyQuestionPage extends ConsumerWidget {
       children: [
         Text(
           'Jawab sesuai kondisi yang kamu rasakan.',
-          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(14)),
+          style: AppTextStyles.subtitle(context)
+              .copyWith(fontSize: context.ui(14)),
         ),
         SizedBox(height: context.ui(AppSpacing.lg)),
         for (final question in state.questions) ...[
@@ -165,8 +167,8 @@ class SurveyQuestionPage extends ConsumerWidget {
             liveRegion: true,
             child: Text(
               state.errorMessage!,
-              style: AppTextStyles.subtitle.copyWith(
-                color: AppColors.error,
+              style: AppTextStyles.subtitle(context).copyWith(
+                color: AppColors.of(context).error,
                 fontSize: context.ui(14),
               ),
             ),
@@ -209,8 +211,8 @@ class _QuestionInput extends StatelessWidget {
       children: [
         Text(
           question.label,
-          style: AppTextStyles.subtitle.copyWith(
-            color: AppColors.navy,
+          style: AppTextStyles.subtitle(context).copyWith(
+            color: AppColors.of(context).navy,
             fontWeight: FontWeight.w700,
             fontSize: context.ui(16),
           ),

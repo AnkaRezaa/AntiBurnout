@@ -5,11 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
 class AuthHeader extends StatelessWidget {
-  const AuthHeader({
-    super.key,
-    required this.title,
-    required this.subtitle,
-  });
+  const AuthHeader({super.key, required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
@@ -21,18 +17,16 @@ class AuthHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: AppTextStyles.title.copyWith(
-            fontSize: context.ui(
-              AppTextStyles.title.fontSize ?? 32,
-            ),
+          style: AppTextStyles.title(context).copyWith(
+            fontSize: context.ui(AppTextStyles.title(context).fontSize ?? 32),
           ),
         ),
         SizedBox(height: context.ui(10)),
         Text(
           subtitle,
-          style: AppTextStyles.subtitle.copyWith(
+          style: AppTextStyles.subtitle(context).copyWith(
             fontSize: context.ui(
-              AppTextStyles.subtitle.fontSize ?? 16,
+              AppTextStyles.subtitle(context).fontSize ?? 16,
             ),
           ),
         ),
@@ -42,10 +36,7 @@ class AuthHeader extends StatelessWidget {
 }
 
 class AuthBackdrop extends StatelessWidget {
-  const AuthBackdrop({
-    super.key,
-    this.showLeaf = false,
-  });
+  const AuthBackdrop({super.key, this.showLeaf = false});
 
   final bool showLeaf;
 
@@ -59,29 +50,26 @@ class AuthBackdrop extends StatelessWidget {
             Positioned(
               top: -context.ui(40),
               left: context.ui(90),
-              child: _blob(context.ui(160)),
+              child: _blob(context, context.ui(160)),
             ),
             Positioned(
               top: context.ui(70),
               right: -context.ui(50),
-              child: _blob(context.ui(120)),
+              child: _blob(context, context.ui(120)),
             ),
             if (showLeaf)
               Positioned(
                 bottom: context.ui(24),
                 right: context.ui(28),
                 child: CustomPaint(
-                  size: Size(
-                    context.ui(70),
-                    context.ui(90),
-                  ),
+                  size: Size(context.ui(70), context.ui(90)),
                   painter: _SproutPainter(),
                 ),
               ),
             Positioned(
               bottom: -context.ui(40),
               left: context.ui(40),
-              child: _blob(context.ui(140)),
+              child: _blob(context, context.ui(140)),
             ),
           ],
         ),
@@ -89,12 +77,12 @@ class AuthBackdrop extends StatelessWidget {
     );
   }
 
-  Widget _blob(double size) {
+  Widget _blob(BuildContext context, double size) {
     return Container(
       width: size,
       height: size,
-      decoration: const BoxDecoration(
-        color: AppColors.blob,
+      decoration: BoxDecoration(
+        color: AppColors.of(context).blob,
         shape: BoxShape.circle,
       ),
     );
@@ -107,10 +95,7 @@ class _SproutPainter extends CustomPainter {
     // Gambar memakai koordinat dasar 70 × 90.
     // Canvas mengikuti ukuran CustomPaint yang sudah diskalakan.
     canvas.save();
-    canvas.scale(
-      size.width / 70,
-      size.height / 90,
-    );
+    canvas.scale(size.width / 70, size.height / 90);
 
     const baseWidth = 70.0;
     const baseHeight = 90.0;
@@ -137,10 +122,7 @@ class _SproutPainter extends CustomPainter {
 
     canvas.drawOval(
       Rect.fromCenter(
-        center: const Offset(
-          baseWidth * 0.28,
-          baseHeight * 0.42,
-        ),
+        center: const Offset(baseWidth * 0.28, baseHeight * 0.42),
         width: 28,
         height: 16,
       ),
@@ -149,10 +131,7 @@ class _SproutPainter extends CustomPainter {
 
     canvas.drawOval(
       Rect.fromCenter(
-        center: const Offset(
-          baseWidth * 0.72,
-          baseHeight * 0.28,
-        ),
+        center: const Offset(baseWidth * 0.72, baseHeight * 0.28),
         width: 26,
         height: 14,
       ),

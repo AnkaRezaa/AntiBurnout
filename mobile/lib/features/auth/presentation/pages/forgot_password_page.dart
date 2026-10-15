@@ -13,10 +13,7 @@ import '../../../../shared/widgets/app_text_field.dart';
 import '../widgets/auth_header.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({
-    super.key,
-    this.onSendResetLink,
-  });
+  const ForgotPasswordPage({super.key, this.onSendResetLink});
 
   // Hubungkan dengan layanan reset password.
   // Future selesai jika permintaan berhasil, throw jika gagal.
@@ -67,8 +64,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       if (!mounted) return;
 
       setState(() {
-        _errorMessage =
-            'Permintaan belum berhasil. Silakan coba lagi.';
+        _errorMessage = 'Permintaan belum berhasil. Silakan coba lagi.';
       });
     } finally {
       if (mounted) {
@@ -90,7 +86,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       resizeToAvoidBottomInset: true,
       body: Stack(
         fit: StackFit.expand,
@@ -115,9 +111,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     vertical: verticalPadding,
                   ),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: minimumHeight,
-                    ),
+                    constraints: BoxConstraints(minHeight: minimumHeight),
                     child: Center(
                       child: SizedBox(
                         width: double.infinity,
@@ -131,23 +125,21 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 _isSent
                                     ? 'Periksa Emailmu'
                                     : 'Lupa Kata Sandi?',
-                                style: AppTextStyles.title.copyWith(
-                                  fontSize: context.ui(32),
-                                ),
+                                style: AppTextStyles.title(context)
+                                    .copyWith(fontSize: context.ui(32)),
                               ),
                               SizedBox(height: context.ui(12)),
                               Text(
                                 _isSent
                                     ? 'Jika email tersebut terdaftar, '
-                                        'kamu akan menerima tautan untuk '
-                                        'mengatur ulang kata sandi. '
-                                        'Periksa juga folder spam.'
+                                          'kamu akan menerima tautan untuk '
+                                          'mengatur ulang kata sandi. '
+                                          'Periksa juga folder spam.'
                                     : 'Masukkan email yang terdaftar untuk '
-                                        'menerima tautan pengaturan ulang '
-                                        'kata sandi.',
-                                style: AppTextStyles.subtitle.copyWith(
-                                  fontSize: context.ui(16),
-                                ),
+                                          'menerima tautan pengaturan ulang '
+                                          'kata sandi.',
+                                style: AppTextStyles.subtitle(context)
+                                    .copyWith(fontSize: context.ui(16)),
                               ),
 
                               if (!_isSent) ...[
@@ -163,7 +155,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     enableSuggestions: false,
                                     prefix: Icon(
                                       Icons.alternate_email,
-                                      color: AppColors.hint,
+                                      color: AppColors.of(context).hint,
                                       size: context.ui(24),
                                     ),
                                     validator: (value) {
@@ -173,9 +165,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                         return 'Email wajib diisi.';
                                       }
 
-                                      if (!RegExp(
-                                        r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
-                                      ).hasMatch(email)) {
+                                      if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+                                          .hasMatch(email)) {
                                         return 'Masukkan email yang valid.';
                                       }
 
@@ -189,7 +180,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   Text(
                                     _errorMessage!,
                                     style: TextStyle(
-                                      color: AppColors.error,
+                                      color: AppColors.of(context).error,
                                       fontSize: context.ui(13),
                                     ),
                                   ),
@@ -215,13 +206,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 SizedBox(height: context.ui(22)),
                                 Center(
                                   child: TextButton(
-                                    onPressed:
-                                        _isSubmitting ? null : _backToLogin,
+                                    onPressed: _isSubmitting
+                                        ? null
+                                        : _backToLogin,
                                     child: Text(
                                       'Kembali ke Masuk',
-                                      style: AppTextStyles.link.copyWith(
-                                        fontSize: context.ui(15),
-                                      ),
+                                      style: AppTextStyles.link(context)
+                                          .copyWith(fontSize: context.ui(15)),
                                     ),
                                   ),
                                 ),

@@ -25,7 +25,7 @@ class HistoryPage extends ConsumerWidget {
     final controller = ref.read(historyControllerProvider.notifier);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(
@@ -40,7 +40,7 @@ class HistoryPage extends ConsumerWidget {
               // Header
               Text(
                 'Riwayat Pemeriksaan',
-                style: AppTextStyles.title.copyWith(
+                style: AppTextStyles.title(context).copyWith(
                   fontSize: context.ui(20),
                   fontWeight: FontWeight.w700,
                 ),
@@ -56,9 +56,12 @@ class HistoryPage extends ConsumerWidget {
               ),
               const SizedBox(height: 14),
 
-              const Text(
+              Text(
                 'Hasil asesmen burnout sebelumnya.',
-                style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.of(context).hint,
+                ),
               ),
               const SizedBox(height: 14),
 

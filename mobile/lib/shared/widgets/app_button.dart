@@ -24,9 +24,10 @@ class AppButton extends StatelessWidget {
       child: FilledButton(
         onPressed: isLoading ? null : onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          disabledBackgroundColor:
-              AppColors.primary.withValues(alpha: 0.6),
+          backgroundColor: AppColors.of(context).primary,
+          foregroundColor: AppColors.of(context).onPrimary,
+          disabledBackgroundColor: AppColors.of(context).primary
+              .withValues(alpha: 0.6),
 
           // Tinggi minimum 48; dapat bertambah mengikuti ukuran teks.
           minimumSize: Size(
@@ -40,9 +41,7 @@ class AppButton extends StatelessWidget {
           ),
 
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              context.ui(AppSpacing.radius),
-            ),
+            borderRadius: BorderRadius.circular(context.ui(AppSpacing.radius)),
           ),
         ),
         child: isLoading
@@ -51,15 +50,14 @@ class AppButton extends StatelessWidget {
                 height: context.ui(22),
                 child: CircularProgressIndicator(
                   strokeWidth: context.ui(2.4),
-                  color: Colors.white,
+                  color: AppColors.of(context).onPrimary,
                 ),
               )
             : Text(
                 label,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.button.copyWith(
-                  fontSize: context.ui(16),
-                ),
+                style: AppTextStyles.button(context)
+                    .copyWith(fontSize: context.ui(16)),
               ),
       ),
     );

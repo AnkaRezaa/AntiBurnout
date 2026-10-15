@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/responsive/app_scale.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/assessment_colors.dart';
@@ -21,17 +20,18 @@ class MotivationCard extends StatelessWidget {
       children: [
         Text(
           'Motivasi Hari Ini',
-          style: AppTextStyles.title.copyWith(
-            fontSize: context.ui(17),
-            fontWeight: FontWeight.w700,
-          ),
+          style: AppTextStyles.title(context)
+              .copyWith(fontSize: context.ui(17), fontWeight: FontWeight.w700),
         ),
         SizedBox(height: context.ui(AppSpacing.md)),
         Container(
           width: double.infinity,
           padding: EdgeInsets.all(context.ui(18)),
           decoration: BoxDecoration(
-            color: AssessmentColors.motivationTint,
+            color: AssessmentColors.tint(
+              context,
+              AssessmentColors.motivationTint,
+            ),
             borderRadius: BorderRadius.circular(context.ui(18)),
           ),
           child: Row(
@@ -46,16 +46,15 @@ class MotivationCard extends StatelessWidget {
                 child: Icon(
                   Icons.lightbulb_outline_rounded,
                   size: context.ui(26),
-                  color: AppColors.background,
+                  color: Colors.white,
                 ),
               ),
               SizedBox(width: context.ui(AppSpacing.md)),
               Expanded(
                 child: Text(
                   quote,
-                  style: AppTextStyles.subtitle.copyWith(
-                    fontSize: context.ui(12),
-                  ),
+                  style: AppTextStyles.subtitle(context)
+                      .copyWith(fontSize: context.ui(12)),
                 ),
               ),
             ],

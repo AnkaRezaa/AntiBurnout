@@ -40,10 +40,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     FocusScope.of(context).unfocus();
 
-    final ok = await ref.read(authControllerProvider.notifier).login(
-          email: _email.text.trim(),
-          password: _password.text,
-        );
+    final ok = await ref
+        .read(authControllerProvider.notifier)
+        .login(email: _email.text.trim(), password: _password.text);
 
     if (!mounted) return;
 
@@ -57,7 +56,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final auth = ref.watch(authControllerProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       resizeToAvoidBottomInset: true,
       body: Stack(
         fit: StackFit.expand,
@@ -82,9 +81,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     vertical: verticalPadding,
                   ),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: minimumHeight,
-                    ),
+                    constraints: BoxConstraints(minHeight: minimumHeight),
                     child: Center(
                       child: SizedBox(
                         width: double.infinity,
@@ -97,8 +94,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               Text(
                                 'Selamat Datang!',
                                 textAlign: TextAlign.left,
-                                style: AppTextStyles.title.copyWith(
-                                  color: AppColors.primaryDark,
+                                style: AppTextStyles.title(context).copyWith(
+                                  color: AppColors.of(context).primaryDark,
                                   fontSize: context.ui(32),
                                 ),
                               ),
@@ -107,9 +104,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 'Masuk untuk melanjutkan perjalanan '
                                 'menuju versi terbaik dirimu.',
                                 textAlign: TextAlign.left,
-                                style: AppTextStyles.subtitle.copyWith(
-                                  fontSize: context.ui(16),
-                                ),
+                                style: AppTextStyles.subtitle(context)
+                                    .copyWith(fontSize: context.ui(16)),
                               ),
 
                               // Jarak deskripsi ke form mengikuti mockup.
@@ -124,7 +120,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 enableSuggestions: false,
                                 prefix: Icon(
                                   Icons.alternate_email,
-                                  color: AppColors.hint,
+                                  color: AppColors.of(context).hint,
                                   size: context.ui(24),
                                 ),
                                 validator: (value) {
@@ -175,7 +171,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   ),
                                   child: Text(
                                     'Lupa kata sandi?',
-                                    style: AppTextStyles.link.copyWith(
+                                    style: AppTextStyles.link(context).copyWith(
                                       fontSize: context.ui(14),
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -188,7 +184,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 Text(
                                   auth.errorMessage!,
                                   style: TextStyle(
-                                    color: AppColors.error,
+                                    color: AppColors.of(context).error,
                                     fontSize: context.ui(13),
                                   ),
                                 ),
@@ -211,7 +207,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   Text(
                                     'Belum punya akun?',
                                     style: TextStyle(
-                                      color: AppColors.body,
+                                      color: AppColors.of(context).body,
                                       fontSize: context.ui(15),
                                     ),
                                   ),
@@ -229,9 +225,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     ),
                                     child: Text(
                                       'Daftar',
-                                      style: AppTextStyles.link.copyWith(
-                                        fontSize: context.ui(15),
-                                      ),
+                                      style: AppTextStyles.link(context)
+                                          .copyWith(fontSize: context.ui(15)),
                                     ),
                                   ),
                                 ],

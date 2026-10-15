@@ -38,17 +38,16 @@ class DashboardHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Halo,',
-                    style: AppTextStyles.subtitle.copyWith(
+                    style: AppTextStyles.subtitle(context).copyWith(
                       fontSize: context.ui(18),
-                      color: AppColors.navy,
+                      color: AppColors.of(context).navy,
                     ),
                   ),
                   SizedBox(height: context.ui(AppSpacing.xs)),
                   Text(
                     '$userName!',
-                    style: AppTextStyles.title.copyWith(
-                      fontSize: context.ui(24),
-                    ),
+                    style: AppTextStyles.title(context)
+                        .copyWith(fontSize: context.ui(24)),
                   ),
                 ],
               ),
@@ -70,7 +69,8 @@ class DashboardHeader extends StatelessWidget {
         SizedBox(height: context.ui(AppSpacing.md)),
         Text(
           subtitle,
-          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(15)),
+          style: AppTextStyles.subtitle(context)
+              .copyWith(fontSize: context.ui(15)),
         ),
       ],
     );

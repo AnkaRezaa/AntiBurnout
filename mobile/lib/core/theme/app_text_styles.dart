@@ -3,36 +3,36 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 abstract final class AppTextStyles {
-  static const title = TextStyle(
+  static TextStyle title(BuildContext context) => TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w800,
-    color: AppColors.navy,
+    color: AppColors.of(context).navy,
     height: 1.2,
   );
 
-  static const brand = TextStyle(
+  static TextStyle brand(BuildContext context) => TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w800,
-    color: AppColors.navy,
+    color: AppColors.of(context).navy,
     height: 1.1,
   );
 
-  static const subtitle = TextStyle(
+  static TextStyle subtitle(BuildContext context) => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: AppColors.body,
+    color: AppColors.of(context).body,
     height: 1.5,
   );
 
-  static const button = TextStyle(
+  static TextStyle button(BuildContext context) => TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w700,
-    color: Colors.white,
+    color: AppColors.of(context).onPrimary,
   );
 
-  static const link = TextStyle(
+  static TextStyle link(BuildContext context) => TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w700,
-    color: AppColors.primary,
+    color: AppColors.of(context).primary,
   );
 }

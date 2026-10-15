@@ -72,11 +72,11 @@ class _ShortcutCard extends StatelessWidget {
     final radius = BorderRadius.circular(context.ui(22));
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: AppColors.of(context).surface,
         borderRadius: radius,
         boxShadow: [
           BoxShadow(
-            color: AppColors.navy.withValues(alpha: 0.07),
+            color: AppColors.of(context).shadow,
             blurRadius: context.ui(20),
             offset: Offset(0, context.ui(6)),
           ),
@@ -97,19 +97,19 @@ class _ShortcutCard extends StatelessWidget {
                   width: context.ui(44),
                   height: context.ui(44),
                   decoration: BoxDecoration(
-                    color: AppColors.blob,
+                    color: AppColors.of(context).blob,
                     borderRadius: BorderRadius.circular(context.ui(14)),
                   ),
                   child: Icon(
                     icon,
-                    color: AppColors.navy,
+                    color: AppColors.of(context).navy,
                     size: context.ui(24),
                   ),
                 ),
                 SizedBox(height: context.ui(AppSpacing.md)),
                 Text(
                   title,
-                  style: AppTextStyles.title.copyWith(
+                  style: AppTextStyles.title(context).copyWith(
                     fontSize: context.ui(16),
                     fontWeight: FontWeight.w700,
                   ),
@@ -117,9 +117,9 @@ class _ShortcutCard extends StatelessWidget {
                 SizedBox(height: context.ui(6)),
                 Text(
                   subtitle,
-                  style: AppTextStyles.subtitle.copyWith(
+                  style: AppTextStyles.subtitle(context).copyWith(
                     fontSize: context.ui(12),
-                    color: AppColors.hint,
+                    color: AppColors.of(context).hint,
                   ),
                 ),
               ],

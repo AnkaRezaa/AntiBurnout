@@ -15,7 +15,7 @@ class SurveyIntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
@@ -30,7 +30,7 @@ class SurveyIntroPage extends StatelessWidget {
                 children: [
                   Text(
                     'Survei Harian',
-                    style: AppTextStyles.title.copyWith(
+                    style: AppTextStyles.title(context).copyWith(
                       fontSize: context.ui(24),
                       fontWeight: FontWeight.w700,
                     ),
@@ -43,8 +43,8 @@ class SurveyIntroPage extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          AppColors.blob,
-                          AppColors.primary.withValues(alpha: 0.04),
+                          AppColors.of(context).blob,
+                          AppColors.of(context).primary.withValues(alpha: 0.04),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(context.ui(24)),
@@ -57,7 +57,7 @@ class SurveyIntroPage extends StatelessWidget {
                             vertical: context.ui(8),
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
+                            color: AppColors.of(context).surface,
                             borderRadius: BorderRadius.circular(context.ui(24)),
                           ),
                           child: Row(
@@ -66,16 +66,15 @@ class SurveyIntroPage extends StatelessWidget {
                               Icon(
                                 Icons.schedule_rounded,
                                 size: context.ui(16),
-                                color: AppColors.primary,
+                                color: AppColors.of(context).primary,
                               ),
                               SizedBox(width: context.ui(6)),
                               Flexible(
                                 child: Text(
                                   'Waktu untuk dirimu · 3–5 menit',
                                   textAlign: TextAlign.center,
-                                  style: AppTextStyles.link.copyWith(
-                                    fontSize: context.ui(12),
-                                  ),
+                                  style: AppTextStyles.link(context)
+                                      .copyWith(fontSize: context.ui(12)),
                                 ),
                               ),
                             ],
@@ -93,18 +92,16 @@ class SurveyIntroPage extends StatelessWidget {
                         Text(
                           'Bagaimana harimu?',
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.title.copyWith(
-                            fontSize: context.ui(23),
-                          ),
+                          style: AppTextStyles.title(context)
+                              .copyWith(fontSize: context.ui(23)),
                         ),
                         SizedBox(height: context.ui(4)),
                         Text(
                           'Luangkan waktu sejenak untuk mengenali aktivitas, '
                           'kebiasaan, dan perasaanmu hari ini.',
                           textAlign: TextAlign.center,
-                          style: AppTextStyles.subtitle.copyWith(
-                            fontSize: context.ui(12),
-                          ),
+                          style: AppTextStyles.subtitle(context)
+                              .copyWith(fontSize: context.ui(12)),
                         ),
                       ],
                     ),
@@ -112,7 +109,7 @@ class SurveyIntroPage extends StatelessWidget {
                   SizedBox(height: context.ui(18)),
                   Text(
                     'Langkah kecil, manfaat berarti',
-                    style: AppTextStyles.title.copyWith(
+                    style: AppTextStyles.title(context).copyWith(
                       fontSize: context.ui(17),
                       fontWeight: FontWeight.w700,
                     ),
@@ -121,8 +118,8 @@ class SurveyIntroPage extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(context.ui(16)),
                     decoration: BoxDecoration(
-                      color: AppColors.background,
-                      border: Border.all(color: AppColors.border),
+                      color: AppColors.of(context).surface,
+                      border: Border.all(color: AppColors.of(context).border),
                       borderRadius: BorderRadius.circular(
                         context.ui(AppSpacing.radius),
                       ),
@@ -139,9 +136,9 @@ class SurveyIntroPage extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                             vertical: context.ui(12),
                           ),
-                          child: const Divider(
+                          child: Divider(
                             height: 1,
-                            color: AppColors.border,
+                            color: AppColors.of(context).border,
                           ),
                         ),
                         _feature(
@@ -157,7 +154,7 @@ class SurveyIntroPage extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(context.ui(14)),
                     decoration: BoxDecoration(
-                      color: AppColors.leaf.withValues(alpha: 0.12),
+                      color: AppColors.of(context).leaf.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(
                         context.ui(AppSpacing.fieldRadius),
                       ),
@@ -167,7 +164,7 @@ class SurveyIntroPage extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.lightbulb_outline_rounded,
-                          color: AppColors.navy,
+                          color: AppColors.of(context).navy,
                           size: context.ui(18),
                         ),
                         SizedBox(width: context.ui(10)),
@@ -175,9 +172,8 @@ class SurveyIntroPage extends StatelessWidget {
                           child: Text(
                             'Tidak ada jawaban benar atau salah. '
                             'Jawab sesuai kondisi yang kamu rasakan.',
-                            style: AppTextStyles.subtitle.copyWith(
-                              fontSize: context.ui(11),
-                            ),
+                            style: AppTextStyles.subtitle(context)
+                                .copyWith(fontSize: context.ui(11)),
                           ),
                         ),
                       ],
@@ -207,10 +203,14 @@ class SurveyIntroPage extends StatelessWidget {
           width: context.ui(44),
           height: context.ui(44),
           decoration: BoxDecoration(
-            color: AppColors.blob.withValues(alpha: 0.6),
+            color: AppColors.of(context).blob.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(context.ui(10)),
           ),
-          child: Icon(icon, color: AppColors.primary, size: context.ui(22)),
+          child: Icon(
+            icon,
+            color: AppColors.of(context).primary,
+            size: context.ui(22),
+          ),
         ),
         SizedBox(width: context.ui(10)),
         Expanded(
@@ -219,18 +219,17 @@ class SurveyIntroPage extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: AppTextStyles.subtitle.copyWith(
+                style: AppTextStyles.subtitle(context).copyWith(
                   fontSize: context.ui(14),
                   fontWeight: FontWeight.w700,
-                  color: AppColors.navy,
+                  color: AppColors.of(context).navy,
                 ),
               ),
               SizedBox(height: context.ui(2)),
               Text(
                 body,
-                style: AppTextStyles.subtitle.copyWith(
-                  fontSize: context.ui(12),
-                ),
+                style: AppTextStyles.subtitle(context)
+                    .copyWith(fontSize: context.ui(12)),
               ),
             ],
           ),

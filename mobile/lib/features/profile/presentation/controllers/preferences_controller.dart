@@ -13,7 +13,7 @@ class PreferencesDetails {
   final bool wellbeingTips;
 }
 
-/// UI preview choices; these do not change theme or schedule notifications.
+/// Theme changes apply immediately; reminder choices remain UI previews.
 class PreferencesController extends Notifier<PreferencesDetails> {
   @override
   PreferencesDetails build() => const PreferencesDetails();

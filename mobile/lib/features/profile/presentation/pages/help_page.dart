@@ -49,10 +49,10 @@ class HelpPage extends StatelessWidget {
           'aplikasi dan belum disimpan ke server.',
     ),
     (
-      'Mengapa pilihan tema gelap belum mengubah tampilan?',
-      'Halaman Preferensi saat ini adalah pratinjau antarmuka. '
-          'Pilihan tema dan pengingat dapat dicoba, tetapi belum diterapkan '
-          'pada aplikasi maupun mengirim notifikasi.',
+      'Bagaimana cara mengubah tema aplikasi?',
+      'Buka Profil, lalu Preferensi. Pilih Terang atau Gelap untuk mengubah '
+          'tampilan aplikasi, atau Sistem untuk mengikuti tema perangkat. '
+          'Pengingat masih berupa pratinjau dan belum mengirim notifikasi.',
     ),
   ];
 
@@ -71,13 +71,14 @@ class HelpPage extends StatelessWidget {
         SizedBox(height: context.ui(28)),
         Text(
           'Pertanyaan yang sering diajukan',
-          style: AppTextStyles.title.copyWith(fontSize: context.ui(18)),
+          style: AppTextStyles.title(context)
+              .copyWith(fontSize: context.ui(18)),
         ),
         SizedBox(height: context.ui(16)),
         for (var index = 0; index < _questions.length; index++) ...[
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: AppColors.of(context).border),
               borderRadius: BorderRadius.circular(context.ui(16)),
             ),
             clipBehavior: Clip.antiAlias,
@@ -98,8 +99,8 @@ class HelpPage extends StatelessWidget {
               ),
               title: Text(
                 _questions[index].$1,
-                style: AppTextStyles.subtitle.copyWith(
-                  color: AppColors.navy,
+                style: AppTextStyles.subtitle(context).copyWith(
+                  color: AppColors.of(context).navy,
                   fontWeight: FontWeight.w600,
                   fontSize: context.ui(14),
                 ),
@@ -109,10 +110,8 @@ class HelpPage extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     _questions[index].$2,
-                    style: AppTextStyles.subtitle.copyWith(
-                      fontSize: context.ui(13),
-                      height: 1.6,
-                    ),
+                    style: AppTextStyles.subtitle(context)
+                        .copyWith(fontSize: context.ui(13), height: 1.6),
                   ),
                 ),
               ],

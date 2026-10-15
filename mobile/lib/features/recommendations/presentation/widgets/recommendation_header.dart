@@ -19,10 +19,9 @@ class RecommendationHeader extends StatelessWidget {
         Expanded(
           child: Text(
             'Rekomendasi untuk Kamu',
-            style: AppTextStyles.title.copyWith(
-              fontSize: context.ui(20),
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.title(
+              context,
+            ).copyWith(fontSize: context.ui(20), fontWeight: FontWeight.w700),
           ),
         ),
       ],

@@ -25,9 +25,11 @@ class MainShell extends StatelessWidget {
       child: Scaffold(
         body: navigationShell,
         bottomNavigationBar: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: AppColors.background,
-            border: Border(top: BorderSide(color: AppColors.border)),
+          decoration: BoxDecoration(
+            color: AppColors.of(context).surface,
+            border: Border(
+              top: BorderSide(color: AppColors.of(context).border),
+            ),
           ),
           child: BottomNavigationBar(
             currentIndex: navigationShell.currentIndex,
@@ -36,11 +38,11 @@ class MainShell extends StatelessWidget {
               onBranchSelected?.call(index);
               navigationShell.goBranch(index);
             },
-            backgroundColor: AppColors.background,
+            backgroundColor: AppColors.of(context).surface,
             elevation: 0,
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: AppColors.primary,
-            unselectedItemColor: AppColors.body,
+            selectedItemColor: AppColors.of(context).primary,
+            unselectedItemColor: AppColors.of(context).body,
             selectedFontSize: context.ui(12),
             unselectedFontSize: context.ui(12),
             items: const [

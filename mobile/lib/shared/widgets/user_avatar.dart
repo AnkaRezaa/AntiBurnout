@@ -22,7 +22,7 @@ class UserAvatar extends StatelessWidget {
       fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) => Icon(
         Icons.person_outline_rounded,
-        color: AppColors.navy,
+        color: AppColors.of(context).navy,
         size: diameter * 0.6,
       ),
     );
@@ -46,8 +46,8 @@ class UserAvatar extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: AppColors.background,
-          border: Border.all(color: AppColors.blob),
+          color: AppColors.of(context).surface,
+          border: Border.all(color: AppColors.of(context).blob),
         ),
         child: ClipOval(
           child: photoBytes != null

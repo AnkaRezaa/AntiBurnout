@@ -19,7 +19,7 @@ class AppBackButton extends StatelessWidget {
       tooltip: tooltip,
       onPressed: onPressed,
       style: IconButton.styleFrom(
-        foregroundColor: AppColors.navy,
+        foregroundColor: AppColors.of(context).navy,
         backgroundColor: Colors.transparent,
         minimumSize: const Size(48, 48),
       ),

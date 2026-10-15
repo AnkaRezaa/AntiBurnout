@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/assessment_colors.dart';
 
 class RecommendationCard extends StatelessWidget {
   const RecommendationCard({
@@ -24,7 +25,7 @@ class RecommendationCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(context.ui(AppSpacing.md)),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: AssessmentColors.tint(context, backgroundColor),
         borderRadius: BorderRadius.circular(context.ui(AppSpacing.radius)),
       ),
       child: Row(
@@ -41,7 +42,7 @@ class RecommendationCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.title.copyWith(
+                  style: AppTextStyles.title(context).copyWith(
                     fontSize: context.ui(15),
                     fontWeight: FontWeight.w700,
                   ),
@@ -49,10 +50,8 @@ class RecommendationCard extends StatelessWidget {
                 SizedBox(height: context.ui(AppSpacing.xs)),
                 Text(
                   body,
-                  style: AppTextStyles.subtitle.copyWith(
-                    fontSize: context.ui(13),
-                    height: 1.4,
-                  ),
+                  style: AppTextStyles.subtitle(context)
+                      .copyWith(fontSize: context.ui(13), height: 1.4),
                 ),
               ],
             ),

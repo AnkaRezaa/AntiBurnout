@@ -19,7 +19,7 @@ class AboutPage extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(context.ui(24)),
           decoration: BoxDecoration(
-            color: AppColors.blob.withValues(alpha: 0.6),
+            color: AppColors.of(context).blob.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(context.ui(24)),
           ),
           child: Column(
@@ -28,34 +28,33 @@ class AboutPage extends StatelessWidget {
                 width: context.ui(72),
                 height: context.ui(72),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: AppColors.of(context).primary,
                   borderRadius: BorderRadius.circular(context.ui(22)),
                 ),
                 child: Icon(
                   Icons.spa_outlined,
-                  color: Colors.white,
+                  color: AppColors.of(context).onPrimary,
                   size: context.ui(38),
                 ),
               ),
               SizedBox(height: context.ui(18)),
               Text(
                 'AntiBurnout',
-                style: AppTextStyles.brand.copyWith(fontSize: context.ui(28)),
+                style: AppTextStyles.brand(context)
+                    .copyWith(fontSize: context.ui(28)),
               ),
               SizedBox(height: context.ui(6)),
               Text(
                 'Kenali dirimu. Jaga keseimbanganmu.',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.subtitle.copyWith(
-                  fontSize: context.ui(14),
-                ),
+                style: AppTextStyles.subtitle(context)
+                    .copyWith(fontSize: context.ui(14)),
               ),
               SizedBox(height: context.ui(10)),
               Text(
                 'Versi 1.0.0',
-                style: AppTextStyles.subtitle.copyWith(
-                  fontSize: context.ui(12),
-                ),
+                style: AppTextStyles.subtitle(context)
+                    .copyWith(fontSize: context.ui(12)),
               ),
             ],
           ),
@@ -63,14 +62,16 @@ class AboutPage extends StatelessWidget {
         SizedBox(height: context.ui(28)),
         Text(
           'Tentang AntiBurnout',
-          style: AppTextStyles.title.copyWith(fontSize: context.ui(18)),
+          style: AppTextStyles.title(context)
+              .copyWith(fontSize: context.ui(18)),
         ),
         SizedBox(height: context.ui(10)),
         Text(
           'AntiBurnout membantu pengguna mengenali kondisi diri melalui '
           'asesmen mandiri, melihat riwayat hasil, dan menemukan panduan '
           'umum untuk menjaga keseimbangan aktivitas sehari-hari.',
-          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(14)),
+          style: AppTextStyles.subtitle(context)
+              .copyWith(fontSize: context.ui(14)),
         ),
         SizedBox(height: context.ui(24)),
         for (final feature in const [
@@ -96,10 +97,10 @@ class AboutPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(context.ui(11)),
                 decoration: BoxDecoration(
-                  color: AppColors.blob,
+                  color: AppColors.of(context).blob,
                   borderRadius: BorderRadius.circular(context.ui(12)),
                 ),
-                child: Icon(feature.$1, color: AppColors.primary),
+                child: Icon(feature.$1, color: AppColors.of(context).primary),
               ),
               SizedBox(width: context.ui(14)),
               Expanded(
@@ -108,8 +109,8 @@ class AboutPage extends StatelessWidget {
                   children: [
                     Text(
                       feature.$2,
-                      style: AppTextStyles.subtitle.copyWith(
-                        color: AppColors.navy,
+                      style: AppTextStyles.subtitle(context).copyWith(
+                        color: AppColors.of(context).navy,
                         fontWeight: FontWeight.w600,
                         fontSize: context.ui(14),
                       ),
@@ -117,9 +118,8 @@ class AboutPage extends StatelessWidget {
                     SizedBox(height: context.ui(4)),
                     Text(
                       feature.$3,
-                      style: AppTextStyles.subtitle.copyWith(
-                        fontSize: context.ui(13),
-                      ),
+                      style: AppTextStyles.subtitle(context)
+                          .copyWith(fontSize: context.ui(13)),
                     ),
                   ],
                 ),
@@ -137,14 +137,15 @@ class AboutPage extends StatelessWidget {
         Text(
           'Dikembangkan oleh Tim AntiBurnout',
           textAlign: TextAlign.center,
-          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(13)),
+          style: AppTextStyles.subtitle(context)
+              .copyWith(fontSize: context.ui(13)),
         ),
         SizedBox(height: context.ui(6)),
         Text(
           '© 2026 AntiBurnout',
           textAlign: TextAlign.center,
-          style: AppTextStyles.subtitle.copyWith(
-            color: AppColors.hint,
+          style: AppTextStyles.subtitle(context).copyWith(
+            color: AppColors.of(context).hint,
             fontSize: context.ui(12),
           ),
         ),
