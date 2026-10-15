@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/assessment_colors.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 import '../../../assessment/di/assessment_providers.dart';
 import '../widgets/encouragement_card.dart';
 import '../widgets/recommendation_card.dart';
@@ -26,64 +27,69 @@ class RecommendationPage extends ConsumerWidget {
     final assessment = ref.watch(assessmentByIdProvider(assessmentId));
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          key: PageStorageKey('recommendation-scroll-$assessmentId'),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              RecommendationHeader(
-                onBack: onBack ?? () => Navigator.of(context).maybePop(),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.ui(AppSpacing.lg),
-                  0,
-                  context.ui(AppSpacing.lg),
-                  context.ui(AppSpacing.lg),
+      body: AppBlobBackground(
+        refreshKey: assessmentId,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            key: PageStorageKey('recommendation-scroll-$assessmentId'),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                RecommendationHeader(
+                  onBack: onBack ?? () => Navigator.of(context).maybePop(),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: context.ui(AppSpacing.md)),
-                    assessment.when(
-                      loading: () => Padding(
-                        padding: EdgeInsets.all(context.ui(AppSpacing.xl)),
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                      error: (error, stackTrace) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Asesmen belum dapat dimuat.',
-                            style: AppTextStyles.subtitle(context)
-                                .copyWith(fontSize: context.ui(14)),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    context.ui(AppSpacing.lg),
+                    0,
+                    context.ui(AppSpacing.lg),
+                    context.ui(AppSpacing.lg),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: context.ui(AppSpacing.md)),
+                      assessment.when(
+                        loading: () => Padding(
+                          padding: EdgeInsets.all(context.ui(AppSpacing.xl)),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
                           ),
-                          TextButton(
-                            onPressed: () => ref.invalidate(
-                              assessmentByIdProvider(assessmentId),
-                            ),
-                            style: TextButton.styleFrom(
-                              textStyle: TextStyle(fontSize: context.ui(14)),
-                              padding: EdgeInsets.all(context.ui(12)),
-                            ),
-                            child: const Text('Coba lagi'),
-                          ),
-                        ],
-                      ),
-                      data: (item) => item == null
-                          ? Text(
-                              'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
-                              'hasil asesmen yang tersedia.',
+                        ),
+                        error: (error, stackTrace) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Asesmen belum dapat dimuat.',
                               style: AppTextStyles.subtitle(context)
                                   .copyWith(fontSize: context.ui(14)),
-                            )
-                          : const _GeneralRecommendations(),
-                    ),
-                  ],
+                            ),
+                            TextButton(
+                              onPressed: () => ref.invalidate(
+                                assessmentByIdProvider(assessmentId),
+                              ),
+                              style: TextButton.styleFrom(
+                                textStyle: TextStyle(fontSize: context.ui(14)),
+                                padding: EdgeInsets.all(context.ui(12)),
+                              ),
+                              child: const Text('Coba lagi'),
+                            ),
+                          ],
+                        ),
+                        data: (item) => item == null
+                            ? Text(
+                                'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
+                                'hasil asesmen yang tersedia.',
+                                style: AppTextStyles.subtitle(context)
+                                    .copyWith(fontSize: context.ui(14)),
+                              )
+                            : const _GeneralRecommendations(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

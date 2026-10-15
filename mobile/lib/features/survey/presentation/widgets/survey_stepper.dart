@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_page_header.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../domain/entities/survey_question.dart';
 import '../controllers/survey_state.dart';
@@ -73,164 +74,148 @@ class _SurveyStepperState extends State<SurveyStepper> {
       },
       child: Scaffold(
         backgroundColor: AppColors.of(context).background,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Positioned(
-                top: -context.ui(72),
-                left: -context.ui(64),
-                child: IgnorePointer(
-                  child: Container(
-                    width: context.ui(150),
-                    height: context.ui(150),
-                    decoration: BoxDecoration(
-                      color: AppColors.of(context).blob,
-                      shape: BoxShape.circle,
-                    ),
+        body: AppBlobBackground(
+          subtle: true,
+          refreshKey: _step,
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) => SingleChildScrollView(
+                key: PageStorageKey('survey-step-$_step'),
+                padding: EdgeInsets.only(bottom: context.ui(AppSpacing.lg)),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight:
+                        (constraints.maxHeight - context.ui(AppSpacing.lg))
+                            .clamp(0.0, double.infinity)
+                            .toDouble(),
                   ),
-                ),
-              ),
-              LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  key: PageStorageKey('survey-step-$_step'),
-                  padding: EdgeInsets.only(bottom: context.ui(AppSpacing.lg)),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight:
-                          (constraints.maxHeight - context.ui(AppSpacing.lg))
-                              .clamp(0.0, double.infinity)
-                              .toDouble(),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Keep the title anchored to progress on every step.
-                        Column(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Keep the title anchored to progress on every step.
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppPageHeader(
+                            tooltip: _step == 0
+                                ? 'Kembali ke pengantar survei'
+                                : 'Kembali',
+                            onBack: widget.state.isSubmitting ? null : _back,
+                          ),
+                          SizedBox(height: context.ui(AppSpacing.lg)),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.ui(AppSpacing.lg),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  'Langkah ${_step + 1} dari $_total',
+                                  style: _subtitleStyle(context, 13).copyWith(
+                                    color: AppColors.of(context).navy,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                SizedBox(height: context.ui(12)),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                    context.ui(AppSpacing.radius),
+                                  ),
+                                  child: LinearProgressIndicator(
+                                    value: progress,
+                                    minHeight: context.ui(9),
+                                    color: AppColors.of(context).primary,
+                                    backgroundColor: AppColors.of(context).blob,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      top: context.ui(AppSpacing.sm),
+                                    ),
+                                    child: Text(
+                                      '${(progress * 100).round()}%',
+                                      style: AppTextStyles.link(context)
+                                          .copyWith(fontSize: context.ui(12)),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: context.ui(AppSpacing.md),
+                                    bottom: context.ui(
+                                      AppSpacing.xl + AppSpacing.md,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(
+                                        title,
+                                        style: AppTextStyles.title(context)
+                                            .copyWith(fontSize: context.ui(23)),
+                                      ),
+                                      SizedBox(height: context.ui(12)),
+                                      Text(
+                                        subtitle,
+                                        style: _subtitleStyle(context, 13),
+                                      ),
+                                      SizedBox(
+                                        height: context.ui(AppSpacing.xl),
+                                      ),
+                                      IgnorePointer(
+                                        ignoring: widget.state.isSubmitting,
+                                        child: _isReview
+                                            ? _review(context)
+                                            : _input(context, _question),
+                                      ),
+                                      if (widget.state.errorMessage !=
+                                          null) ...[
+                                        SizedBox(
+                                          height: context.ui(AppSpacing.lg),
+                                        ),
+                                        Semantics(
+                                          liveRegion: true,
+                                          child: Text(
+                                            widget.state.errorMessage!,
+                                            style: _subtitleStyle(context, 13)
+                                                .copyWith(
+                                                  color: AppColors.of(context)
+                                                      .error,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.ui(AppSpacing.lg),
+                        ),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            AppPageHeader(
-                              tooltip: _step == 0
-                                  ? 'Kembali ke pengantar survei'
-                                  : 'Kembali',
-                              onBack: widget.state.isSubmitting ? null : _back,
-                            ),
+                            _actions(context),
                             SizedBox(height: context.ui(AppSpacing.lg)),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: context.ui(AppSpacing.lg),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Text(
-                                    'Langkah ${_step + 1} dari $_total',
-                                    style: _subtitleStyle(context, 13).copyWith(
-                                      color: AppColors.of(context).navy,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  SizedBox(height: context.ui(12)),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      context.ui(AppSpacing.radius),
-                                    ),
-                                    child: LinearProgressIndicator(
-                                      value: progress,
-                                      minHeight: context.ui(9),
-                                      color: AppColors.of(context).primary,
-                                      backgroundColor: AppColors.of(context)
-                                          .blob,
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                        top: context.ui(AppSpacing.sm),
-                                      ),
-                                      child: Text(
-                                        '${(progress * 100).round()}%',
-                                        style: AppTextStyles.link(context)
-                                            .copyWith(fontSize: context.ui(12)),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      top: context.ui(AppSpacing.md),
-                                      bottom: context.ui(
-                                        AppSpacing.xl + AppSpacing.md,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Text(
-                                          title,
-                                          style: AppTextStyles.title(
-                                            context,
-                                          ).copyWith(fontSize: context.ui(23)),
-                                        ),
-                                        SizedBox(height: context.ui(12)),
-                                        Text(
-                                          subtitle,
-                                          style: _subtitleStyle(context, 13),
-                                        ),
-                                        SizedBox(
-                                          height: context.ui(AppSpacing.xl),
-                                        ),
-                                        IgnorePointer(
-                                          ignoring: widget.state.isSubmitting,
-                                          child: _isReview
-                                              ? _review(context)
-                                              : _input(context, _question),
-                                        ),
-                                        if (widget.state.errorMessage !=
-                                            null) ...[
-                                          SizedBox(
-                                            height: context.ui(AppSpacing.lg),
-                                          ),
-                                          Semantics(
-                                            liveRegion: true,
-                                            child: Text(
-                                              widget.state.errorMessage!,
-                                              style: _subtitleStyle(context, 13)
-                                                  .copyWith(
-                                                    color: AppColors.of(context)
-                                                        .error,
-                                                  ),
-                                            ),
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            _TipCard(text: tip),
                           ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.ui(AppSpacing.lg),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _actions(context),
-                              SizedBox(height: context.ui(AppSpacing.lg)),
-                              _TipCard(text: tip),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -411,8 +396,11 @@ class _SurveyStepperState extends State<SurveyStepper> {
                           style: FilledButton.styleFrom(
                             backgroundColor: value == minutes
                                 ? AppColors.of(context).primary
-                                : AppColors.of(context).blob
-                                      .withValues(alpha: .7),
+                                : Color.alphaBlend(
+                                    AppColors.of(context).blob
+                                        .withValues(alpha: .7),
+                                    AppColors.of(context).background,
+                                  ),
                             foregroundColor: value == minutes
                                 ? AppColors.of(context).onPrimary
                                 : AppColors.of(context).primary,
@@ -744,7 +732,10 @@ class _ChoiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: selected
-        ? AppColors.of(context).blob.withValues(alpha: .55)
+        ? Color.alphaBlend(
+            AppColors.of(context).blob.withValues(alpha: .55),
+            AppColors.of(context).background,
+          )
         : AppColors.of(context).surface,
     borderRadius: BorderRadius.circular(context.ui(AppSpacing.fieldRadius)),
     child: InkWell(
@@ -818,7 +809,10 @@ class _SquareButton extends StatelessWidget {
     child: IconButton(
       onPressed: onPressed,
       style: IconButton.styleFrom(
-        backgroundColor: AppColors.of(context).blob.withValues(alpha: .6),
+        backgroundColor: Color.alphaBlend(
+          AppColors.of(context).blob.withValues(alpha: .6),
+          AppColors.of(context).background,
+        ),
         foregroundColor: AppColors.of(context).primary,
         disabledForegroundColor: AppColors.of(context).hint,
         shape: RoundedRectangleBorder(
@@ -837,7 +831,10 @@ class _TipCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: EdgeInsets.all(context.ui(14)),
     decoration: BoxDecoration(
-      color: AppColors.of(context).blob.withValues(alpha: .65),
+      color: Color.alphaBlend(
+        AppColors.of(context).blob.withValues(alpha: .65),
+        AppColors.of(context).background,
+      ),
       borderRadius: BorderRadius.circular(context.ui(AppSpacing.fieldRadius)),
     ),
     child: Row(

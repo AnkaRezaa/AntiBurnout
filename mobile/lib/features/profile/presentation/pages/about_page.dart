@@ -19,7 +19,10 @@ class AboutPage extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(context.ui(24)),
           decoration: BoxDecoration(
-            color: AppColors.of(context).blob.withValues(alpha: 0.6),
+            color: Color.alphaBlend(
+              AppColors.of(context).blob.withValues(alpha: 0.6),
+              AppColors.of(context).background,
+            ),
             borderRadius: BorderRadius.circular(context.ui(24)),
           ),
           child: Column(

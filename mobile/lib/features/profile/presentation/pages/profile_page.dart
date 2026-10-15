@@ -5,6 +5,7 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/user_avatar.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 import 'about_page.dart';
@@ -89,167 +90,175 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            context.ui(24),
-            context.ui(28),
-            context.ui(24),
-            context.ui(32),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Profil',
-                style: AppTextStyles.title(context).copyWith(
-                  color: AppColors.of(context).navy,
-                  fontSize: context.ui(24),
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              SizedBox(height: context.ui(26)),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  UserAvatar(
-                    size: 98,
-                    photoUrl: profile.photoUrl,
-                    photoBytes: profile.photoBytes,
+      body: AppBlobBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              context.ui(24),
+              context.ui(28),
+              context.ui(24),
+              context.ui(32),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Profil',
+                  style: AppTextStyles.title(context).copyWith(
+                    color: AppColors.of(context).navy,
+                    fontSize: context.ui(24),
+                    fontWeight: FontWeight.w700,
                   ),
-                  SizedBox(width: context.ui(14)),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          profile.name,
-                          style: AppTextStyles.title(context).copyWith(
-                            color: AppColors.of(context).navy,
-                            fontSize: context.ui(20),
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: context.ui(8)),
-                        Text(
-                          profile.email,
-                          style: AppTextStyles.subtitle(context).copyWith(
-                            color: AppColors.of(context).hint,
-                            fontSize: context.ui(14),
-                          ),
-                        ),
-                        SizedBox(height: context.ui(12)),
-                        TextButton(
-                          onPressed: () {
-                            _openPage('edit', widget.onEditProfile);
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: AppColors.of(context).primary,
-                            backgroundColor: AppColors.of(context).blob,
-                            minimumSize: Size(context.ui(100), context.ui(40)),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.ui(18),
-                              vertical: context.ui(6),
-                            ),
-                            shape: const StadiumBorder(),
-                          ),
-                          child: Text(
-                            'Edit Profil',
-                            style: AppTextStyles.link(context).copyWith(
-                              color: AppColors.of(context).primary,
-                              fontSize: context.ui(14),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: context.ui(28)),
-              Material(
-                color: AppColors.of(context).surface,
-                clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(context.ui(16)),
-                  side: BorderSide(color: AppColors.of(context).border),
                 ),
-                child: Column(
+                SizedBox(height: context.ui(26)),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _ProfileMenuItem(
-                      icon: Icons.person_outline_rounded,
-                      label: 'Personalisasi Profil',
-                      onTap: () {
-                        _openPage('personalization', widget.onPersonalization);
-                      },
+                    UserAvatar(
+                      size: 98,
+                      photoUrl: profile.photoUrl,
+                      photoBytes: profile.photoBytes,
                     ),
-                    const _ProfileDivider(),
-                    _ProfileMenuItem(
-                      icon: Icons.settings_outlined,
-                      label: 'Preferensi',
-                      onTap: () {
-                        _openPage('preferences', widget.onPreferences);
-                      },
-                    ),
-                    const _ProfileDivider(),
-                    _ProfileMenuItem(
-                      icon: Icons.question_mark_rounded,
-                      label: 'Bantuan',
-                      onTap: () {
-                        _openPage('help', widget.onHelp);
-                      },
-                    ),
-                    const _ProfileDivider(),
-                    _ProfileMenuItem(
-                      icon: Icons.info_outline_rounded,
-                      label: 'Tentang Aplikasi',
-                      onTap: () {
-                        _openPage('about', widget.onAbout);
-                      },
+                    SizedBox(width: context.ui(14)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            profile.name,
+                            style: AppTextStyles.title(context).copyWith(
+                              color: AppColors.of(context).navy,
+                              fontSize: context.ui(20),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: context.ui(8)),
+                          Text(
+                            profile.email,
+                            style: AppTextStyles.subtitle(context).copyWith(
+                              color: AppColors.of(context).hint,
+                              fontSize: context.ui(14),
+                            ),
+                          ),
+                          SizedBox(height: context.ui(12)),
+                          TextButton(
+                            onPressed: () {
+                              _openPage('edit', widget.onEditProfile);
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppColors.of(context).primary,
+                              backgroundColor: AppColors.of(context).blob,
+                              minimumSize: Size(
+                                context.ui(100),
+                                context.ui(40),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.ui(18),
+                                vertical: context.ui(6),
+                              ),
+                              shape: const StadiumBorder(),
+                            ),
+                            child: Text(
+                              'Edit Profil',
+                              style: AppTextStyles.link(context).copyWith(
+                                color: AppColors.of(context).primary,
+                                fontSize: context.ui(14),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: context.ui(28)),
-              OutlinedButton(
-                onPressed: _isLoggingOut ? null : _logout,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.of(context).error,
-                  minimumSize: Size(
-                    double.infinity,
-                    context.ui(50).clamp(48.0, double.infinity).toDouble(),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.ui(20),
-                    vertical: context.ui(14),
-                  ),
-                  side: BorderSide(
-                    color: AppColors.of(context).error,
-                    width: 1,
-                  ),
+                SizedBox(height: context.ui(28)),
+                Material(
+                  color: AppColors.of(context).surface,
+                  clipBehavior: Clip.antiAlias,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(context.ui(14)),
+                    borderRadius: BorderRadius.circular(context.ui(16)),
+                    side: BorderSide(color: AppColors.of(context).border),
+                  ),
+                  child: Column(
+                    children: [
+                      _ProfileMenuItem(
+                        icon: Icons.person_outline_rounded,
+                        label: 'Personalisasi Profil',
+                        onTap: () {
+                          _openPage(
+                            'personalization',
+                            widget.onPersonalization,
+                          );
+                        },
+                      ),
+                      const _ProfileDivider(),
+                      _ProfileMenuItem(
+                        icon: Icons.settings_outlined,
+                        label: 'Preferensi',
+                        onTap: () {
+                          _openPage('preferences', widget.onPreferences);
+                        },
+                      ),
+                      const _ProfileDivider(),
+                      _ProfileMenuItem(
+                        icon: Icons.question_mark_rounded,
+                        label: 'Bantuan',
+                        onTap: () {
+                          _openPage('help', widget.onHelp);
+                        },
+                      ),
+                      const _ProfileDivider(),
+                      _ProfileMenuItem(
+                        icon: Icons.info_outline_rounded,
+                        label: 'Tentang Aplikasi',
+                        onTap: () {
+                          _openPage('about', widget.onAbout);
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                child: _isLoggingOut
-                    ? SizedBox(
-                        width: context.ui(22),
-                        height: context.ui(22),
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.of(context).error,
+                SizedBox(height: context.ui(28)),
+                OutlinedButton(
+                  onPressed: _isLoggingOut ? null : _logout,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.of(context).error,
+                    minimumSize: Size(
+                      double.infinity,
+                      context.ui(50).clamp(48.0, double.infinity).toDouble(),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.ui(20),
+                      vertical: context.ui(14),
+                    ),
+                    side: BorderSide(
+                      color: AppColors.of(context).error,
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(context.ui(14)),
+                    ),
+                  ),
+                  child: _isLoggingOut
+                      ? SizedBox(
+                          width: context.ui(22),
+                          height: context.ui(22),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.of(context).error,
+                          ),
+                        )
+                      : Text(
+                          'Keluar',
+                          style: TextStyle(
+                            fontSize: context.ui(16),
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      )
-                    : Text(
-                        'Keluar',
-                        style: TextStyle(
-                          fontSize: context.ui(16),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

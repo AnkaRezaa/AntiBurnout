@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 import '../../../../shared/widgets/app_page_header.dart';
 import '../widgets/assessment_history_item.dart';
 import '../controllers/history_controller.dart';
@@ -26,50 +27,56 @@ class HistoryPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const AppPageHeader(
-              title: 'Riwayat Pemeriksaan',
-              showBackButton: false,
-              fontSize: 20,
-            ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.ui(AppSpacing.lg),
-                  context.ui(18),
-                  context.ui(AppSpacing.lg),
-                  0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    HistorySearchField(onChanged: controller.setQuery),
-                    SizedBox(height: context.ui(14)),
+      body: AppBlobBackground(
+        subtle: true,
+        refreshKey: state.items,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const AppPageHeader(
+                title: 'Riwayat Pemeriksaan',
+                showBackButton: false,
+                fontSize: 20,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    context.ui(AppSpacing.lg),
+                    context.ui(18),
+                    context.ui(AppSpacing.lg),
+                    0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      HistorySearchField(onChanged: controller.setQuery),
+                      SizedBox(height: context.ui(14)),
 
-                    HistoryFilterBar(
-                      selected: state.filter,
-                      onSelected: controller.setFilter,
-                    ),
-                    SizedBox(height: context.ui(14)),
-
-                    Text(
-                      'Hasil asesmen burnout sebelumnya.',
-                      style: TextStyle(
-                        fontSize: context.ui(12),
-                        color: AppColors.of(context).hint,
+                      HistoryFilterBar(
+                        selected: state.filter,
+                        onSelected: controller.setFilter,
                       ),
-                    ),
-                    SizedBox(height: context.ui(14)),
+                      SizedBox(height: context.ui(14)),
 
-                    Expanded(child: _buildContent(context, state, controller)),
-                  ],
+                      Text(
+                        'Hasil asesmen burnout sebelumnya.',
+                        style: TextStyle(
+                          fontSize: context.ui(12),
+                          color: AppColors.of(context).hint,
+                        ),
+                      ),
+                      SizedBox(height: context.ui(14)),
+
+                      Expanded(
+                        child: _buildContent(context, state, controller),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_page_header.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 import '../../../../shared/widgets/app_button.dart';
 import '../../../assessment/domain/entities/assessment.dart';
 import '../../domain/entities/survey_question.dart';
@@ -50,30 +51,33 @@ class SurveyQuestionPage extends ConsumerWidget {
       canPop: !state.isSubmitting,
       child: Scaffold(
         backgroundColor: AppColors.of(context).background,
-        body: SafeArea(
-          child: CustomScrollView(
-            key: const PageStorageKey('survey-questions-scroll'),
-            slivers: [
-              SliverToBoxAdapter(
-                child: AppPageHeader(
-                  title: 'Survei Harian',
-                  fontSize: 22,
-                  tooltip: 'Kembali ke pengantar survei',
-                  onBack: state.isSubmitting ? null : onBack,
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    context.ui(AppSpacing.lg),
-                    context.ui(AppSpacing.page),
-                    context.ui(AppSpacing.lg),
-                    context.ui(AppSpacing.page),
+        body: AppBlobBackground(
+          subtle: true,
+          child: SafeArea(
+            child: CustomScrollView(
+              key: const PageStorageKey('survey-questions-scroll'),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: AppPageHeader(
+                    title: 'Survei Harian',
+                    fontSize: 22,
+                    tooltip: 'Kembali ke pengantar survei',
+                    onBack: state.isSubmitting ? null : onBack,
                   ),
-                  child: _buildContent(context, ref, state),
                 ),
-              ),
-            ],
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      context.ui(AppSpacing.lg),
+                      context.ui(AppSpacing.page),
+                      context.ui(AppSpacing.lg),
+                      context.ui(AppSpacing.page),
+                    ),
+                    child: _buildContent(context, ref, state),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

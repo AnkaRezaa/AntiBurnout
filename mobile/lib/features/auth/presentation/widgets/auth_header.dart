@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/responsive/app_scale.dart';
@@ -44,34 +46,62 @@ class AuthBackdrop extends StatelessWidget {
   Widget build(BuildContext context) {
     return IgnorePointer(
       child: ExcludeSemantics(
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned(
-              top: -context.ui(40),
-              left: context.ui(90),
-              child: _blob(context, context.ui(160)),
-            ),
-            Positioned(
-              top: context.ui(70),
-              right: -context.ui(50),
-              child: _blob(context, context.ui(120)),
-            ),
-            if (showLeaf)
-              Positioned(
-                bottom: context.ui(24),
-                right: context.ui(28),
-                child: CustomPaint(
-                  size: Size(context.ui(70), context.ui(90)),
-                  painter: _SproutPainter(),
-                ),
-              ),
-            Positioned(
-              bottom: -context.ui(40),
-              left: context.ui(40),
-              child: _blob(context, context.ui(140)),
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final padding = MediaQuery.paddingOf(context);
+            final gap = context.ui(12);
+            final safeTop = padding.top + gap;
+            final safeBottom = padding.bottom + gap;
+            final availableHeight = math.max(
+              0.0,
+              constraints.maxHeight - safeTop - safeBottom,
+            );
+            final topDiameter = math.min(context.ui(160), availableHeight);
+            final rightDiameter = math.min(context.ui(120), availableHeight);
+            final bottomDiameter = math.min(context.ui(140), availableHeight);
+
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                if (availableHeight > 0) ...[
+                  Positioned(
+                    top: safeTop,
+                    left: context.ui(90),
+                    child: _blob(context, topDiameter),
+                  ),
+                  Positioned(
+                    top: context
+                        .ui(70)
+                        .clamp(
+                          safeTop,
+                          math.max(
+                            safeTop,
+                            safeTop + availableHeight - rightDiameter,
+                          ),
+                        )
+                        .toDouble(),
+                    right: -context.ui(50),
+                    child: _blob(context, rightDiameter),
+                  ),
+                ],
+                if (showLeaf)
+                  Positioned(
+                    bottom: context.ui(24),
+                    right: context.ui(28),
+                    child: CustomPaint(
+                      size: Size(context.ui(70), context.ui(90)),
+                      painter: _SproutPainter(),
+                    ),
+                  ),
+                if (availableHeight > 0)
+                  Positioned(
+                    bottom: safeBottom,
+                    left: context.ui(40),
+                    child: _blob(context, bottomDiameter),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );

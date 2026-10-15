@@ -218,6 +218,7 @@ class RiskSummaryCard extends StatelessWidget {
                     width: double.infinity,
                     padding: EdgeInsets.all(context.ui(AppSpacing.md)),
                     decoration: BoxDecoration(
+                      color: AppColors.of(context).background,
                       border: Border.all(color: AppColors.of(context).border),
                       borderRadius: BorderRadius.circular(
                         context.ui(AppSpacing.radius),
@@ -316,6 +317,7 @@ class _RiskRing extends StatelessWidget {
       height: diameter,
       padding: EdgeInsets.all(contentPadding),
       decoration: BoxDecoration(
+        color: AppColors.of(context).background,
         shape: BoxShape.circle,
         border: Border.all(color: ringColor, width: borderWidth),
       ),

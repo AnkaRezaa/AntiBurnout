@@ -7,6 +7,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/assessment_colors.dart';
 import '../../../../shared/utils/date_formatter.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 import '../../../assessment/di/assessment_providers.dart';
 import '../../../assessment/domain/entities/risk_level.dart';
 import '../widgets/risk_summary_card.dart';
@@ -30,105 +31,109 @@ class ResultPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
-      body: SafeArea(
-        child: assessment.when(
-          loading: () => _ResultStatus(
-            onBack: goBack,
-            child: const Center(child: CircularProgressIndicator()),
-          ),
-          error: (error, stackTrace) => _ResultStatus(
-            onBack: goBack,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Hasil asesmen belum dapat dimuat.',
-                  style: AppTextStyles.subtitle(context)
-                      .copyWith(fontSize: context.ui(14)),
-                ),
-                TextButton(
-                  onPressed: () =>
-                      ref.invalidate(assessmentByIdProvider(assessmentId)),
-                  style: TextButton.styleFrom(
-                    textStyle: TextStyle(fontSize: context.ui(14)),
-                    padding: EdgeInsets.all(context.ui(12)),
-                  ),
-                  child: const Text('Coba lagi'),
-                ),
-              ],
+      body: AppBlobBackground(
+        subtle: true,
+        refreshKey: assessmentId,
+        child: SafeArea(
+          child: assessment.when(
+            loading: () => _ResultStatus(
+              onBack: goBack,
+              child: const Center(child: CircularProgressIndicator()),
             ),
-          ),
-          data: (item) {
-            if (item == null) {
-              return _ResultStatus(
-                onBack: goBack,
-                child: Text(
-                  'Hasil asesmen tidak ditemukan. Buka hasil dari riwayat '
-                  'atau selesaikan survei terlebih dahulu.',
-                  style: AppTextStyles.subtitle(context)
-                      .copyWith(fontSize: context.ui(14)),
-                ),
-              );
-            }
+            error: (error, stackTrace) => _ResultStatus(
+              onBack: goBack,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hasil asesmen belum dapat dimuat.',
+                    style: AppTextStyles.subtitle(context)
+                        .copyWith(fontSize: context.ui(14)),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        ref.invalidate(assessmentByIdProvider(assessmentId)),
+                    style: TextButton.styleFrom(
+                      textStyle: TextStyle(fontSize: context.ui(14)),
+                      padding: EdgeInsets.all(context.ui(12)),
+                    ),
+                    child: const Text('Coba lagi'),
+                  ),
+                ],
+              ),
+            ),
+            data: (item) {
+              if (item == null) {
+                return _ResultStatus(
+                  onBack: goBack,
+                  child: Text(
+                    'Hasil asesmen tidak ditemukan. Buka hasil dari riwayat '
+                    'atau selesaikan survei terlebih dahulu.',
+                    style: AppTextStyles.subtitle(context)
+                        .copyWith(fontSize: context.ui(14)),
+                  ),
+                );
+              }
 
-            final (label, color) = switch (item.riskLevel) {
-              RiskLevel.rendah => ('Rendah', AssessmentColors.riskLow),
-              RiskLevel.sedang => ('Sedang', AssessmentColors.riskMedium),
-              RiskLevel.tinggi => ('Tinggi', AssessmentColors.riskHigh),
-            };
-            return RiskSummaryCard(
-              key: ValueKey(item.id),
-              scrollKey: PageStorageKey('result-scroll-${item.id}'),
-              title: 'Hasil Prediksi',
-              level: label,
-              levelColor: color,
-              ringColor: color,
-              description:
-                  'Hasil asesmen menunjukkan indikasi risiko burnout '
-                  'pada tingkat ${label.toLowerCase()}.',
-              assessmentDate: formatAssessmentDate(item.takenAt),
-              disclaimer:
-                  'Ini bukan diagnosis medis, tetapi indikasi awal '
-                  'yang dapat membantumu lebih memahami kondisi diri.',
-              isExample: item.isExample,
-              factors: [
-                for (var index = 0; index < item.modelFactors.length; index++)
-                  FactorItemData(
-                    icon: item.isExample
-                        ? switch (index) {
-                            0 => Icons.nightlight_outlined,
-                            1 => Icons.bar_chart_rounded,
-                            _ => Icons.favorite_rounded,
-                          }
-                        : Icons.insights_outlined,
-                    label: item.modelFactors[index].label,
-                    backgroundColor: item.isExample
-                        ? switch (index) {
-                            0 => AppColors.of(context).blob,
-                            1 => AssessmentColors.sleepTint,
-                            _ => AssessmentColors.relaxationTint,
-                          }
-                        : AssessmentColors.activityTint,
-                    iconColor: item.isExample
-                        ? switch (index) {
-                            0 => AppColors.of(context).primary,
-                            1 => AppColors.of(context).leaf,
-                            _ => AssessmentColors.riskHigh,
-                          }
-                        : AppColors.of(context).primary,
-                  ),
-              ],
-              answerSummary: [
-                for (final answer in item.answerSummary)
-                  AnswerSummaryItemData(
-                    label: answer.label,
-                    value: answer.value,
-                  ),
-              ],
-              onBackTap: goBack,
-              onRecommendationTap: onRecommendationTap,
-            );
-          },
+              final (label, color) = switch (item.riskLevel) {
+                RiskLevel.rendah => ('Rendah', AssessmentColors.riskLow),
+                RiskLevel.sedang => ('Sedang', AssessmentColors.riskMedium),
+                RiskLevel.tinggi => ('Tinggi', AssessmentColors.riskHigh),
+              };
+              return RiskSummaryCard(
+                key: ValueKey(item.id),
+                scrollKey: PageStorageKey('result-scroll-${item.id}'),
+                title: 'Hasil Prediksi',
+                level: label,
+                levelColor: color,
+                ringColor: color,
+                description:
+                    'Hasil asesmen menunjukkan indikasi risiko burnout '
+                    'pada tingkat ${label.toLowerCase()}.',
+                assessmentDate: formatAssessmentDate(item.takenAt),
+                disclaimer:
+                    'Ini bukan diagnosis medis, tetapi indikasi awal '
+                    'yang dapat membantumu lebih memahami kondisi diri.',
+                isExample: item.isExample,
+                factors: [
+                  for (var index = 0; index < item.modelFactors.length; index++)
+                    FactorItemData(
+                      icon: item.isExample
+                          ? switch (index) {
+                              0 => Icons.nightlight_outlined,
+                              1 => Icons.bar_chart_rounded,
+                              _ => Icons.favorite_rounded,
+                            }
+                          : Icons.insights_outlined,
+                      label: item.modelFactors[index].label,
+                      backgroundColor: item.isExample
+                          ? switch (index) {
+                              0 => AppColors.of(context).blob,
+                              1 => AssessmentColors.sleepTint,
+                              _ => AssessmentColors.relaxationTint,
+                            }
+                          : AssessmentColors.activityTint,
+                      iconColor: item.isExample
+                          ? switch (index) {
+                              0 => AppColors.of(context).primary,
+                              1 => AppColors.of(context).leaf,
+                              _ => AssessmentColors.riskHigh,
+                            }
+                          : AppColors.of(context).primary,
+                    ),
+                ],
+                answerSummary: [
+                  for (final answer in item.answerSummary)
+                    AnswerSummaryItemData(
+                      label: answer.label,
+                      value: answer.value,
+                    ),
+                ],
+                onBackTap: goBack,
+                onRecommendationTap: onRecommendationTap,
+              );
+            },
+          ),
         ),
       ),
     );

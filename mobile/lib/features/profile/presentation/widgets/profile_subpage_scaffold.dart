@@ -4,6 +4,7 @@ import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_page_header.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 
 class ProfileSubpageScaffold extends StatelessWidget {
   const ProfileSubpageScaffold({
@@ -21,25 +22,27 @@ class ProfileSubpageScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.of(context).background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            AppPageHeader(title: title, onBack: onBack, fontSize: 22),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  context.ui(24),
-                  context.ui(24),
-                  context.ui(24),
-                  context.ui(32),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: children,
+      body: AppBlobBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              AppPageHeader(title: title, onBack: onBack, fontSize: 22),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    context.ui(24),
+                    context.ui(24),
+                    context.ui(24),
+                    context.ui(32),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: children,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -61,7 +64,10 @@ class ProfileInfoCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(context.ui(16)),
       decoration: BoxDecoration(
-        color: AppColors.of(context).blob.withValues(alpha: 0.6),
+        color: Color.alphaBlend(
+          AppColors.of(context).blob.withValues(alpha: 0.6),
+          AppColors.of(context).background,
+        ),
         borderRadius: BorderRadius.circular(context.ui(16)),
       ),
       child: Row(

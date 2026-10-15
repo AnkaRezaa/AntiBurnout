@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_blob_background.dart';
 import '../../../../shared/widgets/app_page_header.dart';
 import '../controllers/personalization_controller.dart';
 import '../widgets/activity_section.dart';
@@ -339,18 +340,21 @@ class _PersonalizationPageState extends ConsumerState<PersonalizationPage> {
       },
       child: Scaffold(
         backgroundColor: AppColors.of(context).background,
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppPageHeader(
-                title: 'Personalisasi Profil',
-                onBack: state.isSaving ? null : widget.onBack,
-                tooltip: widget.backTooltip,
-              ),
-              SizedBox(height: context.ui(16)),
-              Expanded(child: body),
-            ],
+        body: AppBlobBackground(
+          refreshKey: _step,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppPageHeader(
+                  title: 'Personalisasi Profil',
+                  onBack: state.isSaving ? null : widget.onBack,
+                  tooltip: widget.backTooltip,
+                ),
+                SizedBox(height: context.ui(16)),
+                Expanded(child: body),
+              ],
+            ),
           ),
         ),
       ),
