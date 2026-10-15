@@ -90,93 +90,130 @@ class _SurveyStepperState extends State<SurveyStepper> {
                   ),
                 ),
               ),
-              SingleChildScrollView(
-                key: PageStorageKey('survey-step-$_step'),
-                padding: EdgeInsets.fromLTRB(
-                  context.ui(24),
-                  context.ui(16),
-                  context.ui(24),
-                  context.ui(24),
-                ),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 560),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: AppBackButton(
-                            tooltip: _step == 0
-                                ? 'Kembali ke pengantar survei'
-                                : 'Kembali',
-                            onPressed: widget.state.isSubmitting ? null : _back,
-                          ),
-                        ),
-                        SizedBox(height: context.ui(22)),
-                        Text(
-                          'Langkah ${_step + 1} dari $_total',
-                          style: _subtitleStyle(context, 13).copyWith(
-                            color: AppColors.navy,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: context.ui(10)),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(context.ui(16)),
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            minHeight: context.ui(9),
-                            color: AppColors.primary,
-                            backgroundColor: AppColors.blob,
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: context.ui(7)),
-                            child: Text(
-                              '${(progress * 100).round()}%',
-                              style: AppTextStyles.link.copyWith(
-                                fontSize: context.ui(12),
+              LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  key: PageStorageKey('survey-step-$_step'),
+                  padding: EdgeInsets.fromLTRB(
+                    context.ui(AppSpacing.lg),
+                    context.ui(AppSpacing.md),
+                    context.ui(AppSpacing.lg),
+                    context.ui(AppSpacing.lg),
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 560,
+                        minHeight:
+                            (constraints.maxHeight -
+                                    context.ui(AppSpacing.md + AppSpacing.lg))
+                                .clamp(0.0, double.infinity)
+                                .toDouble(),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: AppBackButton(
+                                  tooltip: _step == 0
+                                      ? 'Kembali ke pengantar survei'
+                                      : 'Kembali',
+                                  onPressed: widget.state.isSubmitting
+                                      ? null
+                                      : _back,
+                                ),
                               ),
+                              SizedBox(height: context.ui(AppSpacing.lg)),
+                              Text(
+                                'Langkah ${_step + 1} dari $_total',
+                                style: _subtitleStyle(context, 13).copyWith(
+                                  color: AppColors.navy,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: context.ui(12)),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  context.ui(AppSpacing.radius),
+                                ),
+                                child: LinearProgressIndicator(
+                                  value: progress,
+                                  minHeight: context.ui(9),
+                                  color: AppColors.primary,
+                                  backgroundColor: AppColors.blob,
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    top: context.ui(AppSpacing.sm),
+                                  ),
+                                  child: Text(
+                                    '${(progress * 100).round()}%',
+                                    style: AppTextStyles.link.copyWith(
+                                      fontSize: context.ui(12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.ui(AppSpacing.xl),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  title,
+                                  style: AppTextStyles.title.copyWith(
+                                    fontSize: context.ui(23),
+                                  ),
+                                ),
+                                SizedBox(height: context.ui(12)),
+                                Text(
+                                  subtitle,
+                                  style: _subtitleStyle(context, 13),
+                                ),
+                                SizedBox(height: context.ui(AppSpacing.xl)),
+                                IgnorePointer(
+                                  ignoring: widget.state.isSubmitting,
+                                  child: _isReview
+                                      ? _review(context)
+                                      : _input(context, _question),
+                                ),
+                                if (widget.state.errorMessage != null) ...[
+                                  SizedBox(height: context.ui(AppSpacing.lg)),
+                                  Semantics(
+                                    liveRegion: true,
+                                    child: Text(
+                                      widget.state.errorMessage!,
+                                      style: _subtitleStyle(
+                                        context,
+                                        13,
+                                      ).copyWith(color: AppColors.error),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                        ),
-                        SizedBox(height: context.ui(12)),
-                        Text(
-                          title,
-                          style: AppTextStyles.title.copyWith(
-                            fontSize: context.ui(23),
-                          ),
-                        ),
-                        SizedBox(height: context.ui(8)),
-                        Text(subtitle, style: _subtitleStyle(context, 13)),
-                        SizedBox(height: context.ui(18)),
-                        IgnorePointer(
-                          ignoring: widget.state.isSubmitting,
-                          child: _isReview
-                              ? _review(context)
-                              : _input(context, _question),
-                        ),
-                        if (widget.state.errorMessage != null) ...[
-                          SizedBox(height: context.ui(AppSpacing.md)),
-                          Semantics(
-                            liveRegion: true,
-                            child: Text(
-                              widget.state.errorMessage!,
-                              style: _subtitleStyle(
-                                context,
-                                13,
-                              ).copyWith(color: AppColors.error),
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _actions(context),
+                              SizedBox(height: context.ui(AppSpacing.lg)),
+                              _TipCard(text: tip),
+                            ],
                           ),
                         ],
-                        SizedBox(height: context.ui(24)),
-                        _actions(context),
-                        SizedBox(height: context.ui(14)),
-                        _TipCard(text: tip),
-                      ],
+                      ),
                     ),
                   ),
                 ),
