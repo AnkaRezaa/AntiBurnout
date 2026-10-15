@@ -1,142 +1,122 @@
 import 'package:flutter/material.dart';
 
-class LatestAssessmentCard extends StatelessWidget {
-  final String riskLevel; // 'Rendah', 'Sedang', 'Tinggi'
-  final String date;
-  final VoidCallback? onDetailTap;
+import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/assessment_colors.dart';
+import '../../../history/presentation/widgets/assessment_history_item.dart';
 
+class LatestAssessmentCard extends StatelessWidget {
   const LatestAssessmentCard({
     super.key,
-    this.riskLevel = 'Sedang',
-    this.date = '18 September 2026',
-    this.onDetailTap,
+    required this.riskLevel,
+    required this.date,
+    this.onHistoryTap,
   });
+
+  final RiskLevel? riskLevel;
+  final String date;
+  final VoidCallback? onHistoryTap;
+
+  Color get _riskColor => switch (riskLevel) {
+    RiskLevel.rendah => AssessmentColors.riskLow,
+    RiskLevel.sedang => AssessmentColors.riskMedium,
+    RiskLevel.tinggi => AssessmentColors.riskHigh,
+    null => AppColors.hint,
+  };
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: EdgeInsets.all(context.ui(22)),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(context.ui(24)),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0A0F172A),
-            blurRadius: 20,
-            offset: Offset(0, 8),
+            color: AppColors.navy.withValues(alpha: 0.07),
+            blurRadius: context.ui(22),
+            offset: Offset(0, context.ui(AppSpacing.sm)),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row: Label & Badge
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'HASIL ASESMEN TERAKHIR',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.6,
-                  color: Color(0xFF94A3B8),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFBEB),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFFDE68A)),
-                ),
-                child: Text(
-                  riskLevel.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFFD97706),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Title
-          const Text(
-            'Risiko Burnout',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF0F172A),
+          Text(
+            'HASIL ASESMEN TERAKHIR',
+            style: AppTextStyles.subtitle.copyWith(
+              fontSize: context.ui(12),
+              fontWeight: FontWeight.w700,
+              color: AppColors.hint,
             ),
           ),
-          const SizedBox(height: 20),
-
-          // Custom Risk Slider / Progress Bar
-          _buildRiskBar(),
-          const SizedBox(height: 8),
-
-          // Labels Row
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Rendah',
-                style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
-              ),
-              Text(
-                'Sedang',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1D4ED8),
-                ),
-              ),
-              Text(
-                'Tinggi',
-                style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Footer Row: Date & Detail Button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          SizedBox(height: context.ui(AppSpacing.sm)),
+          _buildRiskHeading(context),
+          SizedBox(height: context.ui(AppSpacing.lg)),
+          if (riskLevel == null)
+            Text(
+              'Mulai survei untuk mengenali kondisi keseharianmu.',
+              style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(14)),
+            )
+          else ...[
+            _buildRiskBar(context),
+            SizedBox(height: context.ui(AppSpacing.sm)),
+            Row(
+              children: RiskLevel.values.map((level) {
+                final isSelected = level == riskLevel;
+                return Expanded(
+                  child: Text(
+                    level.label,
+                    textAlign: switch (level) {
+                      RiskLevel.rendah => TextAlign.start,
+                      RiskLevel.sedang => TextAlign.center,
+                      RiskLevel.tinggi => TextAlign.end,
+                    },
+                    style: AppTextStyles.subtitle.copyWith(
+                      fontSize: context.ui(11),
+                      color: isSelected ? AppColors.navy : AppColors.hint,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+          SizedBox(height: context.ui(AppSpacing.md)),
+          const Divider(height: 1, color: AppColors.border),
+          SizedBox(height: context.ui(AppSpacing.sm)),
+          Wrap(
+            spacing: context.ui(AppSpacing.sm),
+            runSpacing: context.ui(AppSpacing.xs),
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
                 date,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF94A3B8),
-                  fontWeight: FontWeight.w500,
+                style: AppTextStyles.subtitle.copyWith(
+                  fontSize: context.ui(12),
+                  color: AppColors.hint,
                 ),
               ),
-              InkWell(
-                onTap: onDetailTap,
-                borderRadius: BorderRadius.circular(8),
-                child: const Row(
-                  children: [
-                    Text(
-                      'Lihat Detail',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF2563EB),
-                      ),
+              if (onHistoryTap != null)
+                TextButton(
+                  onPressed: onHistoryTap,
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(48, 48),
+                    padding: EdgeInsets.symmetric(horizontal: context.ui(4)),
+                  ),
+                  child: Text(
+                    'Lihat Riwayat ›',
+                    style: AppTextStyles.link.copyWith(
+                      fontSize: context.ui(12),
                     ),
-                    SizedBox(width: 4),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 18,
-                      color: Color(0xFF2563EB),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
             ],
           ),
         ],
@@ -144,67 +124,97 @@ class LatestAssessmentCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRiskBar() {
-    return SizedBox(
-      height: 20,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Gradient Bar Track
-          Container(
-            height: 7,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFD1FAE5), // Mint Green
-                  Color(0xFFFEF08A), // Light Yellow
-                  Color(0xFFFDE68A), // Amber
-                  Color(0xFFFEE2E2), // Light Red/Pink
-                ],
-              ),
-            ),
-          ),
+  Widget _buildRiskHeading(BuildContext context) {
+    final title = Text(
+      'Risiko Burnout',
+      style: AppTextStyles.title.copyWith(fontSize: context.ui(22)),
+    );
+    if (riskLevel == null) return title;
 
-          // Faded Ticks (Left & Right)
-          const Positioned(
-            left: 12,
-            child: CircleAvatar(radius: 4, backgroundColor: Color(0x40CBD5E1)),
-          ),
-          const Positioned(
-            right: 12,
-            child: CircleAvatar(radius: 4, backgroundColor: Color(0x40CBD5E1)),
-          ),
+    final badge = Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.ui(12),
+        vertical: context.ui(6),
+      ),
+      decoration: BoxDecoration(
+        color: _riskColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(context.ui(20)),
+      ),
+      child: Text(
+        riskLevel!.label.toUpperCase(),
+        style: AppTextStyles.link.copyWith(
+          fontSize: context.ui(11),
+          color: _riskColor,
+        ),
+      ),
+    );
 
-          // Active Thumb Indicator (Center - Sedang)
-          Center(
-            child: Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFDBEAFE),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.25),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Center(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textScaler = MediaQuery.textScalerOf(context);
+        if (constraints.maxWidth < context.ui(270) ||
+            textScaler.scale(14) > 20) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              title,
+              SizedBox(height: context.ui(AppSpacing.sm)),
+              Align(alignment: Alignment.centerRight, child: badge),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: title),
+            SizedBox(width: context.ui(AppSpacing.sm)),
+            badge,
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildRiskBar(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.ui(AppSpacing.sm)),
+      child: SizedBox(
+        height: context.ui(20),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(height: context.ui(5), color: AppColors.border),
+            for (final level in RiskLevel.values)
+              Align(
+                alignment: switch (level) {
+                  RiskLevel.rendah => Alignment.centerLeft,
+                  RiskLevel.sedang => Alignment.center,
+                  RiskLevel.tinggi => Alignment.centerRight,
+                },
                 child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
+                  width: context.ui(18),
+                  height: context.ui(18),
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xFF2563EB),
+                    color: level == riskLevel
+                        ? AppColors.blob
+                        : AppColors.border,
                   ),
+                  child: level == riskLevel
+                      ? Center(
+                          child: Container(
+                            width: context.ui(10),
+                            height: context.ui(10),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        )
+                      : null,
                 ),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

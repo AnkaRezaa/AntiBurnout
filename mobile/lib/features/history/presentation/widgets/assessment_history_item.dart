@@ -1,11 +1,6 @@
-enum RiskLevel {
-  rendah('Rendah'),
-  sedang('Sedang'),
-  tinggi('Tinggi');
+import '../../../assessment/domain/entities/risk_level.dart';
 
-  const RiskLevel(this.label);
-  final String label;
-}
+export '../../../assessment/domain/entities/risk_level.dart';
 
 class AssessmentHistoryItem {
   final String id;
@@ -19,8 +14,18 @@ class AssessmentHistoryItem {
   });
 
   static const _months = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
   ];
 
   /// Contoh: "18 September 2026 • 20:15"

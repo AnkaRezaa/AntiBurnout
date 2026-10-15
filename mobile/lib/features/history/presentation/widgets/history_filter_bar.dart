@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../controllers/history_state.dart';
 
 class HistoryFilterBar extends StatelessWidget {
@@ -17,32 +21,35 @@ class HistoryFilterBar extends StatelessWidget {
     const filters = HistoryFilter.values;
 
     return SizedBox(
-      height: 36,
+      height:
+          (MediaQuery.textScalerOf(context).scale(context.ui(12)) * 1.5 +
+                  context.ui(AppSpacing.md))
+              .clamp(48.0, double.infinity),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final filter = filters[index];
           final isSelected = filter == selected;
 
           return Material(
-            color: isSelected
-                ? const Color(0xFF6366F1)
-                : const Color(0xFFE8EDFB),
+            color: isSelected ? AppColors.primary : AppColors.blob,
             borderRadius: BorderRadius.circular(20),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
               onTap: () => onSelected(filter),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 8,
+                ),
                 child: Text(
                   filter.label,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: AppTextStyles.subtitle.copyWith(
+                    fontSize: context.ui(12),
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : const Color(0xFF475569),
+                    color: isSelected ? AppColors.background : AppColors.body,
                   ),
                 ),
               ),

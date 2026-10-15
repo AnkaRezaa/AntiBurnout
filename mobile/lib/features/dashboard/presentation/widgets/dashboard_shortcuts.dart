@@ -1,50 +1,60 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+
 class DashboardShortcuts extends StatelessWidget {
+  const DashboardShortcuts({super.key, this.onSurveyTap, this.onHistoryTap});
+
   final VoidCallback? onSurveyTap;
   final VoidCallback? onHistoryTap;
 
-  const DashboardShortcuts({
-    super.key,
-    this.onSurveyTap,
-    this.onHistoryTap,
-  });
-
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Card 1: Mulai Survei
-        Expanded(
-          child: _ShortcutCard(
-            icon: Icons.check_rounded,
-            title: 'Mulai Survei',
-            subtitle: 'Lakukan asesmen burnout baru',
-            onTap: onSurveyTap,
-          ),
-        ),
-        const SizedBox(width: 14),
+    final survey = _ShortcutCard(
+      icon: Icons.check_rounded,
+      title: 'Mulai Survei',
+      subtitle: 'Lakukan asesmen burnout baru',
+      onTap: onSurveyTap,
+    );
+    final history = _ShortcutCard(
+      icon: Icons.menu_rounded,
+      title: 'Riwayat Saya',
+      subtitle: 'Lihat hasil asesmen sebelumnya',
+      onTap: onHistoryTap,
+    );
 
-        // Card 2: Riwayat Saya
-        Expanded(
-          child: _ShortcutCard(
-            icon: Icons.menu_rounded,
-            title: 'Riwayat Saya',
-            subtitle: 'Lihat hasil asesmen sebelumnya',
-            onTap: onHistoryTap,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final largeText = MediaQuery.textScalerOf(context).scale(15) > 21;
+        if (constraints.maxWidth < context.ui(280) || largeText) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              survey,
+              SizedBox(height: context.ui(AppSpacing.md)),
+              history,
+            ],
+          );
+        }
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: survey),
+              SizedBox(width: context.ui(AppSpacing.md)),
+              Expanded(child: history),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }
 
 class _ShortcutCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback? onTap;
-
   const _ShortcutCard({
     required this.icon,
     required this.title,
@@ -52,64 +62,69 @@ class _ShortcutCard extends StatelessWidget {
     this.onTap,
   });
 
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(22),
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0A0F172A),
-              blurRadius: 16,
-              offset: Offset(0, 6),
+    final radius = BorderRadius.circular(context.ui(22));
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: radius,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.navy.withValues(alpha: 0.07),
+            blurRadius: context.ui(20),
+            offset: Offset(0, context.ui(6)),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: radius,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: Padding(
+            padding: EdgeInsets.all(context.ui(20)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: context.ui(44),
+                  height: context.ui(44),
+                  decoration: BoxDecoration(
+                    color: AppColors.blob,
+                    borderRadius: BorderRadius.circular(context.ui(14)),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: AppColors.navy,
+                    size: context.ui(24),
+                  ),
+                ),
+                SizedBox(height: context.ui(AppSpacing.md)),
+                Text(
+                  title,
+                  style: AppTextStyles.title.copyWith(
+                    fontSize: context.ui(16),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: context.ui(6)),
+                Text(
+                  subtitle,
+                  style: AppTextStyles.subtitle.copyWith(
+                    fontSize: context.ui(12),
+                    color: AppColors.hint,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Icon Container
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEF2FF),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(
-                icon,
-                color: const Color(0xFF2563EB),
-                size: 22,
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            // Title
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF0F172A),
-              ),
-            ),
-            const SizedBox(height: 6),
-
-            // Subtitle
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Color(0xFF94A3B8),
-                height: 1.3,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

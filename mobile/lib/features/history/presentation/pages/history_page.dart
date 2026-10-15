@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../widgets/assessment_history_item.dart';
 import '../controllers/history_controller.dart';
 import '../widgets/assessment_history_tile.dart';
@@ -21,37 +25,25 @@ class HistoryPage extends ConsumerWidget {
     final controller = ref.read(historyControllerProvider.notifier);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+          padding: EdgeInsets.fromLTRB(
+            context.ui(AppSpacing.lg),
+            context.ui(AppSpacing.md),
+            context.ui(AppSpacing.lg),
+            0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
-                children: [
-                  InkWell(
-                    onTap: onBack,
-                    borderRadius: BorderRadius.circular(20),
-                   
-                      child: Icon(
-                        Icons.chevron_left_rounded,
-                        size: 26,
-                        color: Color(0xFF1E3A8A),
-                      ),
-                    ),
-                  
-                  const SizedBox(width: 4),
-                  const Text(
-                    'Riwayat Pemeriksaan',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1E3A8A),
-                    ),
-                  ),
-                ],
+              Text(
+                'Riwayat Pemeriksaan',
+                style: AppTextStyles.title.copyWith(
+                  fontSize: context.ui(20),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 18),
 
@@ -102,9 +94,10 @@ class HistoryPage extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: controller.load,
       child: ListView.separated(
+        key: const PageStorageKey('history-scroll'),
         padding: const EdgeInsets.only(bottom: 16),
         itemCount: visible.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 14),
+        separatorBuilder: (_, _) => const SizedBox(height: 14),
         itemBuilder: (context, index) {
           final item = visible[index];
           return AssessmentHistoryTile(

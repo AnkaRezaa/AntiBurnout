@@ -1,216 +1,143 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/router/route_paths.dart';
+import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/assessment_colors.dart';
+import '../../../assessment/di/assessment_providers.dart';
+import '../widgets/encouragement_card.dart';
+import '../widgets/recommendation_card.dart';
+import '../widgets/recommendation_header.dart';
 
-class RecommendationPage extends StatelessWidget {
-  const RecommendationPage({super.key});
+class RecommendationPage extends ConsumerWidget {
+  const RecommendationPage({
+    super.key,
+    required this.assessmentId,
+    this.onBack,
+  });
+
+  final String assessmentId;
+  final VoidCallback? onBack;
 
   @override
-  Widget build(BuildContext context) {
-    final recommendations = [
-      _RecommendationItem(
-        icon: Icons.bedtime_rounded,
-        iconBg: const Color(0xFFE0F2FE),
-        title: 'Perbaiki Pola Tidur',
-        body: 'Usahakan tidur 7-8 jam per hari dengan jadwal yang konsisten.',
-      ),
-      _RecommendationItem(
-        icon: Icons.self_improvement_rounded,
-        iconBg: const Color(0xFFE0E7FF),
-        title: 'Kelola Aktivitas',
-        body: 'Coba prioritaskan tugas penting dan sisihkan waktu istirahat secara teratur.',
-      ),
-      _RecommendationItem(
-        icon: Icons.groups_rounded,
-        iconBg: const Color(0xFFFCE7F3),
-        title: 'Cari Dukungan Sosial',
-        body: 'Jangan ragu untuk berdiskusi dengan teman, keluarga, atau profesional jika merasa terbebani.',
-      ),
-    ];
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final assessment = ref.watch(assessmentByIdProvider(assessmentId));
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F4F6),
+      backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: SingleChildScrollView(
+          key: PageStorageKey('recommendation-scroll-$assessmentId'),
+          padding: EdgeInsets.fromLTRB(
+            context.ui(AppSpacing.lg),
+            context.ui(AppSpacing.md),
+            context.ui(AppSpacing.lg),
+            context.ui(AppSpacing.lg),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () => context.go(RoutePaths.result),
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 24,
-                      color: Color(0xFF1E293B),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Rekomendasi untuk Kamu',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF1E293B),
-                    ),
-                  ),
-                ],
+              RecommendationHeader(
+                onBack: onBack ?? () => Navigator.of(context).maybePop(),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Berikut beberapa langkah yang bisa kamu lakukan untuk membantu menjaga risiko burnout.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF475569),
-                  height: 1.5,
+              SizedBox(height: context.ui(AppSpacing.md)),
+              assessment.when(
+                loading: () => Padding(
+                  padding: EdgeInsets.all(context.ui(AppSpacing.xl)),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
-              ),
-              const SizedBox(height: 18),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: recommendations.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final item = recommendations[index];
-                    return Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 42,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              color: item.iconBg,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              item.icon,
-                              size: 22,
-                              color: const Color(0xFF1E293B),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.title,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF1E293B),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  item.body,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF475569),
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                error: (error, stackTrace) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Asesmen belum dapat dimuat.',
+                      style: AppTextStyles.subtitle,
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          ref.invalidate(assessmentByIdProvider(assessmentId)),
+                      child: const Text('Coba lagi'),
+                    ),
+                  ],
                 ),
+                data: (item) => item == null
+                    ? const Text(
+                        'Hasil asesmen tidak ditemukan. Buka rekomendasi dari '
+                        'hasil asesmen yang tersedia.',
+                        style: AppTextStyles.subtitle,
+                      )
+                    : const _GeneralRecommendations(),
               ),
             ],
           ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Color(0xFFF1F5F9), width: 1)),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: 2,
-          onTap: (index) {
-            if (index == 2) {
-              context.go(RoutePaths.result);
-            } else {
-              context.go(RoutePaths.home, extra: index);
-            }
-          },
-          backgroundColor: Colors.white,
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF4F46E5),
-          unselectedItemColor: const Color(0xFF94A3B8),
-          selectedLabelStyle: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-          ),
-          unselectedLabelStyle: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home_outlined),
-              label: 'Beranda',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.assignment_outlined),
-              activeIcon: Icon(Icons.assignment_rounded),
-              label: 'Survei',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.note_alt_outlined),
-              activeIcon: Icon(Icons.note_alt_outlined),
-              label: 'Hasil',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.pending_actions_outlined),
-              activeIcon: Icon(Icons.pending_actions_outlined),
-              label: 'Riwayat',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline_rounded),
-              activeIcon: Icon(Icons.person_rounded),
-              label: 'Profil',
-            ),
-          ],
         ),
       ),
     );
   }
 }
 
-class _RecommendationItem {
-  final IconData icon;
-  final Color iconBg;
-  final String title;
-  final String body;
+class _GeneralRecommendations extends StatelessWidget {
+  const _GeneralRecommendations();
 
-  const _RecommendationItem({
-    required this.icon,
-    required this.iconBg,
-    required this.title,
-    required this.body,
-  });
+  static const _items = [
+    (
+      icon: Icons.bed_outlined,
+      background: AssessmentColors.sleepTint,
+      title: 'Perbaiki Pola Tidur',
+      body: 'Usahakan tidur 7–8 jam per hari dengan jadwal yang konsisten.',
+    ),
+    (
+      icon: Icons.monitor_heart_outlined,
+      background: AssessmentColors.activityTint,
+      title: 'Kelola Aktivitas',
+      body: 'Buat prioritas dan atur waktu istirahat di sela pekerjaan.',
+    ),
+    (
+      icon: Icons.self_improvement_outlined,
+      background: AssessmentColors.relaxationTint,
+      title: 'Latih Relaksasi',
+      body:
+          'Coba teknik pernapasan, meditasi, atau mindfulness selama '
+          '5–10 menit setiap hari.',
+    ),
+    (
+      icon: Icons.diversity_1_outlined,
+      background: AssessmentColors.socialTint,
+      title: 'Cari Dukungan Sosial',
+      body:
+          'Jangan ragu untuk berbicara dengan teman, keluarga, atau '
+          'profesional jika merasa terbebani.',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Berikut beberapa langkah yang bisa kamu lakukan untuk '
+          'membantu menjaga kesehatan mental.',
+          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(14)),
+        ),
+        SizedBox(height: context.ui(AppSpacing.sm)),
+        Text(
+          'Panduan umum, belum dipersonalisasi berdasarkan hasil asesmen.',
+          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(12)),
+        ),
+        SizedBox(height: context.ui(AppSpacing.md)),
+        for (final item in _items) ...[
+          RecommendationCard(
+            icon: item.icon,
+            backgroundColor: item.background,
+            title: item.title,
+            body: item.body,
+          ),
+          SizedBox(height: context.ui(12)),
+        ],
+        const EncouragementCard(),
+      ],
+    );
+  }
 }
