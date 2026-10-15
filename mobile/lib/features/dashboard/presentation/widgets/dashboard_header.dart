@@ -1,46 +1,70 @@
 import 'package:flutter/material.dart';
 
-class DashboardHeader extends StatelessWidget {
-  final String userName;
-  final String subtitle;
+import '../../../../core/responsive/app_scale.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../shared/widgets/user_avatar.dart';
 
+class DashboardHeader extends StatelessWidget {
   const DashboardHeader({
     super.key,
     required this.userName,
+    this.photoUrl,
+    this.onProfileTap,
     this.subtitle = 'Jaga kesehatan mentalmu, mulai dari sekarang.',
   });
+
+  final String userName;
+  final String? photoUrl;
+  final VoidCallback? onProfileTap;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Halo,',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF64748B),
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Halo,',
+                    style: AppTextStyles.subtitle.copyWith(
+                      fontSize: context.ui(18),
+                      color: AppColors.navy,
+                    ),
+                  ),
+                  SizedBox(height: context.ui(AppSpacing.xs)),
+                  Text(
+                    '$userName!',
+                    style: AppTextStyles.title.copyWith(
+                      fontSize: context.ui(24),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: context.ui(AppSpacing.md)),
+            IconButton(
+              tooltip: 'Buka profil',
+              onPressed: onProfileTap,
+              style: IconButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(48, 48),
+              ),
+              icon: ExcludeSemantics(child: UserAvatar(photoUrl: photoUrl)),
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          '$userName!',
-          style: const TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFF1E3A8A),
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 6),
+        SizedBox(height: context.ui(AppSpacing.md)),
         Text(
           subtitle,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF64748B),
-          ),
+          style: AppTextStyles.subtitle.copyWith(fontSize: context.ui(15)),
         ),
       ],
     );

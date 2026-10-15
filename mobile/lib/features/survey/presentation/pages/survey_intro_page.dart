@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/app_button.dart';
+import '../../../../shared/widgets/app_back_button.dart';
 
 class SurveyIntroPage extends StatelessWidget {
   const SurveyIntroPage({super.key, this.onStartSurvey, this.onLater});
@@ -27,24 +28,7 @@ class SurveyIntroPage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      IconButton(
-                        tooltip: 'Kembali ke beranda',
-                        onPressed: onLater,
-                        style: IconButton.styleFrom(
-                          backgroundColor: AppColors.blob.withValues(
-                            alpha: 0.5,
-                          ),
-                          minimumSize: const Size(48, 48),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(context.ui(14)),
-                          ),
-                        ),
-                        icon: Icon(
-                          Icons.chevron_left_rounded,
-                          color: AppColors.navy,
-                          size: context.ui(26),
-                        ),
-                      ),
+                      AppBackButton(tooltip: 'Kembali', onPressed: onLater),
                       SizedBox(width: context.ui(12)),
                       Expanded(
                         child: Text(
