@@ -35,9 +35,8 @@ class HistoryPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const AppPageHeader(
-                title: 'Riwayat Pemeriksaan',
+                title: 'Riwayat Survei',
                 showBackButton: false,
-                fontSize: 20,
               ),
               Expanded(
                 child: Padding(

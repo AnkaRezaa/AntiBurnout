@@ -359,7 +359,7 @@ void main() {
           'B',
         );
         await _back(tester, android);
-        expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+        expect(find.text('Riwayat Survei'), findsOneWidget);
         expect(find.byType(ResultPage), findsNothing);
         expect(
           container
@@ -422,7 +422,7 @@ void main() {
         'B',
       );
       await _back(tester, false);
-      expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+      expect(find.text('Riwayat Survei'), findsOneWidget);
       expect(find.byType(ResultPage), findsNothing);
       expect(tester.takeException(), isNull);
     },
@@ -469,7 +469,7 @@ void main() {
       );
       await _back(tester, true);
       await _back(tester, false);
-      expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+      expect(find.text('Riwayat Survei'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
           (widget) =>
@@ -490,7 +490,7 @@ void main() {
       expect(find.text('Lihat Detail ›'), findsNothing);
       expect(find.text('Riwayat Saya'), findsOneWidget);
       await _tap(tester, 'Riwayat Saya');
-      expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+      expect(find.text('Riwayat Survei'), findsOneWidget);
       expect(find.byType(ResultPage), findsNothing);
       expect(tester.takeException(), isNull);
     },
@@ -563,7 +563,7 @@ void main() {
         await _back(tester, android);
         expect(find.byType(ResultPage), findsOneWidget);
         await _back(tester, android);
-        expect(find.text('Riwayat Pemeriksaan'), findsOneWidget);
+        expect(find.text('Riwayat Survei'), findsOneWidget);
         expect(container.read(historyControllerProvider).query, 'rendah');
         expect(
           container.read(historyControllerProvider).filter,

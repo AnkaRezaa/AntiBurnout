@@ -90,7 +90,7 @@ void main() {
 
         for (final page in [
           (RoutePaths.survey, 'Survei Harian'),
-          (RoutePaths.history, 'Riwayat Pemeriksaan'),
+          (RoutePaths.history, 'Riwayat Survei'),
         ]) {
           await _go(tester, container, page.$1);
           _expectSameAnchor(
