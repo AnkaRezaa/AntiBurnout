@@ -12,6 +12,7 @@ import '../widgets/dashboard_header.dart';
 import '../widgets/dashboard_shortcuts.dart';
 import '../widgets/latest_assessment_card.dart';
 import '../widgets/motivation_card.dart';
+import '../widgets/risk_statistics_card.dart';
 
 class DashboardPage extends ConsumerWidget {
   final VoidCallback? onStartSurvey;
@@ -73,6 +74,11 @@ class DashboardPage extends ConsumerWidget {
                 DashboardShortcuts(
                   onSurveyTap: onStartSurvey,
                   onHistoryTap: onViewHistory,
+                ),
+                SizedBox(height: context.ui(AppSpacing.lg)),
+
+                RiskStatisticsCard(
+                  assessments: ref.watch(dashboardAssessmentsProvider),
                 ),
                 SizedBox(height: context.ui(AppSpacing.lg)),
 

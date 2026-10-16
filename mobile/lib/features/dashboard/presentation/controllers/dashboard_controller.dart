@@ -4,16 +4,21 @@ import '../../../assessment/di/assessment_providers.dart';
 import '../../../assessment/domain/entities/assessment.dart';
 import '../../../history/presentation/controllers/history_repository.dart';
 
-final latestAssessmentProvider = Provider<Assessment?>((ref) {
+final dashboardAssessmentsProvider = Provider<List<Assessment>>((ref) {
   final items = {
     for (final item in ref.watch(assessmentFixtureProvider))
       item.id: Assessment(
         id: item.id,
         riskLevel: item.riskLevel,
         takenAt: item.takenAt,
+        isExample: true,
       ),
     ...ref.watch(assessmentSessionCacheProvider),
-  }.values;
-  if (items.isEmpty) return null;
-  return items.reduce((a, b) => b.takenAt.isAfter(a.takenAt) ? b : a);
+  }.values.toList()..sort((a, b) => b.takenAt.compareTo(a.takenAt));
+  return List.unmodifiable(items);
+});
+
+final latestAssessmentProvider = Provider<Assessment?>((ref) {
+  final items = ref.watch(dashboardAssessmentsProvider);
+  return items.isEmpty ? null : items.first;
 });
