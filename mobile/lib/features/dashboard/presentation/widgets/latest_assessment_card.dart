@@ -19,12 +19,13 @@ class LatestAssessmentCard extends StatelessWidget {
   final String date;
   final VoidCallback? onViewResult;
 
-  Color _riskColor(BuildContext context) => switch (riskLevel) {
-    RiskLevel.rendah => AssessmentColors.riskLow,
-    RiskLevel.sedang => AssessmentColors.riskMedium,
-    RiskLevel.tinggi => AssessmentColors.riskHigh,
-    null => AppColors.of(context).hint,
-  };
+  Color _riskColor(BuildContext context, {RiskLevel? level}) =>
+      switch (level ?? riskLevel) {
+        RiskLevel.rendah => AssessmentColors.riskLow,
+        RiskLevel.sedang => AssessmentColors.riskMedium,
+        RiskLevel.tinggi => AssessmentColors.riskHigh,
+        null => AppColors.of(context).hint,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -178,13 +179,26 @@ class LatestAssessmentCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: context.ui(AppSpacing.sm)),
       child: SizedBox(
-        height: context.ui(20),
+        height: context.ui(24),
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Container(
-              height: context.ui(5),
-              color: AppColors.of(context).border,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: context.ui(11)),
+              child: Container(
+                height: context.ui(6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(context.ui(3)),
+                  gradient: const LinearGradient(
+                    colors: [
+                      AssessmentColors.riskLow,
+                      AssessmentColors.riskMedium,
+                      AssessmentColors.riskHigh,
+                    ],
+                    stops: [0, 0.5, 1],
+                  ),
+                ),
+              ),
             ),
             for (final level in RiskLevel.values)
               Align(
@@ -193,27 +207,35 @@ class LatestAssessmentCard extends StatelessWidget {
                   RiskLevel.sedang => Alignment.center,
                   RiskLevel.tinggi => Alignment.centerRight,
                 },
-                child: Container(
-                  width: context.ui(18),
-                  height: context.ui(18),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: level == riskLevel
-                        ? AppColors.of(context).blob
-                        : AppColors.of(context).border,
+                // Fixed slots keep category positions stable as selection grows.
+                child: SizedBox(
+                  width: context.ui(22),
+                  height: context.ui(22),
+                  child: Center(
+                    child: Container(
+                      width: context.ui(level == riskLevel ? 20 : 12),
+                      height: context.ui(level == riskLevel ? 20 : 12),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _riskColor(context, level: level),
+                        border: Border.all(
+                          color: level == riskLevel
+                              ? AssessmentColors.riskMarkerOutline
+                              : AppColors.of(context).surface,
+                          width: context.ui(level == riskLevel ? 3 : 2),
+                        ),
+                        boxShadow: level == riskLevel
+                            ? [
+                                BoxShadow(
+                                  color: AssessmentColors.riskMarkerOutline
+                                      .withValues(alpha: 0.3),
+                                  blurRadius: context.ui(6),
+                                ),
+                              ]
+                            : null,
+                      ),
+                    ),
                   ),
-                  child: level == riskLevel
-                      ? Center(
-                          child: Container(
-                            width: context.ui(10),
-                            height: context.ui(10),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.of(context).primary,
-                            ),
-                          ),
-                        )
-                      : null,
                 ),
               ),
           ],

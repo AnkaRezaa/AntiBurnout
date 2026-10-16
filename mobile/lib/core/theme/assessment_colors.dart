@@ -16,6 +16,7 @@ abstract final class AssessmentColors {
   static const riskLow = Color(0xFF2BC751);
   static const riskMedium = Color(0xFFF5A60B);
   static const riskHigh = Color(0xFFE5636B);
+  static const riskMarkerOutline = Color(0xFF5A8DF8);
 
   static const sleepTint = Color(0xFFE6F7F0);
   static const activityTint = Color(0xFFE3F3FB);
