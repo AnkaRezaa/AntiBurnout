@@ -1,17 +1,83 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/responsive/app_scale.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/theme/assessment_colors.dart';
+import '../../data/dashboard_motivations.dart';
 
-class MotivationCard extends StatelessWidget {
-  const MotivationCard({
-    super.key,
-    this.quote = 'Tidur yang cukup membantu menjaga kesehatan mental dan produktivitasmu.',
-  });
+class MotivationCard extends StatefulWidget {
+  const MotivationCard({super.key, this.quote, this.now});
 
-  final String quote;
+  /// An explicit quote remains fixed; otherwise the local date chooses it.
+  final String? quote;
+
+  /// Optional clock for deterministic date-change tests and previews.
+  final DateTime Function()? now;
+
+  @override
+  State<MotivationCard> createState() => _MotivationCardState();
+}
+
+class _MotivationCardState extends State<MotivationCard>
+    with WidgetsBindingObserver {
+  Timer? _midnightTimer;
+
+  DateTime _now() => (widget.now?.call() ?? DateTime.now()).toLocal();
+
+  void _scheduleDailyRefresh() {
+    _midnightTimer?.cancel();
+    if (widget.quote != null) return;
+    final now = _now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    _midnightTimer = Timer(tomorrow.difference(now), () {
+      if (!mounted) return;
+      setState(() {});
+      _scheduleDailyRefresh();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _scheduleDailyRefresh();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final active =
+        TickerMode.valuesOf(context).enabled &&
+        (ModalRoute.isCurrentOf(context) ?? true);
+    // Re-check the date/timezone when returning to a retained tab or route.
+    if (active) _scheduleDailyRefresh();
+  }
+
+  @override
+  void didUpdateWidget(covariant MotivationCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.quote != widget.quote || oldWidget.now != widget.now) {
+      _scheduleDailyRefresh();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && widget.quote == null) {
+      setState(() {});
+      _scheduleDailyRefresh();
+    }
+  }
+
+  @override
+  void dispose() {
+    _midnightTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +118,8 @@ class MotivationCard extends StatelessWidget {
               SizedBox(width: context.ui(AppSpacing.md)),
               Expanded(
                 child: Text(
-                  quote,
+                  widget.quote ?? motivationForDate(_now()),
+                  key: const ValueKey('dashboard-motivation-quote'),
                   style: AppTextStyles.subtitle(context)
                       .copyWith(fontSize: context.ui(12)),
                 ),
